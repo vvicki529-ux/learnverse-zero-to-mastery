@@ -1,0 +1,5 @@
+async function capstone(){const d=await fetch('content/unified-capstone.json').then(r=>r.json());out.innerHTML=`<section class="hero"><span class="badge">Aligned portfolio capstone</span><h1>${d.title}</h1><p>${d.summary}</p></section><section class="panel"><h2>Safety rules</h2><ul>${d.principles.map(x=>`<li>${x}</li>`).join('')}</ul></section><h2>Build order</h2>${d.phases.map((p,i)=>`<section class="panel"><span class="badge">Phase ${i+1}</span><h2>${p.phase}</h2><p><strong>Outcome:</strong> ${p.outcome}</p><div class="grid">${p.tracks.map(t=>`<section class="card"><h3>${t.track}</h3><p><strong>Aligned projects:</strong> ${t.projects}</p><p><strong>Deliverable:</strong> ${t.deliverable}</p></section>`).join('')}</div></section>`).join('')}`}
+document.querySelector('aside nav').insertAdjacentHTML('beforeend','<a href="#capstone">Unified capstone</a>');
+const priorRoute=route;route=function(){const p=location.hash.slice(1).split('/');if(p[0]==='capstone')capstone();else priorRoute()};
+window.addEventListener('hashchange',()=>{if(location.hash==='#capstone')capstone()});
+if(location.hash==='#capstone')capstone();
