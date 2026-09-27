@@ -142,6 +142,66 @@
 - [ ] PCPP-level extension topics: advanced OOP, GUI, networking, files/data processing, standards
 - [ ] Exam-style scenarios, code tracing, distractors, timed mock exams, weak-area remediation
 
+## 15. Computer-science foundations an expert Python practitioner uses
+
+- [ ] Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning
+- [ ] Complexity analysis: Big-O/Theta/Omega, amortized analysis, time/space trade-offs, empirical benchmarking
+- [ ] Recursion trees, divide-and-conquer, backtracking, dynamic programming, greedy algorithms, randomized algorithms
+- [ ] Searching, sorting, hashing, heaps, trees, graphs, shortest paths, traversals, union-find, tries
+- [ ] Core data structures: arrays/lists, stacks, queues, dequeues, hash tables, linked structures, priority queues, trees, graphs
+- [ ] Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic
+- [ ] Numerical reasoning: floating-point representation, precision/recall of calculations, numerical stability, reproducibility
+- [ ] Algorithm engineering: choose appropriate structures, measure real costs, identify bottlenecks, communicate trade-offs
+
+## 16. Software design, architecture, and maintainable systems
+
+- [ ] Requirements discovery, user stories, acceptance criteria, modelling inputs/outputs/failure conditions
+- [ ] API contracts, domain modelling, boundaries, separation of concerns, cohesion/coupling, dependency inversion
+- [ ] Abstract data types, representation invariants, immutability, defensive copying, design by contract
+- [ ] Architecture styles: layered, modular monolith, client/server, event-driven, microservice trade-offs
+- [ ] Resilience patterns: retries, timeouts, circuit breakers, idempotency, rate limiting, graceful degradation
+- [ ] State machines, workflows, transactions, eventual consistency, message ordering, deduplication
+- [ ] Technical decision records, diagrams, documentation, code review, refactoring, backward compatibility
+- [ ] Ethical engineering: accessibility, privacy, data minimization, auditability, user safety, responsible automation
+
+## 17. Python in scientific, data, and high-performance computing workflows
+
+- [ ] NumPy arrays, vectorization, broadcasting, views versus copies, dtype selection, random-number reproducibility
+- [ ] pandas-style tabular data concepts: indexing, joins, group operations, missing data, time series, data-quality checks
+- [ ] Plotting/communication concepts: select visual encodings, reproducible charts, misleading-chart pitfalls
+- [ ] Scientific methods: hypothesis, simulation, parameter sweeps, uncertainty, experimental records, reproducibility
+- [ ] Parallel and high-performance concepts: memory locality, vectorization, native extensions, profiling, distributed-compute boundaries
+- [ ] Interoperability with C/C++/Fortran, binary formats, array protocols, environment reproducibility
+
+## 18. Interpreter implementation, extension, and embedding — advanced/expert
+
+- [ ] Tokenization, parsing, ASTs, compilation, bytecode, execution frames, symbol tables, import machinery
+- [ ] CPython object model, reference counting, cycle detection, garbage collector interfaces, weak references
+- [ ] Stable ABI, limited API, version compatibility, subinterpreter considerations, implementation-specific caveats
+- [ ] C/C++ extension modules: argument parsing, exception translation, reference ownership, module state, build/link concerns
+- [ ] Defining extension types, buffer protocol, capsules, callbacks, thread-state/GIL interaction
+- [ ] Embedding CPython in host applications: initialization, configuration, executing code safely, lifecycle and isolation
+- [ ] Alternative implementations and portability: CPython, PyPy, Jython and implementation-dependent behaviour
+
+## 19. Security, supply chain, governance, and reliability at expert depth
+
+- [ ] Threat modelling Python applications: assets, trust boundaries, attack surface, abuse cases, mitigations
+- [ ] Authentication/authorization concepts, session/token handling, cryptography API boundaries, secure defaults
+- [ ] Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy
+- [ ] Secure deserialization, templating, subprocesses, filesystem operations, SSRF, injection, unsafe reflection patterns
+- [ ] Privacy-by-design, retention, encryption boundaries, audit logs, incident handling, disclosure and patch workflow
+- [ ] Reliability engineering: SLOs/SLIs, capacity planning, load testing, chaos/failure testing concepts, post-incident learning
+
+## 20. Expert practice and knowledge boundaries
+
+- [ ] Read and evaluate unfamiliar codebases, APIs, tracebacks, release notes, changelogs, deprecation notices, and migration guides
+- [ ] Version upgrades and compatibility testing; language-feature gates and feature detection
+- [ ] Open-source contribution workflow: issue reproduction, minimal fix, tests, documentation, review etiquette, release process
+- [ ] Teaching and technical leadership: explain trade-offs to beginners, peers, and nontechnical stakeholders
+- [ ] Know when Python is the wrong tool: CPU-bound numerical kernels, strict latency, mobile/native constraints, language/runtime interoperability choices
+- [ ] Specialist pathways map: backend, data engineering, ML, QA, automation, security, scientific computing, DevOps, GUI, embedded/IoT
+- [ ] Explicit non-goal boundary: the track teaches transferable concepts and one verified path per specialist domain; it does not claim to exhaust every third-party package or framework ever published
+
 ## Required evidence before checking an item off
 
 - Original beginner explanation and why-it-matters context
