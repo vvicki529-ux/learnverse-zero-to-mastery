@@ -47,6 +47,21 @@
         "Hashability, mutability, shallow/deep copy, aliasing, default mutable argument trap"
       ],
       "status": "complete"
+    },
+    {
+      "id": "functions-scope-and-typed-interfaces",
+      "level": "core",
+      "path": "core/functions-scope-and-typed-interfaces/lesson.json",
+      "masterChecklist": [
+        "Defining/calling functions, parameters, arguments, return, None, docstrings",
+        "Positional-only, positional-or-keyword, keyword-only, defaults, *args, **kwargs, argument unpacking",
+        "LEGB scope, local/global/nonlocal names, closures, late binding, shadowing",
+        "Recursion, base cases, stack limits, iteration alternatives",
+        "First-class functions, lambdas, higher-order functions, map, filter, functools, decorators",
+        "Generators, yield, yield from, iterators, lazy evaluation, iterator exhaustion",
+        "Type annotations, typing, generics, protocols, TypedDict, dataclass, runtime versus static checking"
+      ],
+      "status": "complete"
     }
   ]
 }

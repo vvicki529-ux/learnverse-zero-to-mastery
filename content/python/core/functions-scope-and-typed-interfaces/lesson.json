@@ -1,0 +1,125 @@
+{
+  "id": "functions-scope-and-typed-interfaces",
+  "title": "Functions, scope, and typed interfaces",
+  "track": "python",
+  "level": "core",
+  "status": "complete",
+  "lastReviewed": "2026-09-27",
+  "sources": [
+    "Python 3.14 Language Reference: function definitions, naming and binding, lambdas, annotations",
+    "Python 3.14 Tutorial: defining functions and scopes",
+    "Python Institute PCAP-31-03 syllabus: functions, closures, lambdas"
+  ],
+  "masterChecklist": [
+    "Defining/calling functions, parameters, arguments, return, None, docstrings",
+    "Positional-only, positional-or-keyword, keyword-only, defaults, *args, **kwargs, argument unpacking",
+    "LEGB scope, local/global/nonlocal names, closures, late binding, shadowing",
+    "Recursion, base cases, stack limits, iteration alternatives",
+    "First-class functions, lambdas, higher-order functions, map, filter, functools, decorators",
+    "Generators, yield, yield from, iterators, lazy evaluation, iterator exhaustion",
+    "Type annotations, typing, generics, protocols, TypedDict, dataclass, runtime versus static checking"
+  ],
+  "whyItMatters": "Functions are a program's contracts. A small, clearly named function makes a rule testable, reusable, and safe to change. Scope and parameter design decide what information the function can see and how callers are allowed to use it.",
+  "simpleExplanation": "A function accepts inputs, performs one job, and returns a result. Parameters are names in the definition; arguments are values supplied by a caller. Local names disappear when a call ends. Type annotations describe the intended interface but do not automatically enforce types while Python runs.",
+  "mentalModel": "A function is a labelled machine with an input tray and an output tray. Its local workspace is private. A good function has one clear job, a documented input shape, and an output a caller can rely on.",
+  "outcomes": [
+    "Design a small function with explicit inputs, return value, docstring, and predictable failure behaviour.",
+    "Use keyword-only parameters to make risky or optional choices visible at call sites.",
+    "Explain LEGB name lookup and avoid accidental global-state dependencies.",
+    "Recognize the mutable-default-argument and late-binding closure traps.",
+    "Use annotations as a maintainability tool without assuming they validate runtime input."
+  ],
+  "realWorldExample": {
+    "scenario": "A billing API calculates a discount. Multiple endpoints use the rule, but some callers need to opt into a promotional rule.",
+    "riskWithoutSetup": "If each endpoint duplicates the calculation, rules drift. If an optional flag can be passed positionally, a caller can accidentally enable a promotion without its code being obvious in review.",
+    "professionalApproach": "Put the rule in one pure function, name the optional choice as keyword-only, return a numeric value rather than printing, and test edge cases at the threshold."
+  },
+  "workedExample": {
+    "filename": "src/pricing.py",
+    "code": "def discounted_total(total: float, *, member: bool = False) -> float:\n    \"\"\"Return the order total after an optional member discount.\"\"\"\n    if total < 0:\n        raise ValueError('total cannot be negative')\n\n    rate = 0.10 if member else 0.0\n    return total * (1 - rate)\n\nprint(discounted_total(80.0, member=True))\n",
+    "explanation": [
+      "total is a parameter. The : float annotation documents the expected numeric interface; Python itself does not reject a wrong type solely because of the annotation.",
+      "The * makes member keyword-only. A caller must write member=True, which makes the business choice visible and prevents a confusing second positional argument.",
+      "The docstring explains the contract to people and tools reading the function.",
+      "The guard clause rejects a value that breaks the business meaning before calculation begins.",
+      "The function returns a number. It does not print internally, so a web API, CLI, or test can decide how to use the result."
+    ],
+    "expectedOutput": "72.0",
+    "safeExperiment": "Call the function with member=False and with total exactly 0. Then try a negative total and read the ValueError traceback. Finally, try discounted_total(80.0, True) and explain why Python rejects that call."
+  },
+  "procedure": [
+    "State one function responsibility in a sentence before writing code.",
+    "List the required inputs, optional choices, return type, and invalid cases.",
+    "Choose return values for reusable logic; reserve print/logging for a caller or boundary layer.",
+    "Keep internal names local and avoid reading a global setting unless the dependency is explicit.",
+    "Write tests for normal, boundary, and invalid inputs before extracting a more complex helper."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Using a mutable default parameter such as items=[].",
+      "why": "Default expressions are evaluated once when the function is defined, so the same list can be shared by later calls.",
+      "avoid": "Use None as a sentinel, then create a new list inside the function."
+    },
+    {
+      "mistake": "Printing a business result inside reusable logic.",
+      "why": "Printing makes the function harder to test and prevents callers from using the value in another calculation or API response.",
+      "avoid": "Return data from the function; let the outermost caller choose presentation or logging."
+    },
+    {
+      "mistake": "Assuming an annotation validates input at runtime.",
+      "why": "Standard Python annotations are metadata; they help readers and static tools but do not automatically convert or reject values.",
+      "avoid": "Validate untrusted input explicitly and use a type checker as a separate development tool."
+    },
+    {
+      "mistake": "Using a lambda for multi-step business logic.",
+      "why": "Lambdas are limited to one expression and can hide important names and error handling.",
+      "avoid": "Use a named def for nontrivial logic and reserve lambdas for small local callbacks where they improve clarity."
+    }
+  ],
+  "lab": {
+    "title": "Write a testable spending-limit function",
+    "safety": "This exercise uses fictional amounts. Do not include personal banking data.",
+    "starterCode": "def remaining_budget(limit: float, spent: float, *, include_pending: bool = False) -> float:\n    # TODO: reject negative inputs\n    # TODO: optionally include a fictional pending charge\n    # TODO: return the remaining amount\n    pass\n",
+    "guidedSteps": [
+      "Reject a negative limit or spent amount with ValueError.",
+      "Use a keyword-only include_pending flag and a named pending amount of 5.0 for this exercise.",
+      "Calculate the effective spent amount without printing inside the function.",
+      "Return limit minus effective spent.",
+      "Test a normal case, the exact-limit case, an over-limit case, and a negative-input case."
+    ],
+    "checks": [
+      "Function returns a float-like numeric result rather than printing it.",
+      "include_pending is keyword-only.",
+      "Negative values raise ValueError with a useful message.",
+      "The calculation has named intermediate values rather than duplicated expressions."
+    ],
+    "hints": [
+      "A keyword-only separator is written as *, before the keyword-only parameter.",
+      "A guard clause can combine checks: if limit < 0 or spent < 0: ...",
+      "effective_spent can be spent + pending_charge if include_pending else spent."
+    ],
+    "solution": "def remaining_budget(limit: float, spent: float, *, include_pending: bool = False) -> float:\n    if limit < 0 or spent < 0:\n        raise ValueError('limit and spent must be non-negative')\n\n    pending_charge = 5.0 if include_pending else 0.0\n    effective_spent = spent + pending_charge\n    return limit - effective_spent\n"
+  },
+  "projectConnection": {
+    "project": "CLI habit tracker",
+    "milestone": "Extract streak-calculation and validation rules into separate functions with explicit inputs and return values. Add tests for empty history, a completed streak, and invalid dates.",
+    "definitionOfDone": "No function depends on hidden global mutable state, important options are named at call sites, and each function can be tested without printing or reading files."
+  },
+  "assessment": [
+    {
+      "question": "What does the * do in def f(value, *, option=False)?",
+      "answer": "It makes option keyword-only.",
+      "explanation": "The caller must write option=True or option=False, making the optional choice clear."
+    },
+    {
+      "question": "Are Python type annotations automatic runtime validation?",
+      "answer": "No.",
+      "explanation": "Annotations document intent and are used by tools, but untrusted input still needs explicit validation."
+    },
+    {
+      "question": "Why should a reusable calculation normally return instead of print?",
+      "answer": "Returning lets callers test, store, compose, or present the result in different ways.",
+      "explanation": "Printing is a presentation side effect and makes logic less reusable."
+    }
+  ]
+}
