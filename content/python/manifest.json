@@ -105,6 +105,19 @@
         "Descriptors, decorators, metaclasses, class creation hooks — advanced/internals"
       ],
       "status": "complete"
+    },
+    {
+      "id": "concurrency-async-and-network-boundaries",
+      "level": "advanced",
+      "path": "advanced/concurrency-async-and-network-boundaries/lesson.json",
+      "masterChecklist": [
+        "Threads, locks, queues, races, deadlocks, thread-safe design, I/O-bound work",
+        "Processes, multiprocessing, pickling constraints, pools, IPC, CPU-bound work",
+        "asyncio: coroutines, async/await, tasks, gather, timeouts, cancellation, async context managers",
+        "Sockets, HTTP concepts, REST APIs, requests, retries, idempotency, pagination, rate limits, error handling",
+        "Webhooks, message queues, event-driven concepts, background workers"
+      ],
+      "status": "complete"
     }
   ]
 }
