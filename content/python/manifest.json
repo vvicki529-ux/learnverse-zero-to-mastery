@@ -61,6 +61,15 @@
       "status": "complete"
     },
     {
+      "id": "specialized-containers-and-priority-queues",
+      "level": "core",
+      "path": "core/specialized-containers-and-priority-queues/lesson.json",
+      "masterChecklist": [
+        "Core data structures: arrays/lists, stacks, queues, dequeues, hash tables, linked structures, priority queues, trees, graphs"
+      ],
+      "status": "complete"
+    },
+    {
       "id": "functions-scope-and-typed-interfaces",
       "level": "core",
       "path": "core/functions-scope-and-typed-interfaces/lesson.json",
