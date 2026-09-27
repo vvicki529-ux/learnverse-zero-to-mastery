@@ -184,6 +184,28 @@
         "Ethical engineering: accessibility, privacy, data minimization, auditability, user safety, responsible automation"
       ],
       "status": "complete"
+    },
+    {
+      "id": "delivery-operations-and-team-workflows",
+      "level": "production",
+      "path": "production/delivery-operations-and-team-workflows/lesson.json",
+      "masterChecklist": [
+        "Project layout, README, licensing, semantic versioning, changelog, architecture decisions",
+        "Containers: Dockerfile concepts, images, environment configuration, local reproducibility",
+        "CI/CD: test/lint/type-check/build stages, artifacts, deployment gates, rollback concepts",
+        "Cloud and serverless concepts: storage, databases, queues, functions, identity, configuration",
+        "Monitoring, metrics, tracing, alerting, on-call basics, incident-friendly logging",
+        "Linux/shell basics, environment management, process signals, scheduled jobs",
+        "Team workflow: issue tracking, agile delivery, pull requests, code review, technical communication",
+        "Read and evaluate unfamiliar codebases, APIs, tracebacks, release notes, changelogs, deprecation notices, and migration guides",
+        "Version upgrades and compatibility testing; language-feature gates and feature detection",
+        "Open-source contribution workflow: issue reproduction, minimal fix, tests, documentation, review etiquette, release process",
+        "Teaching and technical leadership: explain trade-offs to beginners, peers, and nontechnical stakeholders",
+        "Know when Python is the wrong tool: CPU-bound numerical kernels, strict latency, mobile/native constraints, language/runtime interoperability choices",
+        "Specialist pathways map: backend, data engineering, ML, QA, automation, security, scientific computing, DevOps, GUI, embedded/IoT",
+        "Explicit non-goal boundary: the track teaches transferable concepts and one verified path per specialist domain; it does not claim to exhaust every third-party package or framework ever published"
+      ],
+      "status": "complete"
     }
   ]
 }
