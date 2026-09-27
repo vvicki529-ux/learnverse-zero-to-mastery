@@ -303,6 +303,15 @@
         "Five progressive projects: CLI utility, data/file tool, API client, tested service, production-style capstone"
       ],
       "status": "complete"
+    },
+    {
+      "id": "gui-and-event-driven-apps",
+      "level": "real-world",
+      "path": "real-world/gui-and-event-driven-apps/lesson.json",
+      "masterChecklist": [
+        "PCPP-level extension topics: advanced OOP, GUI, networking, files/data processing, standards"
+      ],
+      "status": "complete"
     }
   ]
 }

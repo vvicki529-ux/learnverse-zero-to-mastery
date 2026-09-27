@@ -1,6 +1,6 @@
 # Python verification boundary
 
-The Python track's 136 master-topic entries are mapped to 19 modular lessons. Each lesson is structurally validated for its source record, review date, explanation, worked example, common mistakes, guided in-site lab, project connection, and assessment.
+The Python track's 136 master-topic entries are mapped to 21 modular lessons. Each lesson is structurally validated for its source record, review date, explanation, worked example, common mistakes, guided in-site lab, project connection, and assessment.
 
 ## What is verified in this repository
 
