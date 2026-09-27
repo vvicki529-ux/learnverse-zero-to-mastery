@@ -222,6 +222,21 @@
         "AI/ML integration: data preparation, model-service API boundaries, evaluation and monitoring concepts"
       ],
       "status": "complete"
+    },
+    {
+      "id": "interpreter-extensions-and-embedding",
+      "level": "expert",
+      "path": "expert/interpreter-extensions-and-embedding/lesson.json",
+      "masterChecklist": [
+        "Tokenization, parsing, ASTs, compilation, bytecode, execution frames, symbol tables, import machinery",
+        "CPython object model, reference counting, cycle detection, garbage collector interfaces, weak references",
+        "Stable ABI, limited API, version compatibility, subinterpreter considerations, implementation-specific caveats",
+        "C/C++ extension modules: argument parsing, exception translation, reference ownership, module state, build/link concerns",
+        "Defining extension types, buffer protocol, capsules, callbacks, thread-state/GIL interaction",
+        "Embedding CPython in host applications: initialization, configuration, executing code safely, lifecycle and isolation",
+        "Alternative implementations and portability: CPython, PyPy, Jython and implementation-dependent behaviour"
+      ],
+      "status": "complete"
     }
   ]
 }
