@@ -16,6 +16,22 @@
         "Git fundamentals for Python projects: repository, commit, branch, ignore files, code review"
       ],
       "status": "complete"
+    },
+    {
+      "id": "values-expressions-control-flow",
+      "level": "foundations",
+      "path": "foundations/values-expressions-control-flow/lesson.json",
+      "masterChecklist": [
+        "Statements, expressions, indentation, comments, names, literals, keywords",
+        "Variables, assignment, rebinding, dynamic typing, object identity versus equality",
+        "Built-in scalar types: None, bool, int, float, complex, str, bytes",
+        "Numeric operations, precedence, integer division, modulo, exponentiation, rounding, floating-point limits, decimal use cases",
+        "Comparisons, truthiness, short-circuit logic, chained comparisons, is versus ==",
+        "Input/output, print(), input(), conversion, formatting, f-strings",
+        "Conditional flow: if, elif, else, match/case, guards, structural pattern matching",
+        "Iteration: for, while, range, break, continue, pass, loop else"
+      ],
+      "status": "complete"
     }
   ]
 }

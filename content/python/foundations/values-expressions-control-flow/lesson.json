@@ -1,0 +1,126 @@
+{
+  "id": "values-expressions-control-flow",
+  "title": "Values, names, expressions, and control flow",
+  "track": "python",
+  "level": "foundations",
+  "status": "complete",
+  "lastReviewed": "2026-09-27",
+  "sources": [
+    "Python 3.14 Language Reference: lexical analysis, expressions, simple statements, compound statements",
+    "Python Institute PCEP-30-02 exam information"
+  ],
+  "masterChecklist": [
+    "Statements, expressions, indentation, comments, names, literals, keywords",
+    "Variables, assignment, rebinding, dynamic typing, object identity versus equality",
+    "Built-in scalar types: None, bool, int, float, complex, str, bytes",
+    "Numeric operations, precedence, integer division, modulo, exponentiation, rounding, floating-point limits, decimal use cases",
+    "Comparisons, truthiness, short-circuit logic, chained comparisons, is versus ==",
+    "Input/output, print(), input(), conversion, formatting, f-strings",
+    "Conditional flow: if, elif, else, match/case, guards, structural pattern matching",
+    "Iteration: for, while, range, break, continue, pass, loop else"
+  ],
+  "whyItMatters": "Every Python program makes decisions from values. If you understand what a name refers to, how an expression produces a result, and how control flow chooses or repeats work, you can read and debug the majority of beginner and production code.",
+  "simpleExplanation": "A value is data such as 12, 'hello', or True. A name is a label that refers to a value. An expression combines values to produce another value. A statement tells Python to perform an action, such as assigning a name, choosing a branch, or repeating a block.",
+  "mentalModel": "Think of a program as a recipe with labelled ingredients. Names label ingredients, expressions combine them, conditions choose a recipe path, and loops repeat a step for each item.",
+  "outcomes": [
+    "Predict the result and type of simple expressions without running them.",
+    "Explain why == compares values while is normally checks whether two references point to the same object.",
+    "Write a decision with if/elif/else and explain which branch will execute.",
+    "Use a for loop and range without the off-by-one mistake.",
+    "Convert user input deliberately instead of assuming input() returns a number."
+  ],
+  "realWorldExample": {
+    "scenario": "An order service decides whether a customer qualifies for free delivery and produces a readable message for the checkout page.",
+    "riskWithoutSetup": "If the service mixes strings and numbers, uses assignment instead of comparison, or forgets that range excludes its end, a customer can receive the wrong result or the program can stop.",
+    "professionalApproach": "Keep values in the intended types, name intermediate decisions clearly, write boundary tests for the exact threshold, and format the final result only at the presentation boundary."
+  },
+  "workedExample": {
+    "filename": "src/delivery.py",
+    "code": "order_total = 52.50\nmember = True\nfree_delivery_threshold = 50\n\nqualifies = member and order_total >= free_delivery_threshold\n\nif qualifies:\n    delivery_fee = 0\n    message = 'Free delivery applied'\nelse:\n    delivery_fee = 4.99\n    message = f'Delivery fee: ${delivery_fee:.2f}'\n\nprint(message)\n",
+    "explanation": [
+      "order_total is a float value and member is a Boolean value. Their names describe their role in the calculation.",
+      "The and operator short-circuits: if member is False, Python does not need to evaluate the threshold comparison to decide the entire expression is False.",
+      "The >= comparison produces True when the total equals the threshold as well as when it exceeds it. That boundary is a business rule that should be tested.",
+      "if uses the Boolean value in qualifies to select exactly one indented branch.",
+      "The f-string formats the numeric fee with two digits after the decimal for display. It does not change how the fee is stored or calculated."
+    ],
+    "expectedOutput": "Free delivery applied",
+    "safeExperiment": "Change order_total to 49.99, 50.00, and 50.01. Predict the message before each run. Then set member to False and explain why the second condition no longer changes the result."
+  },
+  "procedure": [
+    "Write down the input values and their intended types before writing the condition.",
+    "Name the Boolean decision qualifies rather than repeating the long expression in multiple places.",
+    "Test the value just below, exactly at, and just above the threshold.",
+    "Format the final message only after the numeric decision has been made.",
+    "Add a comment only when the business reason for a threshold is not obvious from the name."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Using = inside a condition.",
+      "why": "= is assignment syntax; comparisons use ==, !=, <, <=, >, or >=.",
+      "avoid": "Assign a Boolean decision before the if when the expression is long, then read the condition as a sentence."
+    },
+    {
+      "mistake": "Using is to compare ordinary strings or numbers.",
+      "why": "is asks whether two references are the same object, which is not the same as equal values and may appear to work accidentally because of implementation details.",
+      "avoid": "Use == for value comparison. Use is mainly for singletons such as value is None."
+    },
+    {
+      "mistake": "Assuming input() returns an int or float.",
+      "why": "input() returns a string, even when the user types digits.",
+      "avoid": "Convert deliberately with int() or float() after validating the input and handle invalid values."
+    },
+    {
+      "mistake": "Expecting range(1, 5) to include 5.",
+      "why": "The stop value of range is excluded.",
+      "avoid": "Say the produced sequence out loud: 1, 2, 3, 4. Use boundary tests whenever a loop processes a count or index."
+    }
+  ],
+  "lab": {
+    "title": "Build and test a delivery-rule decision",
+    "safety": "This exercise is local and uses made-up order values only. Do not enter personal or payment data.",
+    "starterCode": "order_total = 0.0\nmember = False\nthreshold = 50\n\n# TODO: calculate whether free delivery applies\n# TODO: choose the correct fee and message\n# TODO: print the message\n",
+    "guidedSteps": [
+      "Set order_total to 49.99 and member to True.",
+      "Create a qualifies variable using and with a >= threshold check.",
+      "Use if/else to select a 0 or 4.99 delivery fee.",
+      "Use an f-string to display the nonzero fee with two decimals.",
+      "Repeat for 50.00, 50.01, and a non-member order. Record the expected message for each case."
+    ],
+    "checks": [
+      "Uses >= so the exact threshold qualifies.",
+      "Uses == only for comparison when needed; does not use assignment in a condition.",
+      "Stores the Boolean decision in a clearly named variable.",
+      "Formats display text separately from the numeric fee.",
+      "Includes at least one boundary case at exactly 50.00."
+    ],
+    "hints": [
+      "The decision can read: member and order_total >= threshold.",
+      "An if statement needs an indented block after its colon.",
+      "Use f'Delivery fee: ${delivery_fee:.2f}' only for the message, after delivery_fee has been chosen."
+    ],
+    "solution": "order_total = 50.00\nmember = True\nthreshold = 50\n\nqualifies = member and order_total >= threshold\n\nif qualifies:\n    delivery_fee = 0\n    message = 'Free delivery applied'\nelse:\n    delivery_fee = 4.99\n    message = f'Delivery fee: ${delivery_fee:.2f}'\n\nprint(message)\n"
+  },
+  "projectConnection": {
+    "project": "CLI habit tracker",
+    "milestone": "Add a rule that awards a weekly streak badge only when the completed-day count reaches the required threshold. Test the day before, exactly at, and above that threshold.",
+    "definitionOfDone": "The command produces a clear result for every boundary case, uses meaningful Boolean names, and keeps calculation separate from the displayed message."
+  },
+  "assessment": [
+    {
+      "question": "What is the difference between value equality and object identity?",
+      "answer": "== compares values for equality; is checks whether two references refer to the same object.",
+      "explanation": "Use == for ordinary numeric, text, and collection comparisons. Use is primarily for singleton checks such as value is None."
+    },
+    {
+      "question": "What does range(2, 5) produce?",
+      "answer": "2, 3, and 4.",
+      "explanation": "range includes the start and excludes the stop. This convention makes it convenient to use lengths and indexes."
+    },
+    {
+      "question": "Why does input('Age: ') + 1 fail when the user enters 20?",
+      "answer": "input returns the text '20', and text cannot be added directly to an integer.",
+      "explanation": "Convert validated numeric text first, for example with int(), before doing arithmetic."
+    }
+  ]
+}
