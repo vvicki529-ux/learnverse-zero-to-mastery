@@ -1,0 +1,21 @@
+{
+  "track": "python",
+  "title": "Python Zero-to-Mastery modules",
+  "schemaVersion": 1,
+  "modules": [
+    {
+      "id": "environment-execution-project-setup",
+      "level": "foundations",
+      "path": "foundations/environment-execution-project-setup/lesson.json",
+      "masterChecklist": [
+        "Installing and selecting a Python version; CPython versus alternative implementations",
+        "Interpreter, REPL, script execution, command-line arguments, exit status, __main__",
+        "Editor/IDE workflow, formatter, linter, debugger, terminal, and reading tracebacks",
+        "File paths, current working directory, encodings, newline differences, cross-platform behaviour",
+        "Virtual environments, venv, activation, dependency isolation, reproducible environments",
+        "Git fundamentals for Python projects: repository, commit, branch, ignore files, code review"
+      ],
+      "status": "complete"
+    }
+  ]
+}

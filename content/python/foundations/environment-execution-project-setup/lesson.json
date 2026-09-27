@@ -1,0 +1,124 @@
+{
+  "id": "environment-execution-project-setup",
+  "title": "Environment, interpreter, scripts, and project setup",
+  "track": "python",
+  "level": "foundations",
+  "status": "complete",
+  "lastReviewed": "2026-09-27",
+  "sources": [
+    "Python 3.14 documentation: Using Python, Tutorial, and venv",
+    "Python Institute PCEP-30-02 exam information"
+  ],
+  "masterChecklist": [
+    "Installing and selecting a Python version; CPython versus alternative implementations",
+    "Interpreter, REPL, script execution, command-line arguments, exit status, __main__",
+    "Editor/IDE workflow, formatter, linter, debugger, terminal, and reading tracebacks",
+    "File paths, current working directory, encodings, newline differences, cross-platform behaviour",
+    "Virtual environments, venv, activation, dependency isolation, reproducible environments",
+    "Git fundamentals for Python projects: repository, commit, branch, ignore files, code review"
+  ],
+  "whyItMatters": "A Python program is only useful when another person can run it predictably. A clear project environment prevents the most common beginner and team failure: code that works on one computer only because of hidden versions, files, or packages.",
+  "simpleExplanation": "Python source code is plain text. The Python interpreter reads that text and runs it. A virtual environment gives one project its own installed packages. Git records the project history so work can be reviewed and recovered.",
+  "mentalModel": "Treat a project like a labelled workshop. The interpreter is the machine that follows instructions, the virtual environment is the project-specific tool drawer, and Git is the time-stamped notebook of every approved change.",
+  "outcomes": [
+    "Explain the difference between an interpreter session and a script file.",
+    "Run a script and identify its working directory, arguments, output, and exit outcome.",
+    "Create a virtual environment and explain why dependencies should not be installed globally for every project.",
+    "Recognize the minimum files needed for a small shareable Python project.",
+    "Use Git to record a focused, reviewable change."
+  ],
+  "realWorldExample": {
+    "scenario": "A small reporting utility reads a CSV file and writes a daily summary. It runs on a developer laptop and later in a scheduled job.",
+    "riskWithoutSetup": "If the script assumes a personal absolute file path or an undeclared package, it fails for the scheduled job or another developer.",
+    "professionalApproach": "Keep paths relative to the project or configurable, declare dependencies, use a virtual environment, log the failure clearly, and commit the project files needed to reproduce the run."
+  },
+  "workedExample": {
+    "filename": "src/report_status.py",
+    "code": "from pathlib import Path\nimport sys\n\nproject_root = Path(__file__).resolve().parents[1]\ninput_file = project_root / 'data' / 'orders.csv'\n\nprint(f'Python version: {sys.version_info.major}.{sys.version_info.minor}')\nprint(f'Input file: {input_file}')\nprint(f'Arguments: {sys.argv[1:]}')\n",
+    "explanation": [
+      "Path(__file__).resolve() starts from this script file, not from whichever folder the user happened to be in when running it.",
+      "parents[1] moves from src/report_status.py to the project root. This avoids a fragile hard-coded personal path.",
+      "The / operator joins path parts in a platform-appropriate way; do not build paths by manually joining strings with slashes.",
+      "sys.version_info reports the interpreter version. Recording or checking it helps diagnose version-specific behaviour.",
+      "sys.argv[1:] contains command-line arguments after the script name. The script can later validate those arguments before using them."
+    ],
+    "expectedOutput": "Python version: 3.x\nInput file: .../project/data/orders.csv\nArguments: []",
+    "safeExperiment": "Run the script from the project root and then from another directory. The displayed input path should remain based on the script location. Then add a harmless argument such as --dry-run and observe it appear in Arguments."
+  },
+  "procedure": [
+    "Create a project folder with src, tests, data, README.md, and .gitignore.",
+    "Create and activate a virtual environment using the Python version chosen for the project.",
+    "Run python -m pip rather than relying on an ambiguous pip command, so the package installer is tied to the intended interpreter.",
+    "Add a small script under src and run it with the selected interpreter.",
+    "Record dependencies only after they are intentionally chosen; do not commit the virtual-environment directory.",
+    "Initialize Git, inspect the pending change, and make one focused initial commit."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Running a different Python than the one that installed the package.",
+      "why": "A machine can have multiple interpreters and each environment has its own packages.",
+      "avoid": "Use python -m pip and confirm python --version inside the activated environment."
+    },
+    {
+      "mistake": "Using an absolute personal path such as C:\\Users\\name\\Desktop\\file.csv.",
+      "why": "The path fails on another computer, CI runner, or deployment environment.",
+      "avoid": "Use pathlib with project-relative paths or configuration supplied by the environment."
+    },
+    {
+      "mistake": "Committing .venv, secrets, generated output, or editor-specific files.",
+      "why": "These files are machine-specific, can leak credentials, and make repositories noisy.",
+      "avoid": "Use .gitignore, store secrets outside source control, and document how to recreate generated artifacts."
+    },
+    {
+      "mistake": "Treating a traceback as noise.",
+      "why": "The final exception and the file/line frames describe where Python stopped and why.",
+      "avoid": "Read the final exception first, then trace backwards to the earliest relevant frame in your project."
+    }
+  ],
+  "lab": {
+    "title": "Make a portable project-status script",
+    "safety": "This lab reads local paths only. Do not place real credentials or sensitive data in the project.",
+    "starterCode": "from pathlib import Path\nimport sys\n\n# TODO: locate the project root from this file\n# TODO: create the path data/orders.csv\n# TODO: print the Python major/minor version and the path\n",
+    "guidedSteps": [
+      "Create a Path from __file__, resolve it, and select the project root.",
+      "Build the input path using / 'data' / 'orders.csv'.",
+      "Print sys.version_info.major and sys.version_info.minor in one readable message.",
+      "Print the input path and run the script from two different current directories.",
+      "Add a --dry-run argument when invoking the script and print sys.argv[1:]."
+    ],
+    "checks": [
+      "Uses pathlib.Path instead of a hand-built absolute path.",
+      "Prints an interpreter-version message.",
+      "Builds a data/orders.csv path from a project root.",
+      "Does not include a credential, token, or personal absolute path."
+    ],
+    "hints": [
+      "__file__ is the current script file path when a script is run from a file.",
+      "Path(__file__).resolve().parents[1] is useful when the script is inside a src folder.",
+      "sys.argv[0] is the script name; user-provided arguments begin at index 1."
+    ],
+    "solution": "from pathlib import Path\nimport sys\n\nproject_root = Path(__file__).resolve().parents[1]\ninput_file = project_root / 'data' / 'orders.csv'\n\nprint(f'Python version: {sys.version_info.major}.{sys.version_info.minor}')\nprint(f'Input file: {input_file}')\nprint(f'Arguments: {sys.argv[1:]}')\n"
+  },
+  "projectConnection": {
+    "project": "CLI habit tracker",
+    "milestone": "Create the project layout, virtual environment notes, .gitignore, a src entry script, and a command that prints a safe status message.",
+    "definitionOfDone": "A new contributor can clone the repository, follow the README, run the status command, and avoid needing the original developer's personal path or globally installed package."
+  },
+  "assessment": [
+    {
+      "question": "Why is python -m pip usually safer than running pip by itself?",
+      "answer": "It runs pip with the selected Python interpreter, reducing the chance of installing a package into a different environment.",
+      "explanation": "Multiple Python installations and virtual environments can exist on one computer. The module form ties the installer to the interpreter command used."
+    },
+    {
+      "question": "What problem does Path(__file__).resolve() help avoid?",
+      "answer": "It locates files relative to the script location instead of relying only on the current working directory.",
+      "explanation": "A current working directory can change depending on how a script is started, whereas the script file path identifies where the code is located."
+    },
+    {
+      "question": "Should a virtual environment folder be committed to Git?",
+      "answer": "No. Commit the dependency declaration and setup instructions instead.",
+      "explanation": "A virtual environment is machine-specific and can be recreated; committing it creates noise and portability problems."
+    }
+  ]
+}
