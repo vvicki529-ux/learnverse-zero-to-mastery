@@ -237,6 +237,20 @@
         "Alternative implementations and portability: CPython, PyPy, Jython and implementation-dependent behaviour"
       ],
       "status": "complete"
+    },
+    {
+      "id": "security-supply-chain-and-reliability",
+      "level": "expert",
+      "path": "expert/security-supply-chain-and-reliability/lesson.json",
+      "masterChecklist": [
+        "Threat modelling Python applications: assets, trust boundaries, attack surface, abuse cases, mitigations",
+        "Authentication/authorization concepts, session/token handling, cryptography API boundaries, secure defaults",
+        "Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy",
+        "Secure deserialization, templating, subprocesses, filesystem operations, SSRF, injection, unsafe reflection patterns",
+        "Privacy-by-design, retention, encryption boundaries, audit logs, incident handling, disclosure and patch workflow",
+        "Reliability engineering: SLOs/SLIs, capacity planning, load testing, chaos/failure testing concepts, post-incident learning"
+      ],
+      "status": "complete"
     }
   ]
 }
