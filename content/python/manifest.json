@@ -251,6 +251,22 @@
         "Reliability engineering: SLOs/SLIs, capacity planning, load testing, chaos/failure testing concepts, post-incident learning"
       ],
       "status": "complete"
+    },
+    {
+      "id": "exam-reasoning-and-objective-map",
+      "level": "certification",
+      "path": "certification/exam-reasoning-and-objective-map/lesson.json",
+      "masterChecklist": [
+        "PCEP-30-02 objectives: computer programming basics, data types/evaluations, control flow, collections, functions/exceptions",
+        "PCAP-31-03 modules/packages objective block",
+        "PCAP-31-03 exceptions objective block",
+        "PCAP-31-03 strings objective block",
+        "PCAP-31-03 OOP objective block",
+        "PCAP-31-03 comprehensions/lambdas/closures/I-O objective block",
+        "PCPP-level extension topics: advanced OOP, GUI, networking, files/data processing, standards",
+        "Exam-style scenarios, code tracing, distractors, timed mock exams, weak-area remediation"
+      ],
+      "status": "complete"
     }
   ]
 }
