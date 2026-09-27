@@ -132,6 +132,20 @@
         "Accessibility, reliability, error messages, internationalization, privacy-aware logging"
       ],
       "status": "complete"
+    },
+    {
+      "id": "execution-memory-and-performance",
+      "level": "advanced",
+      "path": "advanced/execution-memory-and-performance/lesson.json",
+      "masterChecklist": [
+        "Names, bindings, references, object lifetime, garbage collection, reference cycles, weak references",
+        "Mutability, interning/caching caveats, copy semantics, memory profiling",
+        "Bytecode, compilation, .pyc, import execution, frames, call stack, namespaces",
+        "Algorithmic complexity, profiling, benchmarking, timeit, cProfile, performance trade-offs",
+        "CPython GIL, implementation portability, when details are CPython-specific",
+        "Async internals, event-loop concepts, cooperative scheduling, cancellation, backpressure"
+      ],
+      "status": "complete"
     }
   ]
 }
