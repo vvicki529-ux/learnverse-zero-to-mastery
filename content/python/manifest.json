@@ -62,6 +62,20 @@
         "Type annotations, typing, generics, protocols, TypedDict, dataclass, runtime versus static checking"
       ],
       "status": "complete"
+    },
+    {
+      "id": "modules-packages-and-configuration",
+      "level": "intermediate",
+      "path": "core/modules-packages-and-configuration/lesson.json",
+      "masterChecklist": [
+        "Imports, import forms, import-time effects, module cache, sys.path, dir, __name__",
+        "User modules, packages, __init__.py, relative imports, namespace packages, public API design",
+        "Standard modules: math, random, statistics, datetime, pathlib, os, sys, collections, itertools, functools",
+        "Dependency management, pip, requirement/constraint files, lock files, dependency vulnerability awareness",
+        "pyproject.toml, build backends, package metadata, wheels/sdists, versioning, publishing concepts",
+        "Configuration management: environment variables, argparse, configparser, secrets boundaries"
+      ],
+      "status": "complete"
     }
   ]
 }
