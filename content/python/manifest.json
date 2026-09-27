@@ -279,6 +279,18 @@
         "JSON, CSV, and structured-data shapes; validation and schema thinking"
       ],
       "status": "complete"
+    },
+    {
+      "id": "specializations-and-progressive-projects",
+      "level": "real-world",
+      "path": "real-world/specializations-and-progressive-projects/lesson.json",
+      "masterChecklist": [
+        "Automation and scripting: files, APIs, browser/task automation concepts, scheduling, resilience",
+        "Web/backend: REST APIs, authentication concepts, database-backed services, deployment",
+        "Testing/QA automation: test framework, fixtures, API/UI testing concepts, reporting",
+        "Five progressive projects: CLI utility, data/file tool, API client, tested service, production-style capstone"
+      ],
+      "status": "complete"
     }
   ]
 }
