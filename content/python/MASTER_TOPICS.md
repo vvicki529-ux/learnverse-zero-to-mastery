@@ -1,6 +1,6 @@
 # Python — zero-to-mastery master topic checklist
 
-**Track status:** Complete mapping pass. Every listed item maps to a modular lesson that has a self-contained explanation, worked example, guided in-site lab, common mistakes, project connection, source record, and review date. The repository validator enforces the mapping.
+**Track status:** A complete topic-to-module map exists. The mapping validator confirms that every listed item has a destination module; it does **not** prove that every topic already has expert-depth theory or executable code. Content depth and runnable-lab support are being upgraded module by module.
 
 **Status legend:** `[x] covered well` · `[~] covered but shallow` · `[ ] missing`
 
@@ -214,4 +214,4 @@
 
 ## Current gap result
 
-**Mapping result (2026-09-27):** 136 of 136 checklist entries map to the 19 complete modular lessons recorded in `manifest.json`. Run `node tools/validate-python-modules.js` to verify both required lesson fields and checklist coverage. Runtime execution of code samples is separately documented as an environment capability, not inferred from this mapping.
+**Mapping result (2026-09-27):** 136 of 136 checklist entries map to the 19 modular lessons recorded in `manifest.json`. Run `node tools/validate-python-modules.js` to verify required lesson fields and checklist coverage. It is a structural check only. Runtime execution, certification question depth, and expert-level evidence are tracked separately and are not inferred from this mapping.
