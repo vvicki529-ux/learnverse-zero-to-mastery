@@ -2,7 +2,7 @@
 const pythonModuleBase = 'content/python/';
 let pythonManifest;
 async function loadPythonManifest(){
-  if(!pythonManifest) pythonManifest = await fetch(pythonModuleBase+'manifest.json').then(r=>{if(!r.ok)throw new Error('Python module manifest unavailable');return r.json()});
+  if(!pythonManifest) pythonManifest = await fetch(pythonModuleBase+'manifest.json?v=pythonbasics01').then(r=>{if(!r.ok)throw new Error('Python module manifest unavailable');return r.json()});
   return pythonManifest;
 }
 function moduleCode(s){return esc(s).replace(/\b(from|import|print|for|in|if|else|return|Path|sys)\b/g,'<span class="code-keyword">$1</span>')}

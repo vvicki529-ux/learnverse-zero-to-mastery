@@ -18,6 +18,18 @@
       "status": "complete"
     },
     {
+      "id": "first-program-comments-names-and-operators",
+      "level": "foundations",
+      "path": "foundations/first-program-comments-names-and-operators/lesson.json",
+      "masterChecklist": [
+        "Statements, expressions, indentation, comments, names, literals, keywords",
+        "Input/output, print(), input(), conversion, formatting, f-strings",
+        "Numeric operations, precedence, integer division, modulo, exponentiation, rounding, floating-point limits, decimal use cases",
+        "Comparisons, truthiness, short-circuit logic, chained comparisons, is versus =="
+      ],
+      "status": "complete"
+    },
+    {
       "id": "values-expressions-control-flow",
       "level": "foundations",
       "path": "foundations/values-expressions-control-flow/lesson.json",
