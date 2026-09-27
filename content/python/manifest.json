@@ -91,6 +91,20 @@
         "Debugging: breakpoints, pdb, tracebacks, minimal reproducible examples"
       ],
       "status": "complete"
+    },
+    {
+      "id": "object-oriented-design-and-data-model",
+      "level": "advanced",
+      "path": "advanced/object-oriented-design-and-data-model/lesson.json",
+      "masterChecklist": [
+        "Classes, instances, methods, self, constructors, attributes, class versus instance variables",
+        "Encapsulation conventions, properties, name mangling, __dict__, introspection",
+        "Inheritance, composition, mixins, multiple inheritance, MRO, super, polymorphism",
+        "Dunder methods: representation, comparison, arithmetic, container, context-manager, iterator protocols",
+        "dataclass, enums, abstract base classes, protocols, design trade-offs",
+        "Descriptors, decorators, metaclasses, class creation hooks — advanced/internals"
+      ],
+      "status": "complete"
     }
   ]
 }
