@@ -206,6 +206,22 @@
         "Explicit non-goal boundary: the track teaches transferable concepts and one verified path per specialist domain; it does not claim to exhaust every third-party package or framework ever published"
       ],
       "status": "complete"
+    },
+    {
+      "id": "scientific-data-and-high-performance-workflows",
+      "level": "expert",
+      "path": "expert/scientific-data-and-high-performance-workflows/lesson.json",
+      "masterChecklist": [
+        "NumPy arrays, vectorization, broadcasting, views versus copies, dtype selection, random-number reproducibility",
+        "pandas-style tabular data concepts: indexing, joins, group operations, missing data, time series, data-quality checks",
+        "Plotting/communication concepts: select visual encodings, reproducible charts, misleading-chart pitfalls",
+        "Scientific methods: hypothesis, simulation, parameter sweeps, uncertainty, experimental records, reproducibility",
+        "Parallel and high-performance concepts: memory locality, vectorization, native extensions, profiling, distributed-compute boundaries",
+        "Interoperability with C/C++/Fortran, binary formats, array protocols, environment reproducibility",
+        "Data engineering: CSV/JSON, SQL, pandas/NumPy basics, data quality, pipelines",
+        "AI/ML integration: data preparation, model-service API boundaries, evaluation and monitoring concepts"
+      ],
+      "status": "complete"
     }
   ]
 }
