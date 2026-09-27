@@ -3,9 +3,16 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const manifestPath = path.join(root, 'content', 'python', 'manifest.json');
+const masterTopicsPath = path.join(root, 'content', 'python', 'MASTER_TOPICS.md');
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 const required = ['id', 'title', 'track', 'level', 'status', 'lastReviewed', 'sources', 'masterChecklist', 'whyItMatters', 'simpleExplanation', 'mentalModel', 'outcomes', 'realWorldExample', 'workedExample', 'procedure', 'commonMistakes', 'lab', 'projectConnection', 'assessment'];
 let failures = 0;
+const normalizeChecklist = value => value.replaceAll('`', '').replace(/\s+/g, ' ').trim();
+const masterTopics = fs.readFileSync(masterTopicsPath, 'utf8')
+  .split(/\r?\n/)
+  .filter(line => /^- \[[ x~]\] /.test(line))
+  .map(line => normalizeChecklist(line.replace(/^- \[[ x~]\] /, '')));
+const mappedTopics = new Set();
 
 for (const entry of manifest.modules) {
   const file = path.join(path.dirname(manifestPath), entry.path);
@@ -19,7 +26,16 @@ for (const entry of manifest.modules) {
   if (lesson.commonMistakes.length < 3) { console.error(`${entry.id}: needs at least three common mistakes`); failures++; }
   if (lesson.assessment.length < 3) { console.error(`${entry.id}: needs at least three assessment questions`); failures++; }
   if (!lesson.masterChecklist.every(item => entry.masterChecklist.includes(item))) { console.error(`${entry.id}: manifest/checklist mapping differs`); failures++; }
+  if (lesson.masterChecklist.length !== entry.masterChecklist.length) { console.error(`${entry.id}: lesson and manifest checklist counts differ`); failures++; }
+  for (const item of entry.masterChecklist) mappedTopics.add(normalizeChecklist(item));
+}
+
+for (const topic of masterTopics) {
+  if (!mappedTopics.has(topic)) {
+    console.error(`Unmapped master topic: ${topic}`);
+    failures++;
+  }
 }
 
 if (failures) process.exit(1);
-console.log(`Validated ${manifest.modules.length} complete Python module(s).`);
+console.log(`Validated ${manifest.modules.length} complete Python module(s) and ${masterTopics.length} mapped master topic(s).`);
