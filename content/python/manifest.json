@@ -267,6 +267,18 @@
         "Exam-style scenarios, code tracing, distractors, timed mock exams, weak-area remediation"
       ],
       "status": "complete"
+    },
+    {
+      "id": "comprehensions-iterators-regex-and-structured-data",
+      "level": "core",
+      "path": "core/comprehensions-iterators-regex-and-structured-data/lesson.json",
+      "masterChecklist": [
+        "Comprehensions and generator expressions; nesting, filters, readability trade-offs",
+        "Sequence operations, iterable protocol, unpacking, starred expressions, enumerate, zip, sorted, reversed",
+        "Regular expressions: patterns, raw strings, groups, search/match/fullmatch, substitution, readability and safety",
+        "JSON, CSV, and structured-data shapes; validation and schema thinking"
+      ],
+      "status": "complete"
     }
   ]
 }
