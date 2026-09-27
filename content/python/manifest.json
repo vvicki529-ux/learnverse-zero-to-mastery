@@ -76,6 +76,21 @@
         "Configuration management: environment variables, argparse, configparser, secrets boundaries"
       ],
       "status": "complete"
+    },
+    {
+      "id": "errors-files-and-logging",
+      "level": "intermediate",
+      "path": "core/errors-files-and-logging/lesson.json",
+      "masterChecklist": [
+        "Syntax errors versus exceptions, traceback reading, exception hierarchy",
+        "try/except/else/finally, raise, chaining, assertions, custom exceptions, error boundaries",
+        "File I/O: open, modes, encoding, text/binary, buffering, context managers, paths, atomic-write patterns",
+        "Context managers and with; creating context managers where appropriate",
+        "Serialization: json, CSV, pickle risks, data validation and untrusted input",
+        "Logging levels, structured/contextual logging, handlers, formatters, log privacy",
+        "Debugging: breakpoints, pdb, tracebacks, minimal reproducible examples"
+      ],
+      "status": "complete"
     }
   ]
 }
