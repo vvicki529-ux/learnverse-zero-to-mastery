@@ -118,6 +118,20 @@
         "Webhooks, message queues, event-driven concepts, background workers"
       ],
       "status": "complete"
+    },
+    {
+      "id": "testing-quality-and-secure-engineering",
+      "level": "production",
+      "path": "production/testing-quality-and-secure-engineering/lesson.json",
+      "masterChecklist": [
+        "Unit, integration, end-to-end, regression, property-based, and contract-test concepts",
+        "pytest: test discovery, assertions, fixtures, parametrization, mocks, temporary files, coverage",
+        "unittest, unittest.mock, test doubles, patching namespaces correctly",
+        "Static analysis, formatting, linting, type checking, documentation, code review",
+        "Security: input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use",
+        "Accessibility, reliability, error messages, internationalization, privacy-aware logging"
+      ],
+      "status": "complete"
     }
   ]
 }
