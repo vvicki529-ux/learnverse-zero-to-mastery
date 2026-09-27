@@ -162,6 +162,28 @@
         "Algorithm engineering: choose appropriate structures, measure real costs, identify bottlenecks, communicate trade-offs"
       ],
       "status": "complete"
+    },
+    {
+      "id": "databases-apis-and-service-design",
+      "level": "production",
+      "path": "production/databases-apis-and-service-design/lesson.json",
+      "masterChecklist": [
+        "SQL fundamentals from Python: parameterized queries, transactions, connection lifecycle, SQLite/PostgreSQL concepts",
+        "ORM concepts, migrations, query performance, N+1 query problem",
+        "API design and consumption: validation, authentication concepts, status codes, pagination, versioning",
+        "Web-framework concepts: routing, request/response, templates, middleware, background work",
+        "Framework survey and project labs: Flask/FastAPI/Django concepts; use one verified framework version per deep module",
+        "Caching, queues, task scheduling, idempotency, distributed-system failure modes",
+        "Requirements discovery, user stories, acceptance criteria, modelling inputs/outputs/failure conditions",
+        "API contracts, domain modelling, boundaries, separation of concerns, cohesion/coupling, dependency inversion",
+        "Abstract data types, representation invariants, immutability, defensive copying, design by contract",
+        "Architecture styles: layered, modular monolith, client/server, event-driven, microservice trade-offs",
+        "Resilience patterns: retries, timeouts, circuit breakers, idempotency, rate limiting, graceful degradation",
+        "State machines, workflows, transactions, eventual consistency, message ordering, deduplication",
+        "Technical decision records, diagrams, documentation, code review, refactoring, backward compatibility",
+        "Ethical engineering: accessibility, privacy, data minimization, auditability, user safety, responsible automation"
+      ],
+      "status": "complete"
     }
   ]
 }
