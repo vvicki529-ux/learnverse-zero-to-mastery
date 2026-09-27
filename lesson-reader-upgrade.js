@@ -1,5 +1,5 @@
 /* Additive theory-reader upgrade. It preserves the catalogue and certification area. */
-function lessonCode(code){return esc(code).replace(/(#[^\n]*|\/\/[^\n]*)/g,'<span class="code-comment">$1</span>').replace(/\b(def|class|if|else|for|while|return|import|from|CREATE|WAREHOUSE|SELECT|True|False|None)\b/g,'<span class="code-keyword">$1</span>')}
+function lessonCode(code){return String(code||'').split('\n').map(line=>{const hash=line.indexOf('#'),slash=line.indexOf('//'),positions=[hash,slash].filter(n=>n>=0),cut=positions.length?Math.min(...positions):line.length,statement=line.slice(0,cut),comment=line.slice(cut);return esc(statement).replace(/\b(def|class|if|else|for|while|return|import|from|CREATE|WAREHOUSE|SELECT|True|False|None)\b/g,'<span class="code-keyword">$1</span>')+(comment?'<span class="code-comment">'+esc(comment)+'</span>':'')}).join('\n')}
 const beginnerGuides={
   'python:Values, names, control flow, and functions':[
     {line:'def greet(name):',meaning:'def begins a function: a small named instruction you can reuse. greet is its name. name is a placeholder for information supplied later.',reason:'A function prevents repeating the same greeting code every time you need it.'},
