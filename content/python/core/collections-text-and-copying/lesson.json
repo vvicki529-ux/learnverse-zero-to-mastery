@@ -1,0 +1,125 @@
+{
+  "id": "collections-text-and-copying",
+  "title": "Collections, text, and copying data safely",
+  "track": "python",
+  "level": "core",
+  "status": "complete",
+  "lastReviewed": "2026-09-27",
+  "sources": [
+    "Python 3.14 Tutorial: data structures and strings",
+    "Python 3.14 Language Reference: standard type hierarchy and expressions",
+    "Python Institute PCAP-31-03 syllabus: strings and collection-related programming"
+  ],
+  "masterChecklist": [
+    "Strings: indexing, slicing, immutability, Unicode, encodings, escape sequences, formatting, common methods",
+    "Lists: creation, mutation, slicing, copying versus aliasing, methods, stacks/queues, nested lists",
+    "Tuples: packing/unpacking, immutability, single-item tuple, named tuples",
+    "Sets and frozensets: uniqueness, membership, set algebra, hashability",
+    "Dictionaries: key/value design, lookup, iteration, views, defaults, merging, ordering, nested structures",
+    "Sequence operations, iterable protocol, unpacking, starred expressions, enumerate, zip, sorted, reversed",
+    "Hashability, mutability, shallow/deep copy, aliasing, default mutable argument trap"
+  ],
+  "whyItMatters": "Most Python applications move data through strings, lists, dictionaries, and nested structures. Choosing the right collection and understanding whether data is shared or copied prevents subtle bugs in APIs, configuration, data processing, and tests.",
+  "simpleExplanation": "A list is an ordered, changeable collection. A tuple is ordered but normally not changed. A set keeps unique hashable values. A dictionary maps a unique key to a value. A string is immutable text. Copying a container may copy only its outer shell, leaving nested values shared.",
+  "mentalModel": "Think of a list as a whiteboard you may rewrite, a tuple as a printed form, a set as a bag that rejects duplicates, and a dictionary as a labelled filing cabinet. A shallow copy gives you a new filing cabinet but can still point to the same folders inside.",
+  "outcomes": [
+    "Choose a list, tuple, set, or dictionary based on ordering, uniqueness, mutability, and lookup needs.",
+    "Explain why strings and tuples cannot be changed in place.",
+    "Detect aliasing and distinguish a shallow copy from a deep copy.",
+    "Iterate safely with enumerate, zip, dictionary items, and unpacking.",
+    "Use dictionary access without silently hiding a missing-key problem."
+  ],
+  "realWorldExample": {
+    "scenario": "A service receives an order containing line items and prepares a report without mutating the original request data that later audit code needs.",
+    "riskWithoutSetup": "If a report function changes a nested list in a shallow-copied order, the supposedly original request is also changed. Audits and downstream calculations can then disagree.",
+    "professionalApproach": "Make ownership explicit, avoid mutation when a transformed result is intended, copy nested structures deliberately when required, and test that the input object is unchanged after processing."
+  },
+  "workedExample": {
+    "filename": "src/order_summary.py",
+    "code": "from copy import deepcopy\n\norder = {\n    'customer': 'Mira',\n    'items': [\n        {'sku': 'tea', 'quantity': 2},\n        {'sku': 'mug', 'quantity': 1},\n    ],\n}\n\nreport_order = deepcopy(order)\nreport_order['items'][0]['quantity'] = 3\n\nfor position, item in enumerate(report_order['items'], start=1):\n    print(f\"{position}. {item['sku']} x {item['quantity']}\")\n\nprint(order['items'][0]['quantity'])\n",
+    "explanation": [
+      "order is a dictionary containing a list of dictionaries. This is a common nested data shape in JSON-like application data.",
+      "deepcopy creates new nested containers and values where appropriate, so changing the report copy does not change the original nested item.",
+      "Dictionary keys are accessed with item['sku'] and item['quantity']; a missing key raises KeyError, which is often useful during validation because it exposes an unexpected data shape.",
+      "enumerate adds a human-friendly position while the loop processes each item.",
+      "The last print proves that the original quantity remains 2 even though the report copy was changed to 3."
+    ],
+    "expectedOutput": "1. tea x 3\n2. mug x 1\n2",
+    "safeExperiment": "Replace deepcopy(order) with order.copy() and observe the final printed quantity. Then restore deepcopy and add a third item. Explain why the two copy methods differ for nested data."
+  },
+  "procedure": [
+    "Write down the data shape: which values are records, which are lists, and which keys are required.",
+    "Decide whether the function should mutate its input or return a new result. Prefer an explicit returned result when possible.",
+    "Use a shallow copy only when nested values are intentionally shared or are immutable.",
+    "Use a deep copy sparingly when independent nested mutation is required; it can be expensive for large structures.",
+    "Add an assertion or test that confirms the input data is unchanged if immutability is part of the function contract."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Assigning another name and assuming it creates a copy: second = first.",
+      "why": "Assignment binds a new name to the same object, so mutations through either name affect the one shared object.",
+      "avoid": "Use an intentional copy operation or build a new result, then test the ownership behaviour."
+    },
+    {
+      "mistake": "Using list.copy() or dict.copy() and expecting nested values to be independent.",
+      "why": "These are shallow copies; nested lists and dictionaries are still shared.",
+      "avoid": "Understand the data depth. Use deepcopy only when independent nested mutation is necessary and reasonable."
+    },
+    {
+      "mistake": "Using a mutable default argument such as def add(item, items=[]).",
+      "why": "The same default list is created once and reused across calls.",
+      "avoid": "Use None as the default and create a new list inside the function."
+    },
+    {
+      "mistake": "Using dict.get(key) without considering that a missing key and a stored None can look the same.",
+      "why": "A default of None can hide malformed input when None is also a valid value.",
+      "avoid": "Validate required keys explicitly or use a unique sentinel/default with a clear error path."
+    }
+  ],
+  "lab": {
+    "title": "Create a non-mutating inventory report",
+    "safety": "This exercise uses fictional inventory data. Do not load or store real customer data.",
+    "starterCode": "inventory = {\n    'tea': {'available': 4, 'reserved': 0},\n    'mug': {'available': 2, 'reserved': 0},\n}\n\n# TODO: create an independent report copy\n# TODO: reserve 1 tea in the report only\n# TODO: print both the report and original tea reservations\n",
+    "guidedSteps": [
+      "Import deepcopy from copy.",
+      "Create report_inventory as an independent copy of inventory.",
+      "Set only report_inventory['tea']['reserved'] to 1.",
+      "Print the report and original reservation values.",
+      "Explain why inventory['tea']['reserved'] should still be 0."
+    ],
+    "checks": [
+      "Keeps the original nested inventory unchanged.",
+      "Uses a clear dictionary key for the report value.",
+      "Explains whether the copy is shallow or deep.",
+      "Does not rely on dictionary iteration order for correctness."
+    ],
+    "hints": [
+      "A nested dictionary needs more than inventory.copy() if you will mutate one of its nested dictionaries.",
+      "Use report_inventory['tea']['reserved'] = 1 after creating the independent copy.",
+      "Print the two values separately so you can compare them."
+    ],
+    "solution": "from copy import deepcopy\n\ninventory = {\n    'tea': {'available': 4, 'reserved': 0},\n    'mug': {'available': 2, 'reserved': 0},\n}\n\nreport_inventory = deepcopy(inventory)\nreport_inventory['tea']['reserved'] = 1\n\nprint(f\"report: {report_inventory['tea']['reserved']}\")\nprint(f\"original: {inventory['tea']['reserved']}\")\n"
+  },
+  "projectConnection": {
+    "project": "CSV expense organizer",
+    "milestone": "Represent parsed expenses as dictionaries, group them without changing the original imported rows, and write tests that prove the input rows remain intact.",
+    "definitionOfDone": "The project selects appropriate collection types, handles missing fields deliberately, and has a test demonstrating no accidental mutation of imported data."
+  },
+  "assessment": [
+    {
+      "question": "Why can a shallow dictionary copy still lead to an unexpected mutation?",
+      "answer": "Nested mutable values are still shared between the original and the shallow copy.",
+      "explanation": "The outer dictionary is new, but a nested list or dictionary can still be the same object in both structures."
+    },
+    {
+      "question": "Which collection is most appropriate for unique, unordered tags?",
+      "answer": "A set.",
+      "explanation": "Sets model uniqueness and provide efficient membership checks for hashable values."
+    },
+    {
+      "question": "What does enumerate(items, start=1) add to a loop?",
+      "answer": "A counter starting at 1 alongside each item.",
+      "explanation": "It avoids manually maintaining a counter and is useful for human-visible numbered output."
+    }
+  ]
+}

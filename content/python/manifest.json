@@ -32,6 +32,21 @@
         "Iteration: for, while, range, break, continue, pass, loop else"
       ],
       "status": "complete"
+    },
+    {
+      "id": "collections-text-and-copying",
+      "level": "core",
+      "path": "core/collections-text-and-copying/lesson.json",
+      "masterChecklist": [
+        "Strings: indexing, slicing, immutability, Unicode, encodings, escape sequences, formatting, common methods",
+        "Lists: creation, mutation, slicing, copying versus aliasing, methods, stacks/queues, nested lists",
+        "Tuples: packing/unpacking, immutability, single-item tuple, named tuples",
+        "Sets and frozensets: uniqueness, membership, set algebra, hashability",
+        "Dictionaries: key/value design, lookup, iteration, views, defaults, merging, ordering, nested structures",
+        "Sequence operations, iterable protocol, unpacking, starred expressions, enumerate, zip, sorted, reversed",
+        "Hashability, mutability, shallow/deep copy, aliasing, default mutable argument trap"
+      ],
+      "status": "complete"
     }
   ]
 }
