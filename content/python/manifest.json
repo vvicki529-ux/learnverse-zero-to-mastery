@@ -30,6 +30,15 @@
       "status": "complete"
     },
     {
+      "id": "variables-assignment-and-identity",
+      "level": "foundations",
+      "path": "foundations/variables-assignment-and-identity/lesson.json",
+      "masterChecklist": [
+        "Variables, assignment, rebinding, dynamic typing, object identity versus equality"
+      ],
+      "status": "complete"
+    },
+    {
       "id": "values-expressions-control-flow",
       "level": "foundations",
       "path": "foundations/values-expressions-control-flow/lesson.json",
