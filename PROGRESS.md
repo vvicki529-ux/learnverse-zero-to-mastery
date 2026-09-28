@@ -43,7 +43,7 @@
 
 ## Exact next step
 
-Build a generic modular lesson renderer for the five non-Python tracks (or extend the existing Python module renderer safely), then create one JSON lesson file per audited topic so lessons are searchable, ordered, and fully learner-facing rather than stored as broad seed cards. Start with Snowflake: `COPY INTO` load validation and semi-structured JSON/Parquet.
+All six inventories now exist under `inventory/` and were committed separately. The largest recorded gap list is Cyber Security. Build a generic modular lesson renderer for the five non-Python tracks (or extend the existing Python module renderer safely), then create one JSON lesson file per audited topic so lessons are searchable, ordered, and fully learner-facing rather than stored as broad seed cards. Start with Cyber Security: risk/CIA and network defense.
 
 ## Validation limitation
 
