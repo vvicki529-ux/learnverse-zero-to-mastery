@@ -3,7 +3,7 @@ const pythonModuleBase = 'content/python/';
 let pythonManifest;
 let pythonRoadmap;
 async function loadPythonManifest(){
-  if(!pythonManifest) pythonManifest = await fetch(pythonModuleBase+'manifest.json?v=pythonbasics01').then(r=>{if(!r.ok)throw new Error('Python module manifest unavailable');return r.json()});
+  if(!pythonManifest) pythonManifest = await fetch(pythonModuleBase+'manifest.json?v=pythoncontent02').then(r=>{if(!r.ok)throw new Error('Python module manifest unavailable');return r.json()});
   return pythonManifest;
 }
 async function loadPythonRoadmap(){

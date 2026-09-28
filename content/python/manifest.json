@@ -39,6 +39,15 @@
       "status": "complete"
     },
     {
+      "id": "input-output-conversion-and-fstrings",
+      "level": "foundations",
+      "path": "foundations/input-output-conversion-and-fstrings/lesson.json",
+      "masterChecklist": [
+        "Input/output, print(), input(), conversion, formatting, f-strings"
+      ],
+      "status": "complete"
+    },
+    {
       "id": "values-expressions-control-flow",
       "level": "foundations",
       "path": "foundations/values-expressions-control-flow/lesson.json",
