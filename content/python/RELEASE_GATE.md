@@ -2,6 +2,12 @@
 
 This file prevents a structural pass from being described as full mastery coverage.
 
+## Python browser-runner integration — 2026-10-04
+
+- Bundled official Pyodide 314.0.7 core assets under `vendor/pyodide/` after verifying the release archive's published SHA-256. The archive itself is ignored by Git to avoid duplicate binary data.
+- Added a Run Python control, optional stdin, output/errors, Stop button, fresh module worker per run, and eight-second execution timeout. `node tools/test-python-browser-runner.mjs` passes output, input, exception and repeat-run checks against the bundled interpreter.
+- **Still required:** verify the published GitHub Pages page loads the worker and WebAssembly successfully, and exercise representative lessons in the browser. The core distribution does not include external packages; this is not a hostile-code sandbox. Do not call every Python lab executable or the Python curriculum fully complete.
+
 ## Publication exception — 2026-10-03
 
 The user explicitly requested publication of the current work and testing on the live GitHub Pages site before the full Python completion gate is met. Publishing this snapshot is **not** evidence that Python is 100% complete or that the labs execute Python in-browser. The completion blockers below remain open and must be resolved before a full-release claim.

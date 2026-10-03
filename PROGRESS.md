@@ -1,5 +1,11 @@
 # Full curriculum expansion progress
 
+### Self-hosted Python runner and header navigation — 2026-10-04
+
+- Moved Dashboard, Lab repository, Glossary, Review queue, Help agent, Unified capstone and Certification into the responsive site header; the sidebar now holds the course outline. The separate certification content was not changed.
+- Integrated official Pyodide 314.0.7 core assets locally after SHA-256 verification. Python lesson practice now has Run Python, optional input, Stop, captured output/error, a fresh worker per run and an eight-second code timeout. The local Node runtime smoke test passes for normal output, input, exceptions and repeat runs. Browser/live smoke testing and bundle publication remain next; do not claim the live runner works until verified there.
+- The core browser runtime is standard-library oriented, not a general OS process or security sandbox. Some lessons require unsupported external packages or services. Next: publish and verify the header and real Python worker on the live site; then review remaining curriculum-depth items.
+
 ### Production failure-path tests — 2026-10-04
 
 - Added two focused learner-facing Python lessons: **Test a failed save without hiding the failure** and **Test bounded retries without waiting**. They teach injected dependencies, controlled mock failures, preserved exception causes, finite retry limits, and no-wait tests. Each has beginner theory, a worked example, guided practice with hints/checks/solution, common mistakes, three explained questions, official source text, review date, and aligned project milestone.

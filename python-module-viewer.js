@@ -72,8 +72,9 @@ function setupPythonLabEditor(module){
     const reset=document.createElement('button');reset.type='button';reset.className='secondary';reset.textContent='Reset starter code';
     reset.addEventListener('click',()=>{editor.value=module.lab.starterCode;updateLines();editor.scrollTop=0;lines.scrollTop=0;try{localStorage.removeItem(draftKey)}catch(_error){};editor.focus()});
     controls.append(' ',reset);
-    const notice=document.createElement('p');notice.className='muted python-lab-runtime-note';notice.textContent='Your draft is saved on this device when storage is available. This editor does not yet run Python in the browser; use the guided checks and solution to review your approach.';
+    const notice=document.createElement('p');notice.className='muted python-lab-runtime-note';notice.textContent='Your draft is saved on this device when storage is available. Run Python uses a locally bundled browser runtime for standard-library exercises. Some older lab notes describe the previous editor; OS services, subprocesses and unbundled packages still may not work here. Do not paste secrets or untrusted code.';
     controls.after(notice);
+    if(typeof attachPythonRunButton==='function')attachPythonRunButton(module,editor,controls);
   }
   return updateLines;
 }
