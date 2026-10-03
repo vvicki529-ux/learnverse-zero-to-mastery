@@ -42,6 +42,8 @@
     "equivalence-classes-and-partitions",
     "amortized-list-growth-and-deque-choice",
     "temporary-directory-test-isolation",
-    "inject-clock-for-deterministic-tests"
+    "inject-clock-for-deterministic-tests",
+    "test-writer-failure-boundary",
+    "test-retry-with-injected-sleeper"
   ]
 }

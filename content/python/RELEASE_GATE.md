@@ -8,6 +8,8 @@ The user explicitly requested publication of the current work and testing on the
 
 ## Current local evidence — 2026-10-03
 
+2026-10-04 follow-up: two more Production failure-path lessons are wired in. The latest module/route checks cover **288** lessons, syntax parsing covers **572** snippets, and opt-in runtime smoke covers **88** snippets with zero failures. The detailed 2026-10-03 depth-review counts below have not been re-audited for this pair. Offline in-browser execution and visual QA remain open.
+
 - Modular learner-facing lessons wired in the manifest: **286**.
 - Master-topic statements mapped by at least one lesson: **136** in the validator's master-topic inventory.
 - Distinct lesson checklist statements: **205** in the depth-audit inventory.

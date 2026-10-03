@@ -1,5 +1,11 @@
 # Full curriculum expansion progress
 
+### Production failure-path tests — 2026-10-04
+
+- Added two focused learner-facing Python lessons: **Test a failed save without hiding the failure** and **Test bounded retries without waiting**. They teach injected dependencies, controlled mock failures, preserved exception causes, finite retry limits, and no-wait tests. Each has beginner theory, a worked example, guided practice with hints/checks/solution, common mistakes, three explained questions, official source text, review date, and aligned project milestone.
+- Both are wired into the Python manifest. Local checks pass for **288** complete modules and routes, **572** parseable snippets, and **88** reviewed runtime-smoke snippets with zero failures. This does not establish 100% Python mastery or in-browser Python execution.
+- Exact next batch: review remaining Production test boundaries (integration versus unit contracts and unexpected exception paths), then continue pending Advanced/Expert depth items and the offline in-browser runner. The 2026-10-03 snapshot was committed locally as `83d0f1a`; remote publication had failed because GitHub network/write access was unavailable. This batch is local until a successful push.
+
 ### User-authorized GitHub snapshot — 2026-10-03
 
 - The user requested publication of all current local course work now and live testing on GitHub Pages. This supersedes the earlier no-push instruction for this snapshot only; it does not change the active full Python completion goal or the explicit offline-runner/visual/depth limitations.
