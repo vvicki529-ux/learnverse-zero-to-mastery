@@ -1,0 +1,129 @@
+{
+  "id": "quantifiers-and-empty-input-validation",
+  "title": "Use all and any without accepting an empty batch by accident",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python 3.14.8 Built-in Functions: all and any",
+    "Python 3.14.8 Built-in Types: Boolean operations and truth-value testing (reviewed 2026-10-03)"
+  ],
+  "masterChecklist": [
+    "Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic",
+    "Defensive conditions, validation order, readable Boolean expressions and edge cases"
+  ],
+  "whyItMatters": "A validator that says 'every score is valid' may accidentally approve an empty upload. The logic of 'all' and 'any' is correct, but the product's nonempty requirement is a separate condition.",
+  "simpleExplanation": "`all(test(x) for x in items)` asks whether every item passes. It returns True for an empty iterable because no item fails. `any(test(x) for x in items)` asks whether at least one passes and returns False for an empty iterable. These are the code equivalents of 'for every' and 'there exists.' If a batch must contain at least one item, write that rule explicitly: `bool(items) and all(...)`. Python's `and` short-circuits, so the second part runs only when the first is truthy. For a strict integer score, `type(score) is int` rejects Boolean values, which are subclasses of int.",
+  "mentalModel": "A teacher says, 'Every paper in this stack is marked.' If the stack is empty, there is no unmarked paper—but the teacher still cannot submit it as a completed class stack. 'Stack is nonempty' is another rule.",
+  "outcomes": [
+    "Predict all([]) and any([]).",
+    "Add a nonempty precondition to an all-based validator.",
+    "Explain short-circuit evaluation.",
+    "Test Boolean and out-of-range scores as invalid domain values."
+  ],
+  "realWorldExample": {
+    "scenario": "A study-progress importer accepts a batch only when it contains at least one valid score and every score is an integer from 0 to 100.",
+    "riskWithoutSetup": "Using only all(valid(score) for score in scores) accepts an empty import; using isinstance(score, int) accepts True as score 1.",
+    "professionalApproach": "Validate nonempty input separately, require exact integer type where Boolean is invalid, then check the allowed range and test empty/wrong-type/boundary cases."
+  },
+  "workedExample": {
+    "filename": "score_batch_logic.py",
+    "code": "def valid_batch(scores):\n    return bool(scores) and all(\n        type(score) is int and 0 <= score <= 100\n        for score in scores\n    )\n\nprint(all([]))\nprint(any([]))\nprint(valid_batch([]))\nprint(valid_batch([80, 100]))\nprint(valid_batch([80, True]))\n",
+    "explanation": [
+      "The first two lines show the built-in empty-iterable rules: all is True and any is False.",
+      "bool(scores) adds the product rule that an empty batch is not acceptable.",
+      "`and` short-circuits: for an empty list, the all expression is not needed.",
+      "The generator checks each score lazily; all stops once it finds a failing value.",
+      "`type(score) is int` rejects True even though isinstance(True, int) is True."
+    ],
+    "expectedOutput": "True\nFalse\nFalse\nTrue\nFalse",
+    "safeExperiment": "Replace bool(scores) and with nothing. Predict which invalid input now passes."
+  },
+  "procedure": [
+    "State the domain rule in ordinary language: nonempty, type and range.",
+    "Choose all for 'every item' and any for 'at least one item'.",
+    "Handle empty input explicitly when the business rule differs from vacuous truth.",
+    "Place cheap boundary checks before expensive or unsafe operations.",
+    "Test empty, one valid, lower/upper limits, Boolean, wrong type and out-of-range inputs.",
+    "For one-pass iterators, do not call bool(iterator) as an emptiness test; choose a deliberate streaming validation strategy."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Assuming all([]) is False.",
+      "why": "There is no counterexample in an empty iterable, so all returns True.",
+      "avoid": "Add a separate nonempty requirement when the product needs one."
+    },
+    {
+      "mistake": "Using isinstance(True, int) to enforce a strict score field.",
+      "why": "bool is an int subclass.",
+      "avoid": "Use type(value) is int for this exact-type contract."
+    },
+    {
+      "mistake": "Using bool(generator) to check whether a generator has items.",
+      "why": "A generator object is truthy even when it will yield nothing.",
+      "avoid": "Use an explicit bounded peek or materialize only when size is safe."
+    }
+  ],
+  "lab": {
+    "title": "Validate a nonempty score batch",
+    "safety": "Uses fictional in-memory scores only. The static site guides the lab but does not yet execute Python in-browser.",
+    "starterCode": "def valid_batch(scores):\n    # Require at least one score; all scores must be exact ints in 0..100.\n    pass\n\n# Test [], [0, 100], [True], and [101].\n",
+    "guidedSteps": [
+      "Check the nonempty condition before the all expression.",
+      "Require type(score) is int inside the generator.",
+      "Check 0 <= score <= 100.",
+      "Test both valid endpoints and three invalid cases.",
+      "Explain why all([]) alone would be wrong for this feature."
+    ],
+    "checks": [
+      "Empty batch is False.",
+      "0 and 100 are accepted.",
+      "True and 101 are rejected.",
+      "No external data or files are used."
+    ],
+    "hints": [
+      "`bool(scores) and all(...)` expresses two separate rules.",
+      "Use `type(score) is int`.",
+      "`all` can stop at the first failure."
+    ],
+    "solution": "def valid_batch(scores):\n    return bool(scores) and all(\n        type(score) is int and 0 <= score <= 100\n        for score in scores\n    )\n\nassert not valid_batch([])\nassert valid_batch([0, 100])\nassert not valid_batch([True])\nassert not valid_batch([101])\nprint('batch logic checked')\n",
+    "solutionExplanation": "The function first enforces nonempty input and then checks every score. The tests specifically protect the empty-iterable and Boolean-as-integer traps.",
+    "challenges": [
+      "Predict valid_batch([0]).",
+      "Find the bug: remove bool(scores) from the return expression.",
+      "Experiment: pass a generator instead of a list and explain why bool(generator) is not an emptiness test."
+    ],
+    "simulation": {
+      "prompt": "What does all([]) return?",
+      "choices": [
+        "True",
+        "False"
+      ],
+      "correctIndex": 0,
+      "explanation": "There is no element that fails the predicate; a nonempty product rule must be added separately."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress importer",
+    "milestone": "Reject empty score batches and enforce exact integer/range rules before writing progress.",
+    "definitionOfDone": "Tests cover empty, valid endpoints, Boolean, wrong type and out-of-range input; no empty import is accepted."
+  },
+  "assessment": [
+    {
+      "question": "Why does all([]) return True?",
+      "answer": "No element in the empty iterable is false.",
+      "explanation": "That logical rule is separate from whether an empty batch is useful to the app."
+    },
+    {
+      "question": "What does any([]) return?",
+      "answer": "False.",
+      "explanation": "There is no element satisfying an existential condition."
+    },
+    {
+      "question": "Why is bool(generator) not a reliable emptiness check?",
+      "answer": "A generator object is truthy even if it yields zero items.",
+      "explanation": "One-pass iterators need a deliberate streaming or bounded materialization strategy."
+    }
+  ]
+}

@@ -48,6 +48,72 @@
       "status": "complete"
     },
     {
+      "id": "operators-expressions-and-precedence",
+      "level": "foundations",
+      "path": "foundations/operators-expressions-and-precedence/lesson.json",
+      "masterChecklist": [
+        "Numeric operations, precedence, integer division, modulo, exponentiation, rounding, floating-point limits, decimal use cases",
+        "Comparisons, truthiness, short-circuit logic, chained comparisons, is versus =="
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "data-types-and-type-conversion",
+      "level": "foundations",
+      "path": "foundations/data-types-and-type-conversion/lesson.json",
+      "masterChecklist": [
+        "Built-in scalar types: None, bool, int, float, complex, str, bytes"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "conditional-statements-and-decision-tables",
+      "level": "foundations",
+      "path": "foundations/conditional-statements-and-decision-tables/lesson.json",
+      "masterChecklist": [
+        "Conditional flow: if, elif, else, match/case, guards, structural pattern matching"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "loops-range-and-repetition",
+      "level": "foundations",
+      "path": "foundations/loops-range-and-repetition/lesson.json",
+      "masterChecklist": [
+        "Iteration: for, while, range, break, continue, pass, loop else"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "strings-slicing-and-text-methods",
+      "level": "foundations",
+      "path": "foundations/strings-slicing-and-text-methods/lesson.json",
+      "masterChecklist": [
+        "Strings: indexing, slicing, immutability, Unicode, encodings, escape sequences, formatting, common methods"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "lists-mutation-copying-and-nested-data",
+      "level": "foundations",
+      "path": "foundations/lists-mutation-copying-and-nested-data/lesson.json",
+      "masterChecklist": [
+        "Lists: creation, mutation, slicing, copying versus aliasing, methods, stacks/queues, nested lists"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "dictionaries-sets-and-tuples",
+      "level": "foundations",
+      "path": "foundations/dictionaries-sets-and-tuples/lesson.json",
+      "masterChecklist": [
+        "Tuples: packing/unpacking, immutability, single-item tuple, named tuples",
+        "Sets and frozensets: uniqueness, membership, set algebra, hashability",
+        "Dictionaries: key/value design, lookup, iteration, views, defaults, merging, ordering, nested structures"
+      ],
+      "status": "complete"
+    },
+    {
       "id": "values-expressions-control-flow",
       "level": "foundations",
       "path": "foundations/values-expressions-control-flow/lesson.json",
@@ -332,6 +398,555 @@
       "status": "complete"
     },
     {
+      "id": "functions-parameters-returns-and-scope",
+      "level": "core",
+      "path": "core/functions-parameters-returns-and-scope/lesson.json",
+      "masterChecklist": [
+        "Defining/calling functions, parameters, arguments, return, None, docstrings",
+        "LEGB scope, local/global/nonlocal names, closures, late binding, shadowing"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "exceptions-and-defensive-file-handling",
+      "level": "intermediate",
+      "path": "intermediate/exceptions-and-defensive-file-handling/lesson.json",
+      "masterChecklist": [
+        "Syntax errors versus exceptions, traceback reading, exception hierarchy",
+        "try/except/else/finally, raise, chaining, assertions, custom exceptions, error boundaries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "modules-packages-and-imports",
+      "level": "intermediate",
+      "path": "intermediate/modules-packages-and-imports/lesson.json",
+      "masterChecklist": [
+        "Imports, import forms, import-time effects, module cache, sys.path, dir, __name__",
+        "User modules, packages, __init__.py, relative imports, namespace packages, public API design"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "comprehensions-iterators-regex-and-json",
+      "level": "core",
+      "path": "core/comprehensions-iterators-regex-and-json/lesson.json",
+      "masterChecklist": [
+        "Comprehensions and generator expressions; nesting, filters, readability trade-offs",
+        "Regular expressions: patterns, raw strings, groups, search/match/fullmatch, substitution, readability and safety",
+        "JSON, CSV, and structured-data shapes; validation and schema thinking"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "testing-pytest-and-test-doubles",
+      "level": "production",
+      "path": "production/testing-pytest-and-test-doubles/lesson.json",
+      "masterChecklist": [
+        "Unit, integration, end-to-end, regression, property-based, and contract-test concepts",
+        "pytest: test discovery, assertions, fixtures, parametrization, mocks, temporary files, coverage",
+        "unittest, unittest.mock, test doubles, patching namespaces correctly"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "classes-objects-and-composition",
+      "level": "advanced",
+      "path": "advanced/classes-objects-and-composition/lesson.json",
+      "masterChecklist": [
+        "Classes, instances, methods, self, constructors, attributes, class versus instance variables",
+        "Inheritance, composition, mixins, multiple inheritance, MRO, super, polymorphism"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "profiling-complexity-and-performance",
+      "level": "advanced",
+      "path": "advanced/profiling-complexity-and-performance/lesson.json",
+      "masterChecklist": [
+        "Algorithmic complexity, profiling, benchmarking, timeit, cProfile, performance trade-offs"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "asyncio-tasks-timeouts-and-cancellation",
+      "level": "advanced",
+      "path": "advanced/asyncio-tasks-timeouts-and-cancellation/lesson.json",
+      "masterChecklist": [
+        "asyncio: coroutines, async/await, tasks, gather, timeouts, cancellation, async context managers",
+        "Async internals, event-loop concepts, cooperative scheduling, cancellation, backpressure"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "secure-configuration-secrets-and-subprocesses",
+      "level": "production",
+      "path": "production/secure-configuration-secrets-and-subprocesses/lesson.json",
+      "masterChecklist": [
+        "Configuration management: environment variables, argparse, configparser, secrets boundaries",
+        "Security: input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "packaging-pyproject-and-dependencies",
+      "level": "production",
+      "path": "production/packaging-pyproject-and-dependencies/lesson.json",
+      "masterChecklist": [
+        "Dependency management, pip, requirement/constraint files, lock files, dependency vulnerability awareness",
+        "pyproject.toml, build backends, package metadata, wheels/sdists, versioning, publishing concepts"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "logging-debugging-and-tracebacks",
+      "level": "intermediate",
+      "path": "intermediate/logging-debugging-and-tracebacks/lesson.json",
+      "masterChecklist": [
+        "Logging levels, structured/contextual logging, handlers, formatters, log privacy",
+        "Debugging: breakpoints, pdb, tracebacks, minimal reproducible examples"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "delivery-containers-ci-and-observability",
+      "level": "production",
+      "path": "production/delivery-containers-ci-and-observability/lesson.json",
+      "masterChecklist": [
+        "Containers: Dockerfile concepts, images, environment configuration, local reproducibility",
+        "CI/CD: test/lint/type-check/build stages, artifacts, deployment gates, rollback concepts",
+        "Monitoring, metrics, tracing, alerting, on-call basics, incident-friendly logging"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "sqlite-parameters-and-transactions",
+      "level": "production",
+      "path": "production/sqlite-parameters-and-transactions/lesson.json",
+      "masterChecklist": [
+        "SQL fundamentals from Python: parameterized queries, transactions, connection lifecycle, SQLite/PostgreSQL concepts"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "http-api-retries-timeouts-and-pagination",
+      "level": "production",
+      "path": "production/http-api-retries-timeouts-and-pagination/lesson.json",
+      "masterChecklist": [
+        "Sockets, HTTP concepts, REST APIs, requests, retries, idempotency, pagination, rate limits, error handling"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "memory-bytecode-and-gil",
+      "level": "expert",
+      "path": "expert/memory-bytecode-and-gil/lesson.json",
+      "masterChecklist": [
+        "Names, bindings, references, object lifetime, garbage collection, reference cycles, weak references",
+        "Bytecode, compilation, .pyc, import execution, frames, call stack, namespaces",
+        "CPython GIL, implementation portability, when details are CPython-specific"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "type-hints-dataclasses-and-protocols",
+      "level": "core",
+      "path": "core/type-hints-dataclasses-and-protocols/lesson.json",
+      "masterChecklist": [
+        "Type annotations, typing, generics, protocols, TypedDict, dataclass, runtime versus static checking"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "command-line-argparse-and-config",
+      "level": "intermediate",
+      "path": "intermediate/command-line-argparse-and-config/lesson.json",
+      "masterChecklist": [
+        "Configuration management: environment variables, argparse, configparser, secrets boundaries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "generators-decorators-and-lazy-workflows",
+      "level": "core",
+      "path": "core/generators-decorators-and-lazy-workflows/lesson.json",
+      "masterChecklist": [
+        "First-class functions, lambdas, higher-order functions, map, filter, functools, decorators",
+        "Generators, yield, yield from, iterators, lazy evaluation, iterator exhaustion"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "numpy-vectorization-and-reproducibility",
+      "level": "expert",
+      "path": "expert/numpy-vectorization-and-reproducibility/lesson.json",
+      "masterChecklist": [
+        "NumPy arrays, vectorization, broadcasting, views versus copies, dtype selection, random-number reproducibility"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "tabular-data-quality-and-joins",
+      "level": "expert",
+      "path": "expert/tabular-data-quality-and-joins/lesson.json",
+      "masterChecklist": [
+        "pandas-style tabular data concepts: indexing, joins, group operations, missing data, time series, data-quality checks"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "service-boundaries-idempotency-and-resilience",
+      "level": "production",
+      "path": "production/service-boundaries-idempotency-and-resilience/lesson.json",
+      "masterChecklist": [
+        "Caching, queues, task scheduling, idempotency, distributed-system failure modes",
+        "Resilience patterns: retries, timeouts, circuit breakers, idempotency, rate limiting, graceful degradation",
+        "State machines, workflows, transactions, eventual consistency, message ordering, deduplication"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "context-managers-serialization-and-files",
+      "level": "intermediate",
+      "path": "intermediate/context-managers-serialization-and-files/lesson.json",
+      "masterChecklist": [
+        "Text, binary, and path handling",
+        "Context managers, with statement, cleanup and resource lifetime",
+        "JSON serialization, deserialization, validation and safe formats"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "threads-processes-and-coordination",
+      "level": "advanced",
+      "path": "advanced/threads-processes-and-coordination/lesson.json",
+      "masterChecklist": [
+        "Threads, processes, synchronization primitives, thread safety, race conditions",
+        "CPU-bound versus I/O-bound concurrency",
+        "Executors, queues, cancellation and safe shared-state design"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "extension-modules-embedding-and-portability",
+      "level": "expert",
+      "path": "expert/extension-modules-embedding-and-portability/lesson.json",
+      "masterChecklist": [
+        "C/C++ extensions, Python C API, stable ABI, buffer protocol, native interoperability",
+        "Embedding Python into an application and extension-module tradeoffs",
+        "Interpreter portability, implementation differences, wheels and platform constraints"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "algorithmic-thinking-and-data-structure-choices",
+      "level": "advanced",
+      "path": "advanced/algorithmic-thinking-and-data-structure-choices/lesson.json",
+      "masterChecklist": [
+        "Algorithmic complexity, big-O reasoning, time-space tradeoffs",
+        "Lists, dictionaries, sets, stacks, queues, heaps, trees and graph traversal concepts",
+        "Sorting, searching, recursion limits, dynamic programming, correctness and edge cases"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "capstone-release-and-operational-readiness",
+      "level": "real-world",
+      "path": "real-world/capstone-release-and-operational-readiness/lesson.json",
+      "masterChecklist": [
+        "End-to-end project architecture, requirements, milestones, quality gates and release checklist",
+        "Configuration, logging, tests, packaging, documentation, operational handover",
+        "Maintainability, accessibility, reliability, security boundaries and retrospective improvement"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "web-api-contracts-validation-and-errors",
+      "level": "production",
+      "path": "production/web-api-contracts-validation-and-errors/lesson.json",
+      "masterChecklist": [
+        "HTTP methods, status codes, headers, request/response bodies and API contracts",
+        "Input validation, serialization, error design, pagination and versioning",
+        "Web-service security boundaries, authentication/authorization separation and safe observability"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "environments-standard-library-and-reproducible-runs",
+      "level": "intermediate",
+      "path": "intermediate/environments-standard-library-and-reproducible-runs/lesson.json",
+      "masterChecklist": [
+        "Virtual environments, interpreter selection, pip boundaries and dependency isolation",
+        "Standard-library orientation: sys, os, pathlib, datetime, collections, itertools, functools",
+        "Reproducibility, environment diagnostics, configuration precedence and cross-platform paths"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "python-data-model-properties-and-invariants",
+      "level": "advanced",
+      "path": "advanced/python-data-model-properties-and-invariants/lesson.json",
+      "masterChecklist": [
+        "Encapsulation conventions, properties, name mangling, __dict__, introspection",
+        "Dunder methods: representation, comparison, arithmetic, container, context-manager, iterator protocols",
+        "Abstract data types, representation invariants, immutability, defensive copying, design by contract"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "exception-design-recovery-and-cleanup",
+      "level": "intermediate",
+      "path": "intermediate/exception-design-recovery-and-cleanup/lesson.json",
+      "masterChecklist": [
+        "Syntax errors versus exceptions, traceback reading, exception hierarchy",
+        "try/except/else/finally, raise, chaining, assertions, custom exceptions, error boundaries",
+        "Resource cleanup, recovery decisions, minimal reproducible failures and user-safe messages"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "recursion-backtracking-and-dynamic-programming",
+      "level": "advanced",
+      "path": "advanced/recursion-backtracking-and-dynamic-programming/lesson.json",
+      "masterChecklist": [
+        "Recursion, base cases, stack limits, iteration alternatives",
+        "Recursion trees, divide-and-conquer, backtracking, dynamic programming, greedy algorithms",
+        "Correctness reasoning, overlapping subproblems, memoization and edge cases"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "threat-modeling-trust-boundaries-and-secure-defaults",
+      "level": "expert",
+      "path": "expert/threat-modeling-trust-boundaries-and-secure-defaults/lesson.json",
+      "masterChecklist": [
+        "Threat modelling Python applications: assets, trust boundaries, attack surface, abuse cases, mitigations",
+        "Authentication/authorization concepts, session/token handling, cryptography API boundaries, secure defaults",
+        "Privacy-by-design, retention, encryption boundaries, audit logs, incident handling, disclosure and patch workflow"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "graphs-traversal-and-shortest-path-reasoning",
+      "level": "advanced",
+      "path": "advanced/graphs-traversal-and-shortest-path-reasoning/lesson.json",
+      "masterChecklist": [
+        "Searching, sorting, hashing, heaps, trees, graphs, shortest paths, traversals, union-find, tries",
+        "Core data structures: arrays/lists, stacks, queues, dequeues, hash tables, linked structures, priority queues, trees, graphs",
+        "Correctness reasoning, edge cases, algorithm engineering and trade-off communication"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "floating-point-decimal-and-numerical-reasoning",
+      "level": "foundations",
+      "path": "foundations/floating-point-decimal-and-numerical-reasoning/lesson.json",
+      "masterChecklist": [
+        "Numeric operations, precedence, integer division, modulo, exponentiation, rounding, floating-point limits, decimal use cases",
+        "Numerical reasoning: floating-point representation, precision/recall of calculations, numerical stability, reproducibility",
+        "Validation, comparison tolerance, rounding policy and domain-appropriate numeric types"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "imports-packages-and-program-entry-points",
+      "level": "intermediate",
+      "path": "intermediate/imports-packages-and-program-entry-points/lesson.json",
+      "masterChecklist": [
+        "Imports, import forms, import-time effects, module cache, sys.path, dir, __name__",
+        "User modules, packages, __init__.py, relative imports, namespace packages, public API design",
+        "Interpreter, REPL, script execution, command-line arguments, exit status, __main__"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "collaboration-code-review-and-change-management",
+      "level": "real-world",
+      "path": "real-world/collaboration-code-review-and-change-management/lesson.json",
+      "masterChecklist": [
+        "Git fundamentals for Python projects: repository, commit, branch, ignore files, code review",
+        "Technical decision records, diagrams, documentation, code review, refactoring, backward compatibility",
+        "Open-source contribution workflow: issue reproduction, minimal fix, tests, documentation, review etiquette, release process"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "descriptors-and-class-creation-hooks",
+      "level": "expert",
+      "path": "expert/descriptors-and-class-creation-hooks/lesson.json",
+      "masterChecklist": [
+        "Descriptors, decorators, metaclasses, class creation hooks — advanced/internals",
+        "Dunder methods: representation, comparison, arithmetic, container, context-manager, iterator protocols",
+        "Framework design trade-offs, explicitness, introspection and maintainable abstractions"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "csv-json-schema-and-data-normalization",
+      "level": "intermediate",
+      "path": "intermediate/csv-json-schema-and-data-normalization/lesson.json",
+      "masterChecklist": [
+        "JSON, CSV, and structured-data shapes; validation and schema thinking",
+        "File I/O: text/binary, encoding, paths, atomic-write patterns",
+        "Data quality, normalization, missing values, type conversion, error reporting and reproducible inputs"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "test-design-boundaries-doubles-and-properties",
+      "level": "production",
+      "path": "production/test-design-boundaries-doubles-and-properties/lesson.json",
+      "masterChecklist": [
+        "Unit, integration, end-to-end, regression, property-based, and contract-test concepts",
+        "pytest: test discovery, assertions, fixtures, parametrization, mocks, temporary files, coverage",
+        "unittest, unittest.mock, test doubles, patching namespaces correctly"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "dates-times-timezones-and-scheduling",
+      "level": "intermediate",
+      "path": "intermediate/dates-times-timezones-and-scheduling/lesson.json",
+      "masterChecklist": [
+        "Standard modules: datetime, time, pathlib, os, sys, collections, itertools, functools",
+        "Time zones, daylight-saving transitions, scheduling, timestamps and reproducible records",
+        "Logging, observability, configuration and environment-aware production workflows"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "processes-signals-and-graceful-shutdown",
+      "level": "production",
+      "path": "production/processes-signals-and-graceful-shutdown/lesson.json",
+      "masterChecklist": [
+        "Linux/shell basics, environment management, process signals, scheduled jobs",
+        "Graceful shutdown, resource cleanup, exit status, worker lifecycle and observability",
+        "Safe subprocess use, configuration boundaries and production failure handling"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "database-transaction-boundaries-and-query-safety",
+      "level": "production",
+      "path": "production/database-transaction-boundaries-and-query-safety/lesson.json",
+      "masterChecklist": [
+        "SQL fundamentals from Python: parameterized queries, transactions, connection lifecycle, SQLite/PostgreSQL concepts",
+        "ORM concepts, migrations, query performance, N+1 query problem",
+        "Input validation, injection risks, connection ownership, consistency and error handling"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "sockets-protocols-timeouts-and-framing",
+      "level": "advanced",
+      "path": "advanced/sockets-protocols-timeouts-and-framing/lesson.json",
+      "masterChecklist": [
+        "Sockets, HTTP concepts, REST APIs, requests, retries, idempotency, pagination, rate limits, error handling",
+        "Protocol boundaries, connection lifecycle, timeouts, partial reads/writes and message framing",
+        "Networking reliability, backpressure, observability and safe resource limits"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "sorting-heaps-and-priority-workflows",
+      "level": "advanced",
+      "path": "advanced/sorting-heaps-and-priority-workflows/lesson.json",
+      "masterChecklist": [
+        "Searching, sorting, hashing, heaps, trees, graphs, shortest paths, traversals, union-find, tries",
+        "Core data structures: arrays/lists, stacks, queues, dequeues, hash tables, linked structures, priority queues, trees, graphs",
+        "Algorithmic complexity, profiling, benchmarking, time-space trade-offs and practical selection"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "names-bindings-identity-and-equality",
+      "level": "foundations",
+      "path": "foundations/names-bindings-identity-and-equality/lesson.json",
+      "masterChecklist": [
+        "Variables, assignment, rebinding, dynamic typing, object identity versus equality",
+        "Names, bindings, references, object lifetime and mutability",
+        "Comparisons, truthiness, short-circuit logic, chained comparisons, is versus =="
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "truthiness-short-circuiting-and-safe-conditions",
+      "level": "foundations",
+      "path": "foundations/truthiness-short-circuiting-and-safe-conditions/lesson.json",
+      "masterChecklist": [
+        "Comparisons, truthiness, short-circuit logic, chained comparisons, is versus ==",
+        "Conditional flow: if, elif, else, match/case, guards and structural pattern matching",
+        "Defensive conditions, validation order, readable Boolean expressions and edge cases"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "structural-pattern-matching-and-guards",
+      "level": "foundations",
+      "path": "foundations/structural-pattern-matching-and-guards/lesson.json",
+      "masterChecklist": [
+        "Conditional flow: if, elif, else, match/case, guards and structural pattern matching",
+        "Statements, expressions, indentation, comments, names, literals and keywords",
+        "Readable decision design, input validation and explicit fallback behavior"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "unpacking-enumerate-zip-and-starred-expressions",
+      "level": "core",
+      "path": "core/unpacking-enumerate-zip-and-starred-expressions/lesson.json",
+      "masterChecklist": [
+        "Sequence operations, iterable protocol, unpacking, starred expressions, enumerate, zip, sorted and reversed",
+        "Collections, iteration, order preservation, unequal lengths and defensive data handling",
+        "Readable loop design, index/value pairing and explicit validation"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "sets-hashability-and-key-design",
+      "level": "core",
+      "path": "core/sets-hashability-and-key-design/lesson.json",
+      "masterChecklist": [
+        "Sets and frozensets: uniqueness, membership, set algebra and hashability",
+        "Dictionaries: key/value design, lookup, iteration, views, defaults, merging, ordering and nested structures",
+        "Hashability, mutability, shallow/deep copy, aliasing and default mutable argument trap"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "function-defaults-args-kwargs-and-mutable-state",
+      "level": "core",
+      "path": "core/function-defaults-args-kwargs-and-mutable-state/lesson.json",
+      "masterChecklist": [
+        "Positional-only, positional-or-keyword, keyword-only, defaults, *args, **kwargs and argument unpacking",
+        "Hashability, mutability, shallow/deep copy, aliasing and default mutable argument trap",
+        "Function contracts, readable interfaces, validation and backward-compatible call design"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "composition-inheritance-and-method-resolution",
+      "level": "advanced",
+      "path": "advanced/composition-inheritance-and-method-resolution/lesson.json",
+      "masterChecklist": [
+        "Inheritance, composition, mixins, multiple inheritance, MRO, super and polymorphism",
+        "Classes, instances, methods, self, constructors, attributes, class versus instance variables",
+        "Design trade-offs, cohesion/coupling, substitution and maintainable object boundaries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "custom-context-managers-and-resource-ownership",
+      "level": "advanced",
+      "path": "advanced/custom-context-managers-and-resource-ownership/lesson.json",
+      "masterChecklist": [
+        "Context managers and with; creating context managers where appropriate",
+        "Resource cleanup, ownership, exception boundaries and reliable failure behavior",
+        "Dunder methods: context-manager protocol, design trade-offs and safe abstractions"
+      ],
+      "status": "complete"
+    },
+    {
       "id": "gui-and-event-driven-apps",
       "level": "real-world",
       "path": "real-world/gui-and-event-driven-apps/lesson.json",
@@ -339,6 +954,1074 @@
         "PCPP-level extension topics: advanced OOP, GUI, networking, files/data processing, standards"
       ],
       "status": "complete"
-    }
+    },
+    {
+      "id": "scope-closures-and-late-binding",
+      "level": "core",
+      "path": "core/scope-closures-and-late-binding/lesson.json",
+      "masterChecklist": [
+        "LEGB scope, local/global/nonlocal names, closures, late binding, shadowing",
+        "First-class functions, lambdas, higher-order functions, map, filter, functools, decorators"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "regex-patterns-and-safe-text-validation",
+      "level": "core",
+      "path": "core/regex-patterns-and-safe-text-validation/lesson.json",
+      "masterChecklist": [
+        "Regular expressions: patterns, raw strings, groups, search/match/fullmatch, substitution, readability and safety",
+        "Input validation, user-facing errors, safe text processing and boundary checks"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "imports-module-cache-and-side-effects",
+      "level": "intermediate",
+      "path": "intermediate/imports-module-cache-and-side-effects/lesson.json",
+      "masterChecklist": [
+        "Imports, import forms, import-time effects, module cache, sys.path, dir, __name__",
+        "User modules, packages, __init__.py, relative imports, namespace packages, public API design"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "higher-order-functions-and-decorators",
+      "level": "core",
+      "path": "core/higher-order-functions-and-decorators/lesson.json",
+      "masterChecklist": [
+        "First-class functions, lambdas, higher-order functions, map, filter, functools, decorators",
+        "Decorators, descriptors, callable objects, function metadata and wrapping"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "exception-boundaries-custom-errors-and-cleanup",
+      "level": "intermediate",
+      "path": "intermediate/exception-boundaries-custom-errors-and-cleanup/lesson.json",
+      "masterChecklist": [
+        "try/except/else/finally, raise, chaining, assertions, custom exceptions, error boundaries",
+        "Syntax errors versus exceptions, traceback reading, exception hierarchy",
+        "Resource cleanup, ownership, exception boundaries and reliable failure behavior"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "paths-encodings-and-atomic-file-writes",
+      "level": "intermediate",
+      "path": "intermediate/paths-encodings-and-atomic-file-writes/lesson.json",
+      "masterChecklist": [
+        "File I/O: open, modes, encoding, text/binary, buffering, context managers, paths, atomic-write patterns",
+        "File paths, current working directory, encodings, newline differences, cross-platform behaviour",
+        "Context managers and with; creating context managers where appropriate"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "json-validation-and-untrusted-data-boundaries",
+      "level": "intermediate",
+      "path": "intermediate/json-validation-and-untrusted-data-boundaries/lesson.json",
+      "masterChecklist": [
+        "Serialization: json, CSV, pickle risks, data validation and untrusted input",
+        "JSON, CSV, and structured-data shapes; validation and schema thinking",
+        "Input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "binary-search-bisect-and-sorted-data-contracts",
+      "level": "advanced",
+      "path": "advanced/binary-search-bisect-and-sorted-data-contracts/lesson.json",
+      "masterChecklist": [
+        "Searching, sorting, hashing, heaps, trees, graphs, shortest paths, traversals, union-find, tries",
+        "Algorithmic complexity, profiling, benchmarking, time-space trade-offs and practical selection",
+        "Core data structures: arrays/lists, stacks, queues, dequeues, hash tables, linked structures, priority queues, trees, graphs"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "logging-context-levels-and-safe-diagnostics",
+      "level": "intermediate",
+      "path": "intermediate/logging-context-levels-and-safe-diagnostics/lesson.json",
+      "masterChecklist": [
+        "Logging levels, structured/contextual logging, handlers, formatters, log privacy",
+        "Debugging: breakpoints, pdb, tracebacks, minimal reproducible examples",
+        "Accessibility, reliability, error messages, internationalization, privacy-aware logging"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "tracebacks-debugging-and-minimal-reproductions",
+      "level": "intermediate",
+      "path": "intermediate/tracebacks-debugging-and-minimal-reproductions/lesson.json",
+      "masterChecklist": [
+        "Debugging: breakpoints, pdb, tracebacks, minimal reproducible examples",
+        "Syntax errors versus exceptions, traceback reading, exception hierarchy",
+        "Editor/IDE workflow, formatter, linter, debugger, terminal, and reading tracebacks"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "packages-relative-imports-and-public-apis",
+      "level": "intermediate",
+      "path": "intermediate/packages-relative-imports-and-public-apis/lesson.json",
+      "masterChecklist": [
+        "User modules, packages, __init__.py, relative imports, namespace packages, public API design",
+        "Imports, import forms, import-time effects, module cache, sys.path, dir, __name__"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "csv-normalization-and-data-quality-checks",
+      "level": "intermediate",
+      "path": "intermediate/csv-normalization-and-data-quality-checks/lesson.json",
+      "masterChecklist": [
+        "JSON, CSV, and structured-data shapes; validation and schema thinking",
+        "CSV/JSON schema and data normalization",
+        "Data engineering: CSV/JSON, SQL, pandas/NumPy basics, data quality, pipelines"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "iterators-itertools-and-one-pass-data",
+      "level": "intermediate",
+      "path": "intermediate/iterators-itertools-and-one-pass-data/lesson.json",
+      "masterChecklist": [
+        "Generators, yield, yield from, iterators, lazy evaluation, iterator exhaustion",
+        "Standard modules: math, random, statistics, datetime, pathlib, os, sys, collections, itertools, functools",
+        "Sequence operations, iterable protocol, unpacking, starred expressions, enumerate, zip, sorted and reversed"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "standard-library-report-metrics",
+      "level": "intermediate",
+      "path": "intermediate/standard-library-report-metrics/lesson.json",
+      "masterChecklist": [
+        "Standard modules: math, random, statistics, datetime, pathlib, os, sys, collections, itertools, functools"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "dates-and-deadlines-with-datetime",
+      "level": "intermediate",
+      "path": "intermediate/dates-and-deadlines-with-datetime/lesson.json",
+      "masterChecklist": [
+        "Standard modules: math, random, statistics, datetime, pathlib, os, sys, collections, itertools, functools"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "portable-paths-environment-and-runtime",
+      "level": "intermediate",
+      "path": "intermediate/portable-paths-environment-and-runtime/lesson.json",
+      "masterChecklist": [
+        "Standard modules: math, random, statistics, datetime, pathlib, os, sys, collections, itertools, functools",
+        "Configuration management: environment variables, argparse, configparser, secrets boundaries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "inspect-project-metadata-offline",
+      "level": "production",
+      "path": "production/inspect-project-metadata-offline/lesson.json",
+      "masterChecklist": [
+        "Dependency management, pip, requirement/constraint files, lock files, dependency vulnerability awareness",
+        "pyproject.toml, build backends, package metadata, wheels/sdists, versioning, publishing concepts"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "requirements-constraints-and-safe-upgrades",
+      "level": "production",
+      "path": "production/requirements-constraints-and-safe-upgrades/lesson.json",
+      "masterChecklist": [
+        "Dependency management, pip, requirement/constraint files, lock files, dependency vulnerability awareness"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "wheels-sdists-and-release-boundaries",
+      "level": "production",
+      "path": "production/wheels-sdists-and-release-boundaries/lesson.json",
+      "masterChecklist": [
+        "pyproject.toml, build backends, package metadata, wheels/sdists, versioning, publishing concepts"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "layered-configuration-and-secret-boundaries",
+      "level": "intermediate",
+      "path": "intermediate/layered-configuration-and-secret-boundaries/lesson.json",
+      "masterChecklist": [
+        "Configuration management: environment variables, argparse, configparser, secrets boundaries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "text-binary-files-and-encoding",
+      "level": "intermediate",
+      "path": "intermediate/text-binary-files-and-encoding/lesson.json",
+      "masterChecklist": [
+        "File I/O: open, modes, encoding, text/binary, buffering, context managers, paths, atomic-write patterns"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "syntax-errors-runtime-exceptions-and-tracebacks",
+      "level": "intermediate",
+      "path": "intermediate/syntax-errors-runtime-exceptions-and-tracebacks/lesson.json",
+      "masterChecklist": [
+        "Syntax errors versus exceptions, traceback reading, exception hierarchy"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "exception-flow-else-finally-and-assertions",
+      "level": "intermediate",
+      "path": "intermediate/exception-flow-else-finally-and-assertions/lesson.json",
+      "masterChecklist": [
+        "try/except/else/finally, raise, chaining, assertions, custom exceptions, error boundaries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "contextlib-generator-context-managers",
+      "level": "advanced",
+      "path": "advanced/contextlib-generator-context-managers/lesson.json",
+      "masterChecklist": [
+        "Context managers and with; creating context managers where appropriate"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "serialization-formats-and-trust-boundaries",
+      "level": "intermediate",
+      "path": "intermediate/serialization-formats-and-trust-boundaries/lesson.json",
+      "masterChecklist": [
+        "Serialization: json, CSV, pickle risks, data validation and untrusted input"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "structured-context-logging-without-secrets",
+      "level": "intermediate",
+      "path": "intermediate/structured-context-logging-without-secrets/lesson.json",
+      "masterChecklist": [
+        "Logging levels, structured/contextual logging, handlers, formatters, log privacy"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "debugging-breakpoint-pdb-and-minimal-repro",
+      "level": "intermediate",
+      "path": "intermediate/debugging-breakpoint-pdb-and-minimal-repro/lesson.json",
+      "masterChecklist": [
+        "Debugging: breakpoints, pdb, tracebacks, minimal reproducible examples"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "class-construction-and-bound-methods",
+      "level": "advanced",
+      "path": "advanced/class-construction-and-bound-methods/lesson.json",
+      "masterChecklist": [
+        "Classes, instances, methods, self, constructors, attributes, class versus instance variables"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "class-instance-attributes-and-shadowing",
+      "level": "advanced",
+      "path": "advanced/class-instance-attributes-and-shadowing/lesson.json",
+      "masterChecklist": [
+        "Classes, instances, methods, self, constructors, attributes, class versus instance variables"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "properties-name-mangling-and-introspection",
+      "level": "advanced",
+      "path": "advanced/properties-name-mangling-and-introspection/lesson.json",
+      "masterChecklist": [
+        "Encapsulation conventions, properties, name mangling, __dict__, introspection"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "cooperative-super-mixins-and-polymorphism",
+      "level": "advanced",
+      "path": "advanced/cooperative-super-mixins-and-polymorphism/lesson.json",
+      "masterChecklist": [
+        "Inheritance, composition, mixins, multiple inheritance, MRO, super, polymorphism"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "value-object-repr-comparison-and-arithmetic",
+      "level": "advanced",
+      "path": "advanced/value-object-repr-comparison-and-arithmetic/lesson.json",
+      "masterChecklist": [
+        "Dunder methods: representation, comparison, arithmetic, container, context-manager, iterator protocols"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "container-iteration-and-context-protocols",
+      "level": "advanced",
+      "path": "advanced/container-iteration-and-context-protocols/lesson.json",
+      "masterChecklist": [
+        "Dunder methods: representation, comparison, arithmetic, container, context-manager, iterator protocols"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "dataclass-records-and-enum-boundaries",
+      "level": "advanced",
+      "path": "advanced/dataclass-records-and-enum-boundaries/lesson.json",
+      "masterChecklist": [
+        "dataclass, enums, abstract base classes, protocols, design trade-offs"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "abc-protocol-and-composition-contracts",
+      "level": "advanced",
+      "path": "advanced/abc-protocol-and-composition-contracts/lesson.json",
+      "masterChecklist": [
+        "dataclass, enums, abstract base classes, protocols, design trade-offs"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "class-decorators-init-subclass-and-metaclass-boundaries",
+      "level": "expert",
+      "path": "expert/class-decorators-init-subclass-and-metaclass-boundaries/lesson.json",
+      "masterChecklist": [
+        "Descriptors, decorators, metaclasses, class creation hooks — advanced/internals"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "data-versus-nondata-descriptor-lookup",
+      "level": "expert",
+      "path": "expert/data-versus-nondata-descriptor-lookup/lesson.json",
+      "masterChecklist": [
+        "Descriptors, decorators, metaclasses, class creation hooks — advanced/internals"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "metaclass-new-and-class-creation-order",
+      "level": "expert",
+      "path": "expert/metaclass-new-and-class-creation-order/lesson.json",
+      "masterChecklist": [
+        "Descriptors, decorators, metaclasses, class creation hooks — advanced/internals"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "reachability-cycles-and-weak-ownership",
+      "level": "expert",
+      "path": "expert/reachability-cycles-and-weak-ownership/lesson.json",
+      "masterChecklist": [
+        "Names, bindings, references, object lifetime, garbage collection, reference cycles, weak references"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "copy-depth-identity-and-interning-caveats",
+      "level": "expert",
+      "path": "expert/copy-depth-identity-and-interning-caveats/lesson.json",
+      "masterChecklist": [
+        "Mutability, interning/caching caveats, copy semantics, memory profiling"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "tracemalloc-snapshots-and-memory-ownership",
+      "level": "expert",
+      "path": "expert/tracemalloc-snapshots-and-memory-ownership/lesson.json",
+      "masterChecklist": [
+        "Mutability, interning/caching caveats, copy semantics, memory profiling"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "source-compile-bytecode-and-pyc-cache",
+      "level": "expert",
+      "path": "expert/source-compile-bytecode-and-pyc-cache/lesson.json",
+      "masterChecklist": [
+        "Bytecode, compilation, .pyc, import execution, frames, call stack, namespaces"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "frames-call-stack-and-namespaces",
+      "level": "expert",
+      "path": "expert/frames-call-stack-and-namespaces/lesson.json",
+      "masterChecklist": [
+        "Bytecode, compilation, .pyc, import execution, frames, call stack, namespaces"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "complexity-timeit-cprofile-workflow",
+      "level": "expert",
+      "path": "expert/complexity-timeit-cprofile-workflow/lesson.json",
+      "masterChecklist": [
+        "Algorithmic complexity, profiling, benchmarking, timeit, cProfile, performance trade-offs"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "gil-builds-and-portable-thread-safety",
+      "level": "expert",
+      "path": "expert/gil-builds-and-portable-thread-safety/lesson.json",
+      "masterChecklist": [
+        "CPython GIL, implementation portability, when details are CPython-specific"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "async-queue-backpressure-and-clean-shutdown",
+      "level": "advanced",
+      "path": "advanced/async-queue-backpressure-and-clean-shutdown/lesson.json",
+      "masterChecklist": [
+        "Async internals, event-loop concepts, cooperative scheduling, cancellation, backpressure"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "event-loop-task-trace-and-cancellation",
+      "level": "advanced",
+      "path": "advanced/event-loop-task-trace-and-cancellation/lesson.json",
+      "masterChecklist": [
+        "Async internals, event-loop concepts, cooperative scheduling, cancellation, backpressure"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "thread-lock-order-and-safe-transfer",
+      "level": "advanced",
+      "path": "advanced/thread-lock-order-and-safe-transfer/lesson.json",
+      "masterChecklist": [
+        "Threads, locks, queues, races, deadlocks, thread-safe design, I/O-bound work"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "thread-queue-results-and-worker-failures",
+      "level": "advanced",
+      "path": "advanced/thread-queue-results-and-worker-failures/lesson.json",
+      "masterChecklist": [
+        "Threads, locks, queues, races, deadlocks, thread-safe design, I/O-bound work"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "process-payloads-and-pickle-boundaries",
+      "level": "advanced",
+      "path": "advanced/process-payloads-and-pickle-boundaries/lesson.json",
+      "masterChecklist": [
+        "Processes, multiprocessing, pickling constraints, pools, IPC, CPU-bound work"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "process-pool-script-and-result-boundaries",
+      "level": "advanced",
+      "path": "advanced/process-pool-script-and-result-boundaries/lesson.json",
+      "masterChecklist": [
+        "Processes, multiprocessing, pickling constraints, pools, IPC, CPU-bound work"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "process-pipe-messages-and-ownership",
+      "level": "advanced",
+      "path": "advanced/process-pipe-messages-and-ownership/lesson.json",
+      "masterChecklist": [
+        "Processes, multiprocessing, pickling constraints, pools, IPC, CPU-bound work"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "process-pool-failures-and-measurement",
+      "level": "advanced",
+      "path": "advanced/process-pool-failures-and-measurement/lesson.json",
+      "masterChecklist": [
+        "Processes, multiprocessing, pickling constraints, pools, IPC, CPU-bound work"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "taskgroup-failure-and-sibling-cleanup",
+      "level": "advanced",
+      "path": "advanced/taskgroup-failure-and-sibling-cleanup/lesson.json",
+      "masterChecklist": [
+        "asyncio: coroutines, async/await, tasks, gather, timeouts, cancellation, async context managers"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "local-http-client-and-paged-responses",
+      "level": "advanced",
+      "path": "advanced/local-http-client-and-paged-responses/lesson.json",
+      "masterChecklist": [
+        "Sockets, HTTP concepts, REST APIs, requests, retries, idempotency, pagination, rate limits, error handling"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "http-retry-safety-and-rate-limits",
+      "level": "advanced",
+      "path": "advanced/http-retry-safety-and-rate-limits/lesson.json",
+      "masterChecklist": [
+        "Sockets, HTTP concepts, REST APIs, requests, retries, idempotency, pagination, rate limits, error handling"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "webhook-signature-dedupe-and-queue",
+      "level": "advanced",
+      "path": "advanced/webhook-signature-dedupe-and-queue/lesson.json",
+      "masterChecklist": [
+        "Webhooks, message queues, event-driven concepts, background workers"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "webhook-inbox-transaction-and-worker",
+      "level": "advanced",
+      "path": "advanced/webhook-inbox-transaction-and-worker/lesson.json",
+      "masterChecklist": [
+        "Webhooks, message queues, event-driven concepts, background workers"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "worker-retries-and-dead-letter-records",
+      "level": "advanced",
+      "path": "advanced/worker-retries-and-dead-letter-records/lesson.json",
+      "masterChecklist": [
+        "Webhooks, message queues, event-driven concepts, background workers"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "dictionaries-hash-tables-and-lookup-tradeoffs",
+      "level": "advanced",
+      "path": "advanced/dictionaries-hash-tables-and-lookup-tradeoffs/lesson.json",
+      "masterChecklist": [
+        "Dictionaries: key/value design, lookup, iteration, views, defaults, merging, ordering and nested structures",
+        "Sets and frozensets: uniqueness, membership, set algebra and hashability",
+        "Searching, sorting, hashing, heaps, trees, graphs, shortest paths, traversals, union-find, tries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "graph-traversal-and-shortest-path-reasoning",
+      "level": "advanced",
+      "path": "advanced/graph-traversal-and-shortest-path-reasoning/lesson.json",
+      "masterChecklist": [
+        "Searching, sorting, hashing, heaps, trees, graphs, shortest paths, traversals, union-find, tries",
+        "Core data structures: arrays/lists, stacks, queues, dequeues, hash tables, linked structures, priority queues, trees, graphs",
+        "Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "api-contracts-validation-statuses-and-idempotency",
+      "level": "production",
+      "path": "production/api-contracts-validation-statuses-and-idempotency/lesson.json",
+      "masterChecklist": [
+        "API design and consumption: validation, authentication concepts, status codes, pagination, versioning",
+        "Web-framework concepts: routing, request/response, templates, middleware, background work",
+        "Resilience patterns: retries, timeouts, circuit breakers, idempotency, rate limiting, graceful degradation"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "database-migrations-query-shape-and-n-plus-one",
+      "level": "production",
+      "path": "production/database-migrations-query-shape-and-n-plus-one/lesson.json",
+      "masterChecklist": [
+        "ORM concepts, migrations, query performance, N+1 query problem",
+        "SQL fundamentals from Python: parameterized queries, transactions, connection lifecycle, SQLite/PostgreSQL concepts",
+        "Database transaction boundaries and query safety"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "request-lifecycle-middleware-and-background-work",
+      "level": "production",
+      "path": "production/request-lifecycle-middleware-and-background-work/lesson.json",
+      "masterChecklist": [
+        "Web-framework concepts: routing, request/response, templates, middleware, background work",
+        "Architecture styles: layered, modular monolith, client/server, event-driven, microservice trade-offs",
+        "Resilience patterns: retries, timeouts, circuit breakers, idempotency, rate limiting, graceful degradation"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "ast-bytecode-and-implementation-boundaries",
+      "level": "expert",
+      "path": "expert/ast-bytecode-and-implementation-boundaries/lesson.json",
+      "masterChecklist": [
+        "Tokenization, parsing, ASTs, compilation, bytecode, execution frames, symbol tables, import machinery",
+        "Bytecode, compilation, .pyc, import execution, frames, call stack, namespaces",
+        "CPython GIL, implementation portability, when details are CPython-specific"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "object-lifetime-garbage-collection-and-weak-references",
+      "level": "expert",
+      "path": "expert/object-lifetime-garbage-collection-and-weak-references/lesson.json",
+      "masterChecklist": [
+        "Names, bindings, references, object lifetime, garbage collection, reference cycles, weak references",
+        "CPython object model, reference counting, cycle detection, garbage collector interfaces, weak references",
+        "Mutability, interning/caching caveats, copy semantics, memory profiling"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "extensions-embedding-and-portability-decisions",
+      "level": "expert",
+      "path": "expert/extensions-embedding-and-portability-decisions/lesson.json",
+      "masterChecklist": [
+        "C/C++ extension modules: argument parsing, exception translation, reference ownership, module state, build/link concerns",
+        "Embedding CPython in host applications: initialization, configuration, executing code safely, lifecycle and isolation",
+        "Stable ABI, limited API, version compatibility, subinterpreter considerations, implementation-specific caveats"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "numpy-arrays-views-dtypes-and-reproducibility",
+      "level": "expert",
+      "path": "expert/numpy-arrays-views-dtypes-and-reproducibility/lesson.json",
+      "masterChecklist": [
+        "NumPy arrays, vectorization, broadcasting, views versus copies, dtype selection, random-number reproducibility",
+        "Parallel and high-performance concepts: memory locality, vectorization, native extensions, profiling, distributed-compute boundaries",
+        "Scientific methods: hypothesis, simulation, parameter sweeps, uncertainty, experimental records, reproducibility"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "tabular-joins-missing-data-and-data-quality",
+      "level": "expert",
+      "path": "expert/tabular-joins-missing-data-and-data-quality/lesson.json",
+      "masterChecklist": [
+        "pandas-style tabular data concepts: indexing, joins, group operations, missing data, time series, data-quality checks",
+        "Data quality, normalization, missing values, type conversion, error reporting and reproducible inputs",
+        "Data engineering: CSV/JSON, SQL, pandas/NumPy basics, data quality, pipelines"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "grouped-analysis-timeseries-and-measurement-caveats",
+      "level": "expert",
+      "path": "expert/grouped-analysis-timeseries-and-measurement-caveats/lesson.json",
+      "masterChecklist": [
+        "pandas-style tabular data concepts: indexing, joins, group operations, missing data, time series, data-quality checks",
+        "Plotting/communication concepts: select visual encodings, reproducible charts, misleading-chart pitfalls",
+        "Time zones, daylight-saving transitions, scheduling, timestamps and reproducible records"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "reliability-objectives-incidents-and-dependency-lifecycle",
+      "level": "production",
+      "path": "production/reliability-objectives-incidents-and-dependency-lifecycle/lesson.json",
+      "masterChecklist": [
+        "Reliability engineering: SLOs/SLIs, capacity planning, load testing, chaos/failure testing concepts, post-incident learning",
+        "Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy",
+        "Monitoring, metrics, tracing, alerting, on-call basics, incident-friendly logging"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "project-architecture-requirements-and-change-review",
+      "level": "real-world",
+      "path": "real-world/project-architecture-requirements-and-change-review/lesson.json",
+      "masterChecklist": [
+        "Requirements discovery, user stories, acceptance criteria, modelling inputs/outputs/failure conditions",
+        "API contracts, domain modelling, boundaries, separation of concerns, cohesion/coupling, dependency inversion",
+        "Technical decision records, diagrams, documentation, code review, refactoring, backward compatibility"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "contract-testing-and-compatible-change-design",
+      "level": "real-world",
+      "path": "real-world/contract-testing-and-compatible-change-design/lesson.json",
+      "masterChecklist": [
+        "Unit, integration, end-to-end, regression, property-based, and contract-test concepts",
+        "Testing/QA automation: test framework, fixtures, API/UI testing concepts, reporting",
+        "Technical decision records, diagrams, documentation, code review, refactoring, backward compatibility"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "automation-scheduling-and-idempotent-jobs",
+      "level": "real-world",
+      "path": "real-world/automation-scheduling-and-idempotent-jobs/lesson.json",
+      "masterChecklist": [
+        "Linux/shell basics, environment management, process signals, scheduled jobs",
+        "Automation and scripting: files, APIs, browser/task automation concepts, scheduling, resilience",
+        "Resilience patterns: retries, timeouts, circuit breakers, idempotency, rate limiting, graceful degradation"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "qa-automation-test-reports-and-flaky-tests",
+      "level": "real-world",
+      "path": "real-world/qa-automation-test-reports-and-flaky-tests/lesson.json",
+      "masterChecklist": [
+        "Testing/QA automation: test framework, fixtures, API/UI testing concepts, reporting",
+        "Unit, integration, end-to-end, regression, property-based, and contract-test concepts",
+        "Debugging: breakpoints, pdb, tracebacks, minimal reproducible examples"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "batch-data-pipelines-validation-and-recovery",
+      "level": "real-world",
+      "path": "real-world/batch-data-pipelines-validation-and-recovery/lesson.json",
+      "masterChecklist": [
+        "Data engineering: CSV/JSON, SQL, pandas/NumPy basics, data quality, pipelines",
+        "JSON, CSV, and structured-data shapes; validation and schema thinking",
+        "Data quality, normalization, missing values, type conversion, error reporting and reproducible inputs"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "reproducible-experiments-and-honest-data-visualization",
+      "level": "expert",
+      "path": "expert/reproducible-experiments-and-honest-data-visualization/lesson.json",
+      "masterChecklist": [
+        "Scientific methods: hypothesis, simulation, parameter sweeps, uncertainty, experimental records, reproducibility",
+        "Plotting/communication concepts: select visual encodings, reproducible charts, misleading-chart pitfalls",
+        "NumPy arrays, vectorization, broadcasting, views versus copies, dtype selection, random-number reproducibility"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "embedded-events-sensors-and-resource-limits",
+      "level": "real-world",
+      "path": "real-world/embedded-events-sensors-and-resource-limits/lesson.json",
+      "masterChecklist": [
+        "Specialist pathways map: backend, data engineering, ML, QA, automation, security, scientific computing, DevOps, GUI, embedded/IoT",
+        "PCPP-level extension topics: advanced OOP, GUI, networking, files/data processing, standards",
+        "Parallel and high-performance concepts: memory locality, vectorization, native extensions, profiling, distributed-compute boundaries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "domain-boundaries-dependency-inversion-and-testable-services",
+      "level": "production",
+      "path": "production/domain-boundaries-dependency-inversion-and-testable-services/lesson.json",
+      "masterChecklist": [
+        "API contracts, domain modelling, boundaries, separation of concerns, cohesion/coupling, dependency inversion",
+        "Architecture styles: layered, modular monolith, client/server, event-driven, microservice trade-offs",
+        "Design trade-offs, cohesion/coupling, substitution and maintainable object boundaries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "trees-tries-and-union-find",
+      "level": "advanced",
+      "path": "advanced/trees-tries-and-union-find/lesson.json",
+      "masterChecklist": [
+        "Searching, sorting, hashing, heaps, trees, graphs, shortest paths, traversals, union-find, tries",
+        "Core data structures: arrays/lists, stacks, queues, dequeues, hash tables, linked structures, priority queues, trees, graphs",
+        "Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "recursion-memoization-and-dynamic-programming",
+      "level": "advanced",
+      "path": "advanced/recursion-memoization-and-dynamic-programming/lesson.json",
+      "masterChecklist": [
+        "Recursion, backtracking, dynamic programming, greedy choices and algorithm design",
+        "Algorithmic complexity, profiling, benchmarking, time-space trade-offs and practical selection",
+        "Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "profiling-memory-and-evidence-based-optimization",
+      "level": "expert",
+      "path": "expert/profiling-memory-and-evidence-based-optimization/lesson.json",
+      "masterChecklist": [
+        "Algorithmic complexity, profiling, benchmarking, time-space trade-offs and practical selection",
+        "Mutability, interning/caching caveats, copy semantics, memory profiling",
+        "Parallel and high-performance concepts: memory locality, vectorization, native extensions, profiling, distributed-compute boundaries"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "authentication-authorization-and-session-boundaries",
+      "level": "production",
+      "path": "production/authentication-authorization-and-session-boundaries/lesson.json",
+      "masterChecklist": [
+        "API design and consumption: validation, authentication concepts, status codes, pagination, versioning",
+        "Input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use",
+        "Threat modelling, trust boundaries, secure defaults, secure code review, incident triage"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "accessible-private-and-user-safe-application-design",
+      "level": "real-world",
+      "path": "real-world/accessible-private-and-user-safe-application-design/lesson.json",
+      "masterChecklist": [
+        "Accessibility, reliability, error messages, internationalization, privacy-aware logging",
+        "Ethical engineering: accessibility, privacy, data minimization, auditability, user safety, responsible automation",
+        "Input validation, user-facing errors, safe text processing and boundary checks"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "code-quality-formatting-linting-and-reviewable-change",
+      "level": "production",
+      "path": "production/code-quality-formatting-linting-and-reviewable-change/lesson.json",
+      "masterChecklist": [
+        "Editor/IDE workflow, formatter, linter, debugger, terminal, and reading tracebacks",
+        "Technical decision records, diagrams, documentation, code review, refactoring, backward compatibility",
+        "Function contracts, readable interfaces, validation and backward-compatible call design"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "versioning-deprecation-and-safe-migrations",
+      "level": "production",
+      "path": "production/versioning-deprecation-and-safe-migrations/lesson.json",
+      "masterChecklist": [
+        "Versioning, release notes, changelogs, deprecation policy, semantic compatibility concepts",
+        "Technical decision records, diagrams, documentation, code review, refactoring, backward compatibility",
+        "Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "queues-workers-and-backpressure",
+      "level": "production",
+      "path": "production/queues-workers-and-backpressure/lesson.json",
+      "masterChecklist": [
+        "Web-framework concepts: routing, request/response, templates, middleware, background work",
+        "Resilience patterns: retries, timeouts, circuit breakers, idempotency, rate limiting, graceful degradation",
+        "Networking reliability, backpressure, observability and safe resource limits"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "generics-protocols-and-runtime-validation-boundaries",
+      "level": "advanced",
+      "path": "advanced/generics-protocols-and-runtime-validation-boundaries/lesson.json",
+      "masterChecklist": [
+        "Type hints: annotations, typing, generics, Protocol, TypedDict, runtime versus static checking",
+        "Function contracts, readable interfaces, validation and backward-compatible call design",
+        "Input validation, user-facing errors, safe text processing and boundary checks"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "task-groups-exception-groups-and-structured-concurrency",
+      "level": "advanced",
+      "path": "advanced/task-groups-exception-groups-and-structured-concurrency/lesson.json",
+      "masterChecklist": [
+        "Concurrency: threading, multiprocessing, asyncio, tasks, futures, cancellation, synchronization, queues",
+        "Async workflows: event loop, coroutines, tasks, cancellation, timeouts, async iterators/context managers",
+        "Resource cleanup, ownership, exception boundaries and reliable failure behavior"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "property-based-thinking-invariants-and-test-data",
+      "level": "production",
+      "path": "production/property-based-thinking-invariants-and-test-data/lesson.json",
+      "masterChecklist": [
+        "Unit, integration, end-to-end, regression, property-based, and contract-test concepts",
+        "Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning",
+        "Testing/QA automation: test framework, fixtures, API/UI testing concepts, reporting"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "fixtures-test-doubles-and-interaction-boundaries",
+      "level": "production",
+      "path": "production/fixtures-test-doubles-and-interaction-boundaries/lesson.json",
+      "masterChecklist": [
+        "Testing/QA automation: test framework, fixtures, API/UI testing concepts, reporting",
+        "Unit, integration, end-to-end, regression, property-based, and contract-test concepts",
+        "Function contracts, readable interfaces, validation and backward-compatible call design"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "reading-codebases-and-planning-safe-changes",
+      "level": "real-world",
+      "path": "real-world/reading-codebases-and-planning-safe-changes/lesson.json",
+      "masterChecklist": [
+        "Read and evaluate unfamiliar codebases, APIs, tracebacks, release notes, changelogs, deprecation notices, and migration guides",
+        "Technical decision records, diagrams, documentation, code review, refactoring, backward compatibility",
+        "Requirements discovery, user stories, acceptance criteria, modelling inputs/outputs/failure conditions"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "cpu-io-bound-work-and-concurrency-choice",
+      "level": "advanced",
+      "path": "advanced/cpu-io-bound-work-and-concurrency-choice/lesson.json",
+      "masterChecklist": [
+        "CPU-bound versus I/O-bound concurrency",
+        "Threads, locks, queues, races, deadlocks, thread-safe design, I/O-bound work",
+        "Processes, multiprocessing, pickling constraints, pools, IPC, CPU-bound work"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "model-integration-evaluation-and-monitoring-boundaries",
+      "level": "expert",
+      "path": "expert/model-integration-evaluation-and-monitoring-boundaries/lesson.json",
+      "masterChecklist": [
+        "AI/ML integration: data preparation, model-service API boundaries, evaluation and monitoring concepts",
+        "Data engineering: CSV/JSON, SQL, pandas/NumPy basics, data quality, pipelines",
+        "Monitoring, metrics, tracing, alerting, on-call basics, incident-friendly logging"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "cloud-serverless-configuration-and-deployment-boundaries",
+      "level": "production",
+      "path": "production/cloud-serverless-configuration-and-deployment-boundaries/lesson.json",
+      "masterChecklist": [
+        "Cloud and serverless concepts: storage, databases, queues, functions, identity, configuration",
+        "Configuration, logging, tests, packaging, documentation, operational handover",
+        "Deployment, containers, CI/CD concepts, release safety, monitoring, rollback"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "dependency-provenance-lockfiles-and-safe-upgrades",
+      "level": "production",
+      "path": "production/dependency-provenance-lockfiles-and-safe-upgrades/lesson.json",
+      "masterChecklist": [
+        "Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy",
+        "Virtual environments, interpreter selection, pip boundaries and dependency isolation",
+        "Version upgrades and compatibility testing; language-feature gates and feature detection"
+      ],
+      "status": "complete"
+    },
+    {"id":"discrete-math-probability-and-algorithm-reasoning","level":"advanced","path":"advanced/discrete-math-probability-and-algorithm-reasoning/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic","Algorithm engineering: choose appropriate structures, measure real costs, identify bottlenecks, communicate trade-offs","Correctness reasoning, edge cases, algorithm engineering and trade-off communication"],"status":"complete"}
+    ,{"id":"web-routing-request-validation-and-handler-boundaries","level":"production","path":"production/web-routing-request-validation-and-handler-boundaries/lesson.json","masterChecklist":["Framework survey and project labs: Flask/FastAPI/Django concepts; use one verified framework version per deep module","HTTP methods, status codes, headers, request/response bodies and API contracts","Input validation, serialization, error design, pagination and versioning"],"status":"complete"}
+    ,{"id":"context-manager-lifetime-and-resource-ownership","level":"advanced","path":"advanced/context-manager-lifetime-and-resource-ownership/lesson.json","masterChecklist":["Context managers, with statement, cleanup and resource lifetime","Text, binary, and path handling","Resource cleanup, recovery decisions, minimal reproducible failures and user-safe messages"],"status":"complete"}
+    ,{"id":"python-portability-and-implementation-boundaries","level":"expert","path":"expert/python-portability-and-implementation-boundaries/lesson.json","masterChecklist":["Alternative implementations and portability: CPython, PyPy, Jython and implementation-dependent behaviour","Interpreter portability, implementation differences, wheels and platform constraints","Installing and selecting a Python version; CPython versus alternative implementations"],"status":"complete"}
+    ,{"id":"big-o-empirical-measurement-and-tradeoffs","level":"advanced","path":"advanced/big-o-empirical-measurement-and-tradeoffs/lesson.json","masterChecklist":["Algorithmic complexity, big-O reasoning, time-space tradeoffs","Complexity analysis: Big-O/Theta/Omega, amortized analysis, time/space trade-offs, empirical benchmarking","Sorting, searching, recursion limits, dynamic programming, correctness and edge cases"],"status":"complete"}
+    ,{"id":"iteration-order-and-unequal-inputs","level":"core","path":"core/iteration-order-and-unequal-inputs/lesson.json","masterChecklist":["Sequence operations, iterable protocol, unpacking, starred expressions, enumerate, zip, sorted, reversed"],"status":"complete"}
+    ,{"id":"dataclasses-enums-abcs-and-protocol-design","level":"advanced","path":"advanced/dataclasses-enums-abcs-and-protocol-design/lesson.json","masterChecklist":["dataclass, enums, abstract base classes, protocols, design trade-offs"],"status":"complete"}
+    ,{"id":"async-iterators-timeouts-and-cancellation-cleanup","level":"advanced","path":"advanced/async-iterators-timeouts-and-cancellation-cleanup/lesson.json","masterChecklist":["Async workflows: event loop, coroutines, tasks, cancellation, timeouts, async iterators/context managers"],"status":"complete"}
+    ,{"id":"aliasing-shallow-copy-and-nested-mutation","level":"core","path":"core/aliasing-shallow-copy-and-nested-mutation/lesson.json","masterChecklist":["Hashability, mutability, shallow/deep copy, aliasing, default mutable argument trap","Mutability, interning/caching caveats, copy semantics, memory profiling"],"status":"complete"}
+    ,{"id":"deque-heap-and-operation-driven-choices","level":"advanced","path":"advanced/deque-heap-and-operation-driven-choices/lesson.json","masterChecklist":["Lists, dictionaries, sets, stacks, queues, heaps, trees and graph traversal concepts","Algorithm engineering: choose appropriate structures, measure real costs, identify bottlenecks, communicate trade-offs"],"status":"complete"}
+    ,{"id":"async-streams-and-resource-lifetime","level":"advanced","path":"advanced/async-streams-and-resource-lifetime/lesson.json","masterChecklist":["Async workflows: event loop, coroutines, tasks, cancellation, timeouts, async iterators/context managers","Resource cleanup, ownership, exception boundaries and reliable failure behavior"],"status":"complete"}
+    ,{"id":"sqlite-atomic-progress-updates","level":"production","path":"production/sqlite-atomic-progress-updates/lesson.json","masterChecklist":["Database transaction boundaries and query safety","Input validation, injection risks, connection ownership, consistency and error handling"],"status":"complete"}
+    ,{"id":"json-schema-boundaries-and-error-messages","level":"intermediate","path":"intermediate/json-schema-boundaries-and-error-messages/lesson.json","masterChecklist":["CSV/JSON schema and data normalization","JSON serialization, deserialization, validation and safe formats"],"status":"complete"}
+    ,{"id":"sqlite-schema-version-and-safe-upgrade","level":"production","path":"production/sqlite-schema-version-and-safe-upgrade/lesson.json","masterChecklist":["ORM concepts, migrations, query performance, N+1 query problem","Versioning, release notes, changelogs, deprecation policy, semantic compatibility concepts"],"status":"complete"}
+    ,{"id":"query-count-and-batched-progress-reads","level":"production","path":"production/query-count-and-batched-progress-reads/lesson.json","masterChecklist":["ORM concepts, migrations, query performance, N+1 query problem","Database transaction boundaries and query safety"],"status":"complete"}
+    ,{"id":"capstone-release-evidence-and-handover","level":"real-world","path":"real-world/capstone-release-evidence-and-handover/lesson.json","masterChecklist":["End-to-end project architecture, requirements, milestones, quality gates and release checklist","Configuration, logging, tests, packaging, documentation, operational handover","Maintainability, accessibility, reliability, security boundaries and retrospective improvement"],"status":"complete"}
+    ,{"id":"safe-job-logging-and-incident-triage","level":"production","path":"production/safe-job-logging-and-incident-triage/lesson.json","masterChecklist":["Logging, observability, configuration and environment-aware production workflows","Monitoring, metrics, tracing, alerting, on-call basics, incident-friendly logging"],"status":"complete"}
+    ,{"id":"project-one-study-summary-cli","level":"real-world","path":"real-world/project-one-study-summary-cli/lesson.json","masterChecklist":["Five progressive projects: CLI utility, data/file tool, API client, tested service, production-style capstone","Interpreter, REPL, script execution, command-line arguments, exit status, __main__"],"status":"complete"}
+    ,{"id":"project-two-validated-study-csv","level":"real-world","path":"real-world/project-two-validated-study-csv/lesson.json","masterChecklist":["Five progressive projects: CLI utility, data/file tool, API client, tested service, production-style capstone","JSON, CSV, and structured-data shapes; validation and schema thinking"],"status":"complete"}
+    ,{"id":"project-three-local-api-client-boundary","level":"real-world","path":"real-world/project-three-local-api-client-boundary/lesson.json","masterChecklist":["Five progressive projects: CLI utility, data/file tool, API client, tested service, production-style capstone","Sockets, HTTP concepts, REST APIs, requests, retries, idempotency, pagination, rate limits, error handling"],"status":"complete"}
+    ,{"id":"project-four-tested-progress-service","level":"real-world","path":"real-world/project-four-tested-progress-service/lesson.json","masterChecklist":["Five progressive projects: CLI utility, data/file tool, API client, tested service, production-style capstone","Web/backend: REST APIs, authentication concepts, database-backed services, deployment"],"status":"complete"}
+    ,{"id":"project-five-study-progress-capstone","level":"real-world","path":"real-world/project-five-study-progress-capstone/lesson.json","masterChecklist":["Five progressive projects: CLI utility, data/file tool, API client, tested service, production-style capstone","End-to-end project architecture, requirements, milestones, quality gates and release checklist","Configuration, logging, tests, packaging, documentation, operational handover"],"status":"complete"}
+    ,{"id":"accessible-error-contracts-and-recovery","level":"real-world","path":"real-world/accessible-error-contracts-and-recovery/lesson.json","masterChecklist":["Accessibility, reliability, error messages, internationalization, privacy-aware logging","Ethical engineering: accessibility, privacy, data minimization, auditability, user safety, responsible automation"],"status":"complete"}
+    ,{"id":"retention-minimization-and-safe-event-records","level":"production","path":"production/retention-minimization-and-safe-event-records/lesson.json","masterChecklist":["Privacy-by-design, retention, encryption boundaries, audit logs, incident handling, disclosure and patch workflow","Accessibility, reliability, error messages, internationalization, privacy-aware logging"],"status":"complete"}
+    ,{"id":"text-bytes-complex-and-missing-values","level":"foundations","path":"foundations/text-bytes-complex-and-missing-values/lesson.json","masterChecklist":["Built-in scalar types: None, bool, int, float, complex, str, bytes"],"status":"complete"}
+    ,{"id":"statements-expressions-and-keywords","level":"foundations","path":"foundations/statements-expressions-and-keywords/lesson.json","masterChecklist":["Statements, expressions, indentation, comments, names, literals, keywords"],"status":"complete"}
+    ,{"id":"division-remainder-powers-and-rounding","level":"foundations","path":"foundations/division-remainder-powers-and-rounding/lesson.json","masterChecklist":["Numeric operations, precedence, integer division, modulo, exponentiation, rounding, floating-point limits, decimal use cases"],"status":"complete"}
+    ,{"id":"chained-comparisons-and-boolean-values","level":"foundations","path":"foundations/chained-comparisons-and-boolean-values/lesson.json","masterChecklist":["Comparisons, truthiness, short-circuit logic, chained comparisons, is versus =="],"status":"complete"}
+    ,{"id":"loop-exit-and-search-else","level":"foundations","path":"foundations/loop-exit-and-search-else/lesson.json","masterChecklist":["Iteration: for, while, range, break, continue, pass, loop else"],"status":"complete"}
+    ,{"id":"functions-results-and-documentation","level":"foundations","path":"foundations/functions-results-and-documentation/lesson.json","masterChecklist":["Defining/calling functions, parameters, arguments, return, None, docstrings"],"status":"complete"}
+    ,{"id":"comprehensions-generators-and-readable-nesting","level":"core","path":"core/comprehensions-generators-and-readable-nesting/lesson.json","masterChecklist":["Comprehensions and generator expressions; nesting, filters, readability trade-offs"],"status":"complete"}
+    ,{"id":"unicode-string-boundaries-and-escapes","level":"foundations","path":"foundations/unicode-string-boundaries-and-escapes/lesson.json","masterChecklist":["Strings: indexing, slicing, immutability, Unicode, encodings, escape sequences, formatting, common methods"],"status":"complete"}
+    ,{"id":"list-methods-nested-copies-and-queues","level":"core","path":"core/list-methods-nested-copies-and-queues/lesson.json","masterChecklist":["Lists: creation, mutation, slicing, copying versus aliasing, methods, stacks/queues, nested lists"],"status":"complete"}
+    ,{"id":"tuples-unpacking-and-named-records","level":"core","path":"core/tuples-unpacking-and-named-records/lesson.json","masterChecklist":["Tuples: packing/unpacking, immutability, single-item tuple, named tuples"],"status":"complete"}
+    ,{"id":"set-algebra-frozenset-and-membership","level":"core","path":"core/set-algebra-frozenset-and-membership/lesson.json","masterChecklist":["Sets and frozensets: uniqueness, membership, set algebra, hashability"],"status":"complete"}
+    ,{"id":"dictionary-views-defaults-merging-and-nesting","level":"core","path":"core/dictionary-views-defaults-merging-and-nesting/lesson.json","masterChecklist":["Dictionaries: key/value design, lookup, iteration, views, defaults, merging, ordering, nested structures"],"status":"complete"}
+    ,{"id":"sequence-ordering-reversal-and-strict-pairing","level":"core","path":"core/sequence-ordering-reversal-and-strict-pairing/lesson.json","masterChecklist":["Sequence operations, iterable protocol, unpacking, starred expressions, enumerate, zip, sorted, reversed"],"status":"complete"}
+    ,{"id":"regex-search-match-fullmatch-and-replacement","level":"core","path":"core/regex-search-match-fullmatch-and-replacement/lesson.json","masterChecklist":["Regular expressions: patterns, raw strings, groups, search/match/fullmatch, substitution, readability and safety"],"status":"complete"}
+    ,{"id":"json-csv-parsing-and-schema-boundaries","level":"intermediate","path":"intermediate/json-csv-parsing-and-schema-boundaries/lesson.json","masterChecklist":["JSON, CSV, and structured-data shapes; validation and schema thinking"],"status":"complete"}
+    ,{"id":"parameter-kinds-defaults-and-unpacking","level":"core","path":"core/parameter-kinds-defaults-and-unpacking/lesson.json","masterChecklist":["Positional-only, positional-or-keyword, keyword-only, defaults, *args, **kwargs, argument unpacking"],"status":"complete"}
+    ,{"id":"name-resolution-shadowing-and-late-callbacks","level":"core","path":"core/name-resolution-shadowing-and-late-callbacks/lesson.json","masterChecklist":["LEGB scope, local/global/nonlocal names, closures, late binding, shadowing"],"status":"complete"}
+    ,{"id":"recursive-base-cases-and-iterative-alternatives","level":"core","path":"core/recursive-base-cases-and-iterative-alternatives/lesson.json","masterChecklist":["Recursion, base cases, stack limits, iteration alternatives"],"status":"complete"}
+    ,{"id":"functions-as-values-map-filter-and-partial","level":"core","path":"core/functions-as-values-map-filter-and-partial/lesson.json","masterChecklist":["First-class functions, lambdas, higher-order functions, map, filter, functools, decorators"],"status":"complete"}
+    ,{"id":"yield-from-and-one-pass-generator-pipelines","level":"core","path":"core/yield-from-and-one-pass-generator-pipelines/lesson.json","masterChecklist":["Generators, yield, yield from, iterators, lazy evaluation, iterator exhaustion"],"status":"complete"}
+    ,{"id":"typeddict-protocol-generic-and-runtime-checks","level":"core","path":"core/typeddict-protocol-generic-and-runtime-checks/lesson.json","masterChecklist":["Type annotations, typing, generics, protocols, TypedDict, dataclass, runtime versus static checking"],"status":"complete"}
+    ,{"id":"import-cache-path-and-side-effect-lab","level":"intermediate","path":"intermediate/import-cache-path-and-side-effect-lab/lesson.json","masterChecklist":["Imports, import forms, import-time effects, module cache, sys.path, dir, __name__"],"status":"complete"}
+    ,{"id":"package-boundaries-relative-imports-and-namespace-layout","level":"intermediate","path":"intermediate/package-boundaries-relative-imports-and-namespace-layout/lesson.json","masterChecklist":["User modules, packages, __init__.py, relative imports, namespace packages, public API design"],"status":"complete"}
+    ,{"id":"sql-values-and-identifier-allowlists","level":"production","path":"production/sql-values-and-identifier-allowlists/lesson.json","masterChecklist":["SQL fundamentals from Python: parameterized queries, transactions, connection lifecycle, SQLite/PostgreSQL concepts"],"status":"complete"}
+    ,{"id":"sqlite-two-write-rollback-boundary","level":"production","path":"production/sqlite-two-write-rollback-boundary/lesson.json","masterChecklist":["SQL fundamentals from Python: parameterized queries, transactions, connection lifecycle, SQLite/PostgreSQL concepts","Database transaction boundaries and query safety"],"status":"complete"}
+    ,{"id":"sqlite-postgresql-portability-boundary","level":"production","path":"production/sqlite-postgresql-portability-boundary/lesson.json","masterChecklist":["SQL fundamentals from Python: parameterized queries, transactions, connection lifecycle, SQLite/PostgreSQL concepts"],"status":"complete"}
+    ,{"id":"measure-n-plus-one-with-sql-tracing","level":"production","path":"production/measure-n-plus-one-with-sql-tracing/lesson.json","masterChecklist":["ORM concepts, migrations, query performance, N+1 query problem"],"status":"complete"}
+    ,{"id":"sqlite-schema-version-migration","level":"production","path":"production/sqlite-schema-version-migration/lesson.json","masterChecklist":["ORM concepts, migrations, query performance, N+1 query problem"],"status":"complete"}
+    ,{"id":"rows-to-domain-objects-and-orm-boundaries","level":"production","path":"production/rows-to-domain-objects-and-orm-boundaries/lesson.json","masterChecklist":["ORM concepts, migrations, query performance, N+1 query problem"],"status":"complete"}
+    ,{"id":"sqlite-failed-migration-rollback","level":"production","path":"production/sqlite-failed-migration-rollback/lesson.json","masterChecklist":["ORM concepts, migrations, query performance, N+1 query problem","Database transaction boundaries and query safety"],"status":"complete"}
+    ,{"id":"idempotency-key-reuse-conflict","level":"production","path":"production/idempotency-key-reuse-conflict/lesson.json","masterChecklist":["API design and consumption: validation, authentication concepts, status codes, pagination, versioning","Resilience patterns: retries, timeouts, circuit breakers, idempotency, rate limiting, graceful degradation"],"status":"complete"}
+    ,{"id":"api-input-and-object-authorization-order","level":"production","path":"production/api-input-and-object-authorization-order/lesson.json","masterChecklist":["API design and consumption: validation, authentication concepts, status codes, pagination, versioning","Web-service security boundaries, authentication/authorization separation and safe observability"],"status":"complete"}
+    ,{"id":"stable-cursor-pages-for-progress-api","level":"production","path":"production/stable-cursor-pages-for-progress-api/lesson.json","masterChecklist":["API design and consumption: validation, authentication concepts, status codes, pagination, versioning"],"status":"complete"}
+    ,{"id":"api-response-version-compatibility","level":"production","path":"production/api-response-version-compatibility/lesson.json","masterChecklist":["API design and consumption: validation, authentication concepts, status codes, pagination, versioning"],"status":"complete"}
+    ,{"id":"wsgi-request-route-and-response-boundary","level":"production","path":"production/wsgi-request-route-and-response-boundary/lesson.json","masterChecklist":["Web-framework concepts: routing, request/response, templates, middleware, background work"],"status":"complete"}
+    ,{"id":"wsgi-middleware-response-wrapper","level":"production","path":"production/wsgi-middleware-response-wrapper/lesson.json","masterChecklist":["Web-framework concepts: routing, request/response, templates, middleware, background work"],"status":"complete"}
+    ,{"id":"html-template-text-escaping-boundary","level":"production","path":"production/html-template-text-escaping-boundary/lesson.json","masterChecklist":["Web-framework concepts: routing, request/response, templates, middleware, background work","Input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use"],"status":"complete"}
+    ,{"id":"accepted-background-job-status-boundary","level":"production","path":"production/accepted-background-job-status-boundary/lesson.json","masterChecklist":["Web-framework concepts: routing, request/response, templates, middleware, background work"],"status":"complete"}
+    ,{"id":"middleware-order-and-error-boundary","level":"production","path":"production/middleware-order-and-error-boundary/lesson.json","masterChecklist":["Web-framework concepts: routing, request/response, templates, middleware, background work"],"status":"complete"}
+    ,{"id":"queued-job-worker-state-transition","level":"production","path":"production/queued-job-worker-state-transition/lesson.json","masterChecklist":["Web-framework concepts: routing, request/response, templates, middleware, background work","Queues, workers, background jobs, backpressure and safe shutdown"],"status":"complete"}
+    ,{"id":"sqlite-atomic-job-claim","level":"production","path":"production/sqlite-atomic-job-claim/lesson.json","masterChecklist":["Web-framework concepts: routing, request/response, templates, middleware, background work","Queues, workers, background jobs, backpressure and safe shutdown"],"status":"complete"}
+    ,{"id":"job-lease-expiry-and-stale-worker","level":"production","path":"production/job-lease-expiry-and-stale-worker/lesson.json","masterChecklist":["Queues, workers, background jobs, backpressure and safe shutdown"],"status":"complete"}
+    ,{"id":"flask-route-and-test-client-contract","level":"production","path":"production/flask-route-and-test-client-contract/lesson.json","masterChecklist":["Framework survey and project labs: Flask/FastAPI/Django concepts; use one verified framework version per deep module","Web-framework concepts: routing, request/response, templates, middleware, background work"],"status":"complete"}
+    ,{"id":"flask-template-autoescaping-contract","level":"production","path":"production/flask-template-autoescaping-contract/lesson.json","masterChecklist":["Framework survey and project labs: Flask/FastAPI/Django concepts; use one verified framework version per deep module","Web-framework concepts: routing, request/response, templates, middleware, background work","Input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use"],"status":"complete"}
+    ,{"id":"flask-app-factory-test-isolation","level":"production","path":"production/flask-app-factory-test-isolation/lesson.json","masterChecklist":["Framework survey and project labs: Flask/FastAPI/Django concepts; use one verified framework version per deep module","Web-framework concepts: routing, request/response, templates, middleware, background work"],"status":"complete"}
+    ,{"id":"flask-request-db-lifetime","level":"production","path":"production/flask-request-db-lifetime/lesson.json","masterChecklist":["Framework survey and project labs: Flask/FastAPI/Django concepts; use one verified framework version per deep module","Web-framework concepts: routing, request/response, templates, middleware, background work","Database transaction boundaries and query safety"],"status":"complete"}
+    ,{"id":"flask-dev-server-production-boundary","level":"production","path":"production/flask-dev-server-production-boundary/lesson.json","masterChecklist":["Framework survey and project labs: Flask/FastAPI/Django concepts; use one verified framework version per deep module","Web-framework concepts: routing, request/response, templates, middleware, background work","Deployment, containers, CI/CD concepts, release safety, monitoring, rollback"],"status":"complete"}
+    ,{"id":"cli-arguments-main-and-exit-code","level":"foundations","path":"foundations/cli-arguments-main-and-exit-code/lesson.json","masterChecklist":["Interpreter, REPL, script execution, command-line arguments, exit status, __main__"],"status":"complete"}
+    ,{"id":"script-path-and-utf8-file-boundary","level":"foundations","path":"foundations/script-path-and-utf8-file-boundary/lesson.json","masterChecklist":["File paths, current working directory, encodings, newline differences, cross-platform behaviour"],"status":"complete"}
+    ,{"id":"venv-interpreter-isolation-check","level":"foundations","path":"foundations/venv-interpreter-isolation-check/lesson.json","masterChecklist":["Installing and selecting a Python version; CPython versus alternative implementations","Virtual environments, venv, activation, dependency isolation, reproducible environments"],"status":"complete"}
+    ,{"id":"repl-script-and-module-execution","level":"foundations","path":"foundations/repl-script-and-module-execution/lesson.json","masterChecklist":["Interpreter, REPL, script execution, command-line arguments, exit status, __main__"],"status":"complete"}
+    ,{"id":"read-traceback-and-reproduce-bug","level":"foundations","path":"foundations/read-traceback-and-reproduce-bug/lesson.json","masterChecklist":["Editor/IDE workflow, formatter, linter, debugger, terminal, and reading tracebacks","Syntax errors versus exceptions, traceback reading, exception hierarchy"],"status":"complete"}
+    ,{"id":"syntax-style-and-behavior-checks","level":"foundations","path":"foundations/syntax-style-and-behavior-checks/lesson.json","masterChecklist":["Editor/IDE workflow, formatter, linter, debugger, terminal, and reading tracebacks","Static analysis, formatting, linting, type checking, documentation, code review"],"status":"complete"}
+    ,{"id":"git-workflow-for-python-projects","level":"foundations","path":"foundations/git-workflow-for-python-projects/lesson.json","masterChecklist":["Git fundamentals for Python projects: repository, commit, branch, ignore files, code review"],"status":"complete"}
+    ,{"id":"identify-python-runtime-and-version","level":"foundations","path":"foundations/identify-python-runtime-and-version/lesson.json","masterChecklist":["Installing and selecting a Python version; CPython versus alternative implementations"],"status":"complete"}
+    ,{"id":"check-package-environment-before-installing","level":"foundations","path":"foundations/check-package-environment-before-installing/lesson.json","masterChecklist":["Virtual environments, venv, activation, dependency isolation, reproducible environments","Dependency management: pip, virtual environments, requirements, lockfiles, editable installs"],"status":"complete"}
+    ,{"id":"patch-the-name-your-code-uses","level":"production","path":"production/patch-the-name-your-code-uses/lesson.json","masterChecklist":["unittest, unittest.mock, test doubles, patching namespaces correctly","Unit, integration, end-to-end, regression, property-based, and contract-test concepts"],"status":"complete"}
+    ,{"id":"test-a-real-sqlite-boundary","level":"production","path":"production/test-a-real-sqlite-boundary/lesson.json","masterChecklist":["Unit, integration, end-to-end, regression, property-based, and contract-test concepts","SQL fundamentals from Python: parameterized queries, transactions, connection lifecycle, SQLite/PostgreSQL concepts"],"status":"complete"}
+    ,{"id":"run-boundary-tests-with-unittest","level":"production","path":"production/run-boundary-tests-with-unittest/lesson.json","masterChecklist":["unittest, unittest.mock, test doubles, patching namespaces correctly","Unit, integration, end-to-end, regression, property-based, and contract-test concepts"],"status":"complete"}
+    ,{"id":"confine-user-file-paths","level":"production","path":"production/confine-user-file-paths/lesson.json","masterChecklist":["Security: input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use","File I/O: open, modes, encoding, text/binary, buffering, context managers, paths, atomic-write patterns"],"status":"complete"}
+    ,{"id":"pass-subprocess-arguments-as-data","level":"production","path":"production/pass-subprocess-arguments-as-data/lesson.json","masterChecklist":["Security: input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use","Linux/shell basics, environment management, process signals, scheduled jobs"],"status":"complete"}
+    ,{"id":"validate-json-without-untrusted-pickle","level":"production","path":"production/validate-json-without-untrusted-pickle/lesson.json","masterChecklist":["Security: input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use","Serialization: json, CSV, pickle risks, data validation and untrusted input"],"status":"complete"}
+    ,{"id":"generate-and-handle-demo-tokens","level":"production","path":"production/generate-and-handle-demo-tokens/lesson.json","masterChecklist":["Security: input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use","Configuration management: environment variables, argparse, configparser, secrets boundaries"],"status":"complete"}
+    ,{"id":"compare-local-package-artifact-hash","level":"production","path":"production/compare-local-package-artifact-hash/lesson.json","masterChecklist":["Security: input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use","Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy"],"status":"complete"}
+    ,{"id":"inventory-installed-distributions-offline","level":"production","path":"production/inventory-installed-distributions-offline/lesson.json","masterChecklist":["Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy","Dependency management: pip, virtual environments, requirements, lockfiles, editable installs"],"status":"complete"}
+    ,{"id":"hold-dependency-release-on-missing-review-evidence","level":"production","path":"production/hold-dependency-release-on-missing-review-evidence/lesson.json","masterChecklist":["Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy"],"status":"complete"}
+    ,{"id":"compare-tested-resolved-set-with-environment","level":"production","path":"production/compare-tested-resolved-set-with-environment/lesson.json","masterChecklist":["Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy","Dependency management: pip, virtual environments, requirements, lockfiles, editable installs"],"status":"complete"}
+    ,{"id":"read-sbom-dependency-relationships-honestly","level":"production","path":"production/read-sbom-dependency-relationships-honestly/lesson.json","masterChecklist":["Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy"],"status":"complete"}
+    ,{"id":"pair-streams-with-strict-zip","level":"core","path":"core/pair-streams-with-strict-zip/lesson.json","masterChecklist":["Collections, iteration, order preservation, unequal lengths and defensive data handling","Sequence operations, iterable protocol, unpacking, starred expressions, enumerate, zip, sorted and reversed"],"status":"complete"}
+    ,{"id":"prove-first-seen-dedup-with-loop-invariant","level":"advanced","path":"advanced/prove-first-seen-dedup-with-loop-invariant/lesson.json","masterChecklist":["Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning","Abstract data types, representation invariants, immutability, defensive copying, design by contract"],"status":"complete"}
+    ,{"id":"derive-leftmost-search-boundary-with-invariant","level":"advanced","path":"advanced/derive-leftmost-search-boundary-with-invariant/lesson.json","masterChecklist":["Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning","Searching, sorting, hashing, heaps, trees, graphs, shortest paths, traversals, union-find, tries"],"status":"complete"}
+    ,{"id":"modular-arithmetic-for-cyclic-indexing","level":"advanced","path":"advanced/modular-arithmetic-for-cyclic-indexing/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic"],"status":"complete"}
+    ,{"id":"count-possible-pairs-with-combinations","level":"advanced","path":"advanced/count-possible-pairs-with-combinations/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic","Complexity analysis: Big-O/Theta/Omega, amortized analysis, time/space trade-offs, empirical benchmarking"],"status":"complete"}
+    ,{"id":"probability-from-counted-sample-space","level":"advanced","path":"advanced/probability-from-counted-sample-space/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic"],"status":"complete"}
+    ,{"id":"relations-versus-total-function-mappings","level":"advanced","path":"advanced/relations-versus-total-function-mappings/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic"],"status":"complete"}
+    ,{"id":"quantifiers-and-empty-input-validation","level":"advanced","path":"advanced/quantifiers-and-empty-input-validation/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic","Defensive conditions, validation order, readable Boolean expressions and edge cases"],"status":"complete"}
+    ,{"id":"induction-for-pair-count-growth","level":"advanced","path":"advanced/induction-for-pair-count-growth/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic","Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning"],"status":"complete"}
+    ,{"id":"boolean-rules-and-de-morgan","level":"advanced","path":"advanced/boolean-rules-and-de-morgan/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic","Defensive conditions, validation order, readable Boolean expressions and edge cases"],"status":"complete"}
+    ,{"id":"set-reconciliation-and-subset-proof","level":"advanced","path":"advanced/set-reconciliation-and-subset-proof/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic","Sets and frozensets: uniqueness, membership, set algebra, hashability"],"status":"complete"}
+    ,{"id":"equivalence-classes-and-partitions","level":"advanced","path":"advanced/equivalence-classes-and-partitions/lesson.json","masterChecklist":["Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic"],"status":"complete"}
+    ,{"id":"amortized-list-growth-and-deque-choice","level":"advanced","path":"advanced/amortized-list-growth-and-deque-choice/lesson.json","masterChecklist":["Complexity analysis: Big-O/Theta/Omega, amortized analysis, time/space trade-offs, empirical benchmarking","Core data structures: arrays/lists, stacks, queues, dequeues, hash tables, linked structures, priority queues, trees, graphs"],"status":"complete"}
+    ,{"id":"temporary-directory-test-isolation","level":"production","path":"production/temporary-directory-test-isolation/lesson.json","masterChecklist":["Unit, integration, end-to-end, regression, property-based, and contract-test concepts","pytest: test discovery, assertions, fixtures, parametrization, mocks, temporary files, coverage"],"status":"complete"}
+    ,{"id":"inject-clock-for-deterministic-tests","level":"production","path":"production/inject-clock-for-deterministic-tests/lesson.json","masterChecklist":["Unit, integration, end-to-end, regression, property-based, and contract-test concepts","unittest, unittest.mock, test doubles, patching namespaces correctly","Automation and scripting: files, APIs, browser/task automation concepts, scheduling, resilience"],"status":"complete"}
   ]
 }

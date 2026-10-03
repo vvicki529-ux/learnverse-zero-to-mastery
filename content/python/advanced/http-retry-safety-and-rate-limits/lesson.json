@@ -1,0 +1,46 @@
+{
+  "id": "http-retry-safety-and-rate-limits",
+  "title": "Retry an HTTP request only when its effect is safe",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["IETF RFC 9110: idempotent methods, Retry-After and 503; IETF RFC 6585: 429 Too Many Requests; Python 3.14 urllib.request timeout/error concepts; reviewed 2026-10-03"],
+  "masterChecklist": ["Sockets, HTTP concepts, REST APIs, requests, retries, idempotency, pagination, rate limits, error handling"],
+  "whyItMatters": "A failed-looking request may have reached the server. Automatically repeating a write can create duplicates, while ignoring a rate limit can make an overloaded service worse.",
+  "simpleExplanation": "Retry means sending the same request again after a failure or temporary response. First ask whether repeating its effect is safe under the API contract. GET is normally read-only, but an API can still have unusual behavior; do not assume a POST is safe to repeat. A server may return 429 for rate limiting or 503 for temporary unavailability. Retry-After may contain seconds or an HTTP date. This small offline policy accepts only a bounded nonnegative seconds value; it stops rather than guessing when a date or invalid value appears. It also stops after a fixed attempt count. For state-changing writes, use only a documented idempotency-key contract and reconciliation strategy; an arbitrary client header by itself does not make a write idempotent.",
+  "mentalModel": "If a courier does not get a receipt, sending the same package again is safe only if the recipient recognizes duplicates or the package is read-only. A wait instruction and maximum number of attempts prevent a delivery storm.",
+  "outcomes": ["State why retry safety depends on method and server contract.", "Keep retries bounded and respect a supported Retry-After value.", "Stop on unknown or unsupported retry guidance instead of guessing.", "Distinguish a policy function from actual network I/O or guaranteed server behavior."],
+  "realWorldExample": {"scenario": "An internal course catalog GET is rate limited while a progress-update POST times out.", "riskWithoutSetup": "The GET hammers the server; a blind POST retry may apply a progress change twice.", "professionalApproach": "Back off for documented retryable reads, cap attempts, log safe diagnostics, and reconcile writes through an API-specific idempotency contract before any retry."},
+  "workedExample": {
+    "filename": "retry_policy.py",
+    "code": "def retry_decision(method, status, attempt, retry_after=None):\n    if method != 'GET' or status not in (429, 503) or attempt >= 3:\n        return ('stop', 0)\n    if retry_after is not None:\n        if not retry_after.isdecimal():\n            return ('stop: unsupported Retry-After', 0)\n        delay = int(retry_after)\n        if delay > 5:\n            return ('stop: delay too long', 0)\n        return ('retry', delay)\n    return ('retry', min(2 ** (attempt - 1), 5))\n\nprint(retry_decision('GET', 429, 1, '2'))\nprint(retry_decision('POST', 503, 1))\nprint(retry_decision('GET', 503, 3))\n",
+    "explanation": ["Only a GET with an explicitly modeled transient/rate-limit status is considered for retry in this teaching policy; other operations stop.", "attempt starts at 1 and the third attempt is the maximum, so retry decisions have a fixed ceiling.", "A numeric Retry-After of at most five seconds is honored. HTTP-date values are legal in the protocol but unsupported here, so the safe result is to stop rather than invent a delay.", "Without a header, the example uses a small bounded exponential delay. This returns a plan; it does not sleep or call a server."],
+    "expectedOutput": "('retry', 2)\n('stop', 0)\n('stop', 0)",
+    "safeExperiment": "Try Retry-After='Fri, 31 Dec 1999 23:59:59 GMT' and confirm the policy stops. A production client would need a verified HTTP-date parser and clock policy, not an improvised split."
+  },
+  "procedure": ["Read the target API contract for status codes, idempotency and rate limits.", "Classify each operation's repeat safety before writing retry code.", "Set a per-request timeout and total attempt/deadline budget.", "Validate Retry-After or apply a documented bounded fallback with jitter for real fleets.", "Record success/failure and reconcile ambiguous write outcomes before retrying any state change."],
+  "commonMistakes": [
+    {"mistake": "Retrying a timed-out POST automatically.", "why": "The server might have applied the write before the response was lost.", "avoid": "Use a documented idempotency key and reconciliation, or stop."},
+    {"mistake": "Treating Retry-After as always an integer.", "why": "HTTP also permits an HTTP-date value.", "avoid": "Parse both forms correctly or stop when the form is unsupported."},
+    {"mistake": "Retrying indefinitely or ignoring rate-limit instructions.", "why": "It can amplify overload and leave the user waiting without bound.", "avoid": "Use a total attempt/time budget and respect validated guidance."}
+  ],
+  "lab": {
+    "title": "Choose a bounded response policy offline",
+    "safety": "Pure local values only; no requests are sent. The in-site concept question checks the decision, while the current browser editor does not execute Python code.",
+    "simulation": {"prompt": "A progress-update POST timed out. The API does not document idempotency keys. What should the client do automatically?", "choices": ["Retry immediately until one response succeeds", "Stop and reconcile whether the update happened before deciding on a retry", "Pretend the request definitely failed"], "correctIndex": 1, "explanation": "A timeout does not prove the server did nothing. Without an idempotency contract, reconcile the outcome before repeating a write."},
+    "starterCode": "def retry_decision(method, status, attempt, retry_after=None):\n    # Only GET with 429/503 before attempt 3; parse bounded numeric delay.\n    pass\n",
+    "guidedSteps": ["Stop for non-GET operations, other statuses or attempt three and later.", "If Retry-After is present, accept only decimal seconds up to five; stop on dates or invalid values.", "Otherwise return a bounded exponential delay.", "Check GET/429 with '2', POST/503, and exhausted attempts.", "Explain what additional contract would be needed before retrying a write."],
+    "checks": ["POST is not automatically retried.", "Attempts have a fixed ceiling.", "Unsupported Retry-After forms stop rather than being guessed.", "No network or real sleep occurs."],
+    "hints": ["if method != 'GET' or status not in (429, 503) or attempt >= 3:", "retry_after.isdecimal()", "return ('retry', min(2 ** (attempt - 1), 5))"],
+    "solution": "def retry_decision(method, status, attempt, retry_after=None):\n    if method != 'GET' or status not in (429, 503) or attempt >= 3:\n        return ('stop', 0)\n    if retry_after is not None:\n        if not retry_after.isdecimal():\n            return ('stop: unsupported Retry-After', 0)\n        delay = int(retry_after)\n        if delay > 5:\n            return ('stop: delay too long', 0)\n        return ('retry', delay)\n    return ('retry', min(2 ** (attempt - 1), 5))\n\nassert retry_decision('GET', 429, 1, '2') == ('retry', 2)\nassert retry_decision('POST', 503, 1) == ('stop', 0)\nassert retry_decision('GET', 503, 3) == ('stop', 0)\nassert retry_decision('GET', 503, 1, 'tomorrow')[0].startswith('stop')\nprint('policy checks passed')\n",
+    "solutionExplanation": "The function keeps policy decisions testable without network side effects. It is deliberately conservative on POST and unsupported Retry-After dates; real integration requires the API's specific contract.",
+    "challenges": ["Predict the decision for GET 404.", "Find the duplicate-write risk in retrying every timeout.", "Experiment with a five-second Retry-After and a six-second one, then explain the product's maximum-wait choice."]
+  },
+  "projectConnection": {"project": "Cross-track catalog client", "milestone": "Add a reviewed retry policy to the local HTTP fixture before any production service call.", "definitionOfDone": "GET retries are bounded, rate-limit guidance is validated, writes are not repeated without a server-specific idempotency contract, and all outcomes are visible."},
+  "assessment": [
+    {"question": "Does a client timeout prove a POST had no effect?", "answer": "No.", "explanation": "The response could be lost after the server applied the write."},
+    {"question": "Can Retry-After be an HTTP date?", "answer": "Yes.", "explanation": "This small policy supports only seconds and stops on unsupported dates."},
+    {"question": "Why limit total retry attempts?", "answer": "To avoid unlimited waiting and amplifying server overload.", "explanation": "A bounded retry budget is part of reliable behavior."}
+  ]
+}

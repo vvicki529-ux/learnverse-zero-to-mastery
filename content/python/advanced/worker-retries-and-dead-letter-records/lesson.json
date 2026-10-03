@@ -1,0 +1,46 @@
+{
+  "id": "worker-retries-and-dead-letter-records",
+  "title": "Keep failed event jobs visible after bounded retries",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: collections.deque and queue concepts; GitHub Docs: webhook best practices and delivery IDs; reviewed 2026-10-03"],
+  "masterChecklist": ["Webhooks, message queues, event-driven concepts, background workers"],
+  "whyItMatters": "A background worker can fail after the receiver acknowledged an event. If it retries forever or discards the job, the user cannot tell what happened.",
+  "simpleExplanation": "A worker takes one accepted job, performs its side effect and records success. If a transient-looking job fails, it can be retried a limited number of times. After the limit, move it to a dead-letter record for inspection and repair rather than hiding it. The job needs a stable delivery ID so a repeated delivery or worker retry does not apply the effect twice. A dead-letter queue is not a magic error fix: it is an auditable state that needs an owner, alert and replay policy. The local example uses deque and sets only to illustrate transitions; a restart erases them. A real service stores queued, in-progress, completed and failed states durably, uses an atomic claim/lease, backs off between retries, and reconciles ambiguous side effects before replay.",
+  "mentalModel": "A work order can move from waiting to done, back to waiting for a limited retry, or to an exception tray. Never make a failed order disappear behind an 'accepted' receipt.",
+  "outcomes": ["Keep a stable job ID across deliveries and retries.", "Bound retry count and record a final failed state.", "Avoid counting an already completed job twice.", "Distinguish this in-memory state-machine exercise from a durable production worker."],
+  "realWorldExample": {"scenario": "A course-progress event is valid, but a downstream scoring operation rejects one course ID.", "riskWithoutSetup": "The worker loops forever, loses the failed job after restart, or applies the update twice when the webhook is redelivered.", "professionalApproach": "Record attempts and failure details safely, retry only under a documented policy, dead-letter terminal failures, alert an owner and make the side effect idempotent by delivery ID."},
+  "workedExample": {
+    "filename": "local_worker_states.py",
+    "code": "from collections import deque\n\nwaiting = deque([{'id': 'd-1', 'attempts': 0}, {'id': 'd-2', 'attempts': 0}])\ncompleted = set()\ndead_letters = []\n\nwhile waiting:\n    job = waiting.popleft()\n    if job['id'] in completed:\n        continue\n    try:\n        if job['id'] == 'd-2':\n            raise ValueError('unknown course')\n        completed.add(job['id'])\n    except ValueError as error:\n        job['attempts'] += 1\n        if job['attempts'] >= 2:\n            dead_letters.append({'id': job['id'], 'reason': str(error)})\n        else:\n            waiting.append(job)\n\nprint(sorted(completed), dead_letters)\n",
+    "explanation": ["The stable ID lets the worker skip already completed work in this local model.", "A known invalid job fails twice. The first failure returns it to the waiting deque; the second creates a visible dead-letter record.", "The reason is a short safe diagnostic, not a secret or complete payload. An operator would need a documented replay/repair path.", "This loop has no delay and no persistent state. It demonstrates transitions, not a production retry schedule or exactly-once effects."],
+    "expectedOutput": "['d-1'] [{'id': 'd-2', 'reason': 'unknown course'}]",
+    "safeExperiment": "Change d-2 to a valid course after one failure in a modified local model; decide how the retry policy knows it is safe to replay."
+  },
+  "procedure": ["Give every accepted job a stable ID and recorded state.", "Before a side effect, define its idempotency/reconciliation behavior.", "After a known retryable failure, increment attempts and schedule bounded backoff.", "After the limit or a permanent failure, record a dead-letter state and alert the responsible owner.", "Make replay an explicit, audited action after the root cause is fixed; do not clear failure history silently."],
+  "commonMistakes": [
+    {"mistake": "Retrying forever in a tight loop.", "why": "It burns capacity and can hammer a failing dependency.", "avoid": "Use capped attempts and scheduled backoff, then dead-letter."},
+    {"mistake": "Removing failed work without a record.", "why": "An acknowledged event becomes invisible and unrepairable.", "avoid": "Keep a terminal failure record with safe diagnostics and an owner."},
+    {"mistake": "Claiming a completed-ID set guarantees exactly-once external effects.", "why": "A crash can occur after the side effect but before recording completion.", "avoid": "Use idempotent downstream operations and reconciliation; persist job state durably."}
+  ],
+  "lab": {
+    "title": "Route a failed course job to a visible dead-letter record",
+    "safety": "Fictional in-memory events only; no network or real service. The page offers an in-site decision check but does not execute Python code.",
+    "simulation": {"prompt": "A job has failed its final allowed attempt. What should the worker do?", "choices": ["Delete it and report success", "Record a dead-letter failure and alert for repair", "Retry forever immediately"], "correctIndex": 1, "explanation": "A terminal failure should remain visible and actionable; retries need a bounded policy."},
+    "starterCode": "from collections import deque\n\nwaiting = deque([{'id': 'd-1', 'attempts': 0}, {'id': 'd-2', 'attempts': 0}])\ncompleted, dead_letters = set(), []\n# Process d-1 successfully. Make d-2 fail twice, then record a dead letter.\n",
+    "guidedSteps": ["Pop one job at a time and skip IDs already completed.", "Make d-1 succeed and add its ID to completed.", "For d-2, catch a known ValueError, increment attempts and requeue only when attempts remains below two.", "On the second failure, append an ID and safe reason to dead_letters.", "Print final states and explain why they vanish when this local process exits."],
+    "checks": ["Completed contains d-1 once.", "d-2 has at most two attempts and ends as one dead letter.", "The retry loop terminates.", "The explanation does not claim durable or exactly-once processing."],
+    "hints": ["job['attempts'] += 1", "if job['attempts'] >= 2: dead_letters.append(...) else: waiting.append(job)", "Use a stable job['id'] for deduplication."],
+    "solution": "from collections import deque\n\nwaiting = deque([{'id': 'd-1', 'attempts': 0}, {'id': 'd-2', 'attempts': 0}])\ncompleted, dead_letters = set(), []\nwhile waiting:\n    job = waiting.popleft()\n    if job['id'] in completed:\n        continue\n    try:\n        if job['id'] == 'd-2':\n            raise ValueError('unknown course')\n        completed.add(job['id'])\n    except ValueError as error:\n        job['attempts'] += 1\n        if job['attempts'] >= 2:\n            dead_letters.append({'id': job['id'], 'reason': str(error)})\n        else:\n            waiting.append(job)\nassert completed == {'d-1'}\nassert dead_letters == [{'id': 'd-2', 'reason': 'unknown course'}]\nprint(sorted(completed), dead_letters)\n",
+    "solutionExplanation": "The known bad job is retried only once, then placed in a visible terminal failure record. This pure state model is not a durable queue or scheduler.",
+    "challenges": ["Predict why a duplicate d-1 job should be skipped.", "Find the infinite-loop risk when attempts never increases.", "Experiment with a third valid job after d-2 to prove one failure does not block all work."]
+  },
+  "projectConnection": {"project": "Cross-track learning-event pipeline", "milestone": "Add bounded worker retry and an auditable failure state after transactional event intake.", "definitionOfDone": "A known failure is visible after a finite number of attempts, valid work continues, and the production plan includes durable state, backoff, replay ownership and side-effect reconciliation."},
+  "assessment": [
+    {"question": "What is a dead-letter record for?", "answer": "Keeping terminally failed work visible for diagnosis and repair.", "explanation": "It is not automatic success or automatic replay."},
+    {"question": "Why use a stable delivery ID in a worker?", "answer": "To correlate retries and recognize already completed work.", "explanation": "The ID supports idempotency and observability."},
+    {"question": "Does this in-memory completed set guarantee exactly-once effects after a crash?", "answer": "No.", "explanation": "It disappears on restart and cannot resolve an action completed just before a crash."}
+  ]
+}

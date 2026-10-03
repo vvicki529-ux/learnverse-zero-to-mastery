@@ -1,0 +1,130 @@
+{
+  "id": "induction-for-pair-count-growth",
+  "title": "Use induction to explain why pair counts grow",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "MIT OpenCourseWare 6.042J Mathematics for Computer Science: Chapter 3, Induction (Fall 2010)",
+    "Python 3.14.8 Standard Library: math.comb and itertools.combinations"
+  ],
+  "masterChecklist": [
+    "Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic",
+    "Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning"
+  ],
+  "whyItMatters": "A few tests can show a counting formula works for small groups, but a product limit needs reasoning that applies as a group grows. Induction explains the pattern for every nonnegative size.",
+  "simpleExplanation": "Suppose every pair of different learners reviews together once, and A-B is the same as B-A. With n learners there are `n*(n-1)//2` pairs. The base case is n=0: there are no pairs and the formula gives zero. For the step, assume the formula is correct for n learners. Adding one learner creates exactly n new pairs—one with each existing learner. The new total is `n*(n-1)/2 + n = n*(n+1)/2`, which is the formula for n+1. That base case plus step is an induction argument. It differs from testing n=0 through n=10: those tests catch implementation mistakes but do not establish every possible n.",
+  "mentalModel": "A row of dominoes falls if the first one falls and each falling domino knocks over the next. Induction similarly needs a base case and a step that carries the claim forward.",
+  "outcomes": [
+    "State the base case and inductive step.",
+    "Explain why adding one learner contributes n new pairs.",
+    "Implement an integer pair-count formula with input validation.",
+    "Distinguish finite tests from a proof of the mathematical formula."
+  ],
+  "realWorldExample": {
+    "scenario": "A peer-review planner must reject group sizes that would create too many candidate pairs.",
+    "riskWithoutSetup": "The team assumes candidate pairs scale linearly and permits a cohort that would create an impractically large review job.",
+    "professionalApproach": "Use the proved n(n-1)/2 count for capacity planning, validate nonnegative integer sizes, and still benchmark the real generation workflow before choosing limits."
+  },
+  "workedExample": {
+    "filename": "pair_growth.py",
+    "code": "from math import comb\n\ndef pair_count(n):\n    if type(n) is not int or n < 0:\n        raise ValueError('n must be a nonnegative integer')\n    return n * (n - 1) // 2\n\nfor n in (0, 1, 4, 5):\n    print(n, pair_count(n), comb(n, 2))\n",
+    "explanation": [
+      "The function's precondition is an exact nonnegative integer; it rejects True as a size.",
+      "The formula counts unordered pairs and uses integer division, so no floating approximation is introduced.",
+      "math.comb(n, 2) is an independent standard-library check for these sample values.",
+      "The induction argument is the general justification: zero pairs initially, then exactly n new pairs when learner n+1 arrives.",
+      "Running four examples helps test code, but the examples alone are not the induction proof."
+    ],
+    "expectedOutput": "0 0 0\n1 0 0\n4 6 6\n5 10 10",
+    "safeExperiment": "Increase n from 5 to 6. Predict that the count rises by exactly five before running."
+  },
+  "procedure": [
+    "Define whether pairs are ordered or unordered and whether self-pairs are excluded.",
+    "State P(n): pair_count(n) = n(n-1)/2 for every nonnegative integer n.",
+    "Prove P(0) directly.",
+    "Assume P(n) and show adding one person creates n and only n new pairs.",
+    "Simplify the resulting expression to the formula for n+1.",
+    "Implement the formula with strict input validation and compare small cases with math.comb.",
+    "Use measured capacity limits for the actual app; the formula counts outputs but does not measure each output's cost."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Testing many sizes and calling that induction.",
+      "why": "A finite test set cannot cover every nonnegative integer.",
+      "avoid": "State base case, assumption and algebraic step explicitly."
+    },
+    {
+      "mistake": "Using n*n/2 or n*(n-1)/2 and leaving a float.",
+      "why": "One expression counts self-pairs incorrectly; the other needlessly produces float results.",
+      "avoid": "Use n*(n-1)//2 for valid integer n."
+    },
+    {
+      "mistake": "Forgetting to define whether A-B and B-A are the same.",
+      "why": "Ordered pairs have a different count.",
+      "avoid": "State the model before applying the formula."
+    }
+  ],
+  "lab": {
+    "title": "Prove and test a candidate-pair budget",
+    "safety": "Uses only integer counts and tiny local test ranges; it does not create large pair lists. The static site guides practice but does not yet execute Python in-browser.",
+    "starterCode": "from math import comb\n\ndef pair_count(n):\n    # Reject invalid n, then return n*(n-1)//2.\n    pass\n\n# Compare values for n from 0 through 8 with comb(n, 2).\n",
+    "guidedSteps": [
+      "Write the nonnegative exact-integer precondition.",
+      "Return n*(n-1)//2.",
+      "Check n=0 and n=1.",
+      "Compare n=0..8 to math.comb(n, 2).",
+      "Write the inductive step in words: one added learner forms n new pairs."
+    ],
+    "checks": [
+      "Rejects negative n, non-integer n and Boolean n.",
+      "Returns 0 for n=0 and n=1.",
+      "Matches math.comb(n, 2) for tested small n.",
+      "Learner can explain base case and inductive step without relying only on tests."
+    ],
+    "hints": [
+      "Use `type(n) is int` to exclude bool.",
+      "`n*(n-1)//2` counts unordered distinct pairs.",
+      "P(n+1) = P(n) + n."
+    ],
+    "solution": "from math import comb\n\ndef pair_count(n):\n    if type(n) is not int or n < 0:\n        raise ValueError('n must be a nonnegative integer')\n    return n * (n - 1) // 2\n\nfor n in range(9):\n    assert pair_count(n) == comb(n, 2)\nfor invalid in (-1, 2.5, True):\n    try:\n        pair_count(invalid)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('invalid size accepted')\nprint('pair-count tests checked')\n",
+    "solutionExplanation": "The tests check the implementation on selected cases. The induction argument supplies the general mathematical reasoning: the base case holds, and each additional learner contributes exactly the number of existing learners in new pairs.",
+    "challenges": [
+      "Predict pair_count(6) and its difference from pair_count(5).",
+      "Find the bug: use `n*n//2`.",
+      "Experiment: derive the ordered-pair count when A-B differs from B-A."
+    ],
+    "simulation": {
+      "prompt": "What must an induction argument include beyond testing small n?",
+      "choices": [
+        "A base case and a step from n to n+1",
+        "Only a larger test range"
+      ],
+      "correctIndex": 0,
+      "explanation": "The base and step establish the pattern for every nonnegative integer in the stated domain."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress peer-review planner",
+    "milestone": "Explain the candidate-pair formula in the planner's capacity notes and reject counts above a measured limit before generating teams.",
+    "definitionOfDone": "The formula is validated for small inputs, its induction argument is documented, and the product limit is justified separately by measurements."
+  },
+  "assessment": [
+    {
+      "question": "How many new unordered pairs does the (n+1)th learner create?",
+      "answer": "n.",
+      "explanation": "The newcomer can pair once with each of the n existing learners."
+    },
+    {
+      "question": "Why are tests for n=0 through n=8 not a complete proof?",
+      "answer": "They cover only finitely many inputs.",
+      "explanation": "Induction provides a base and general step for all nonnegative n."
+    },
+    {
+      "question": "What count does n(n-1)/2 assume?",
+      "answer": "Unordered pairs of distinct people, with no self-pairs.",
+      "explanation": "Changing the model changes the formula."
+    }
+  ]
+}

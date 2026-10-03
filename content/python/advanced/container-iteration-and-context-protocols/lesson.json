@@ -1,0 +1,45 @@
+{
+  "id": "container-iteration-and-context-protocols",
+  "title": "Make an object work with len, indexing, for, and with",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Language Reference: data model, emulating container types and context managers; Python 3.14 built-in iter() and next(); reviewed 2026-10-03"],
+  "masterChecklist": ["Dunder methods: representation, comparison, arithmetic, container, context-manager, iterator protocols"],
+  "whyItMatters": "A small collection can feel natural to callers when len, indexing and a for-loop match its documented behavior. A context manager can make cleanup reliable even when the work fails.",
+  "simpleExplanation": "len(obj) calls __len__; obj[index] calls __getitem__. A for-loop asks iter(obj) for an iterator, then repeatedly asks next(iterator) until StopIteration. A collection can return a fresh iterator from __iter__, often by calling iter on an internal collection. With with manager as value, Python calls __enter__ before the body and __exit__ afterward, including after an error. Returning False from __exit__ lets an exception continue outward; returning True suppresses it, so suppression must be intentional. A resource manager should finish cleanup in __exit__, not wait for garbage collection.",
+  "mentalModel": "Each syntax form is a request at a different service window: length, item, next item, and guaranteed exit. The object should answer only the requests it can support honestly.",
+  "outcomes": ["Implement predictable len, indexing and repeatable iteration.", "Distinguish an iterable collection from a one-pass iterator.", "Write a context manager that releases state after normal and exceptional exits.", "Avoid accidental exception suppression."],
+  "realWorldExample": {"scenario": "A dashboard exposes a read-only snapshot of completed lesson IDs and temporarily marks a report as open while rendering.", "riskWithoutSetup": "Returning the underlying list can let callers mutate internal state. An incomplete cleanup path can leave a report marked open after a render error.", "professionalApproach": "Store a tuple snapshot, return a new iterator per loop, and place state cleanup in __exit__ while allowing unexpected errors to propagate."},
+  "workedExample": {
+    "filename": "progress_protocols.py",
+    "code": "class CompletedLessons:\n    def __init__(self, lesson_ids):\n        self._items = tuple(lesson_ids)\n\n    def __len__(self):\n        return len(self._items)\n\n    def __getitem__(self, index):\n        return self._items[index]\n\n    def __iter__(self):\n        return iter(self._items)\n\nclass ReportSession:\n    def __init__(self):\n        self.active = False\n\n    def __enter__(self):\n        self.active = True\n        return self\n\n    def __exit__(self, exc_type, exc_value, traceback):\n        self.active = False\n        return False\n\nlessons = CompletedLessons(['loops', 'classes'])\nprint(len(lessons), lessons[0], list(lessons))\nprint(list(lessons))  # A second loop starts fresh.\nsession = ReportSession()\ntry:\n    with session as current:\n        print(current.active)\n        raise ValueError('demo failure')\nexcept ValueError:\n    print(session.active)\n",
+    "explanation": ["The tuple snapshot prevents ordinary callers from editing the collection through the original input list or returned items.", "__len__, __getitem__ and __iter__ make built-in syntax work; returning iter(self._items) supplies a fresh iterator each time.", "__enter__ marks the report session active and returns the value bound after as.", "Even when the body raises ValueError, __exit__ clears active and False allows the error to reach the outer handler."],
+    "expectedOutput": "2 loops ['loops', 'classes']\n['loops', 'classes']\nTrue\nFalse",
+    "safeExperiment": "Remove the raise statement and confirm active is still False after the with block."
+  },
+  "procedure": ["Write down whether the object is a reusable collection or a one-pass iterator.", "For a small read-only collection, store a tuple snapshot and implement only the container operations callers need.", "Return a fresh iterator from __iter__ so repeated loops behave predictably.", "For a temporary resource or state, use __enter__ and put cleanup in __exit__.", "Test both a normal with body and a body that raises; do not suppress errors accidentally."],
+  "commonMistakes": [
+    {"mistake": "Returning self from a collection's __iter__ without implementing a correct independent __next__ state.", "why": "Repeated loops can interfere or resume partway through.", "avoid": "Return iter(self._items) for a reusable collection."},
+    {"mistake": "Returning the mutable internal list to callers.", "why": "They can change the collection without going through its rules.", "avoid": "Use a tuple snapshot or a deliberate read-only API."},
+    {"mistake": "Returning True from __exit__ without intending to hide errors.", "why": "The exception is suppressed and failures can look like success.", "avoid": "Return False or None unless a specific exception is intentionally handled."}
+  ],
+  "lab": {
+    "title": "Build a repeatable lesson collection and safe report session",
+    "safety": "Fictional in-memory lesson IDs; no files or external systems.",
+    "starterCode": "class CompletedLessons:\n    def __init__(self, lesson_ids):\n        # Store a tuple snapshot.\n        pass\n\n    # Add __len__, __getitem__, and __iter__.\n\nclass ReportSession:\n    def __init__(self):\n        self.active = False\n\n    # Add __enter__ and __exit__; always clear active.\n",
+    "guidedSteps": ["Store tuple(lesson_ids) so the source list cannot later mutate the snapshot.", "Implement len, indexing and fresh iteration by delegating to the tuple.", "Make __enter__ set active True and return self.", "Make __exit__ set active False and return False.", "Run two loops and an intentional ValueError inside with; catch it outside and inspect active."],
+    "checks": ["len, indexing and list conversion show two expected lesson IDs.", "Two consecutive list conversions have the same result.", "active is True inside with and False after an error.", "The ValueError reaches the outer except block."],
+    "hints": ["self._items = tuple(lesson_ids)", "return iter(self._items)", "Return False from __exit__ after clearing active."],
+    "solution": "class CompletedLessons:\n    def __init__(self, lesson_ids):\n        self._items = tuple(lesson_ids)\n\n    def __len__(self):\n        return len(self._items)\n\n    def __getitem__(self, index):\n        return self._items[index]\n\n    def __iter__(self):\n        return iter(self._items)\n\nclass ReportSession:\n    def __init__(self):\n        self.active = False\n\n    def __enter__(self):\n        self.active = True\n        return self\n\n    def __exit__(self, exc_type, exc_value, traceback):\n        self.active = False\n        return False\n\nlessons = CompletedLessons(['loops', 'classes'])\nprint(len(lessons), lessons[0], list(lessons))\nprint(list(lessons))\nsession = ReportSession()\ntry:\n    with session as current:\n        print(current.active)\n        raise ValueError('demo failure')\nexcept ValueError:\n    print(session.active)\n",
+    "solutionExplanation": "The collection is safely repeatable, and the session's exit path clears state while letting the deliberate error remain visible.",
+    "challenges": ["Predict whether lessons[-1] works when __getitem__ delegates to a tuple.", "Find the bug if __exit__ returns True for every exception.", "Experiment: change the input list after constructing CompletedLessons and see whether the snapshot changes."]
+  },
+  "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Expose a repeatable, read-only progress snapshot and a report session that cleans up after failures.", "definitionOfDone": "Tests cover indexing, two iterations, source-list mutation isolation, normal exit and error exit with the exception preserved."},
+  "assessment": [
+    {"question": "What should a reusable collection's __iter__ return?", "answer": "A fresh iterator over its contents.", "explanation": "Then one loop does not consume the collection for future loops."},
+    {"question": "When does __exit__ run?", "answer": "After the with body, whether it finishes normally or raises.", "explanation": "That is why resource cleanup belongs there."},
+    {"question": "What does returning True from __exit__ do when the body raised?", "answer": "It suppresses the exception.", "explanation": "Use it only when swallowing that error is an intentional part of the contract."}
+  ]
+}

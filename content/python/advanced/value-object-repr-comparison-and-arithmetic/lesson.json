@@ -1,0 +1,45 @@
+{
+  "id": "value-object-repr-comparison-and-arithmetic",
+  "title": "Special methods for readable, comparable, addable values",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Language Reference: data model, basic customization, rich comparison methods, emulating numeric types; reviewed 2026-10-03"],
+  "masterChecklist": ["Dunder methods: representation, comparison, arithmetic, container, context-manager, iterator protocols"],
+  "whyItMatters": "An object that represents a real value can print clearly, compare by that value, and support a meaningful operation. These behaviors must agree with the domain rules or they mislead callers.",
+  "simpleExplanation": "Python calls special methods when you use built-in syntax. repr(obj) calls __repr__ for a developer-facing description. obj1 == obj2 calls __eq__; return NotImplemented for an unsupported operand so Python can try another implementation or fallback. obj1 + obj2 calls __add__, which should make sense for that type. Only define operations that have an obvious meaning. Equality without a matching stable hash usually makes a mutable object unsuitable as a dictionary key; Python makes a class with __eq__ and no __hash__ unhashable by default. An immutable-looking class is not automatically deeply immutable, so design the value contract deliberately.",
+  "mentalModel": "The special methods are adapters between your class and ordinary Python punctuation: repr, == and + each ask the object a different question.",
+  "outcomes": ["Write a useful repr that omits sensitive details.", "Compare two domain values while returning NotImplemented for other types.", "Implement addition that returns a new value rather than mutating an operand.", "Explain why equality and hashing must agree."],
+  "realWorldExample": {"scenario": "A course planner combines two independent study-minute estimates and compares resulting totals.", "riskWithoutSetup": "Identity-based equality would treat equal estimates as different; an arithmetic method that mutates a source estimate could corrupt a plan.", "professionalApproach": "Use a small validated value object with clear representation, value equality, and new-object addition. Keep it unhashable unless a stable hash contract is deliberately implemented."},
+  "workedExample": {
+    "filename": "study_minutes.py",
+    "code": "class StudyMinutes:\n    def __init__(self, amount):\n        if type(amount) is not int or amount < 0:\n            raise ValueError('amount must be a non-negative whole number')\n        self.amount = amount\n\n    def __repr__(self):\n        return f'StudyMinutes({self.amount})'\n\n    def __eq__(self, other):\n        if not isinstance(other, StudyMinutes):\n            return NotImplemented\n        return self.amount == other.amount\n\n    def __add__(self, other):\n        if not isinstance(other, StudyMinutes):\n            return NotImplemented\n        return StudyMinutes(self.amount + other.amount)\n\nfirst = StudyMinutes(20)\nsecond = StudyMinutes(25)\ncombined = first + second\nprint(repr(combined))\nprint(combined == StudyMinutes(45))\nprint(first)\nprint(StudyMinutes.__hash__ is None)\n",
+    "explanation": ["The constructor rejects negative, non-int and boolean amounts before storing state.", "__repr__ produces a clear developer display and contains no learner identity.", "__eq__ and __add__ accept the same domain type and return NotImplemented for another type rather than guessing what the operation means.", "Addition creates a new object; first is still 20. Python disables hashing here because value equality was defined without a hash implementation."],
+    "expectedOutput": "StudyMinutes(45)\nTrue\nStudyMinutes(20)\nTrue",
+    "safeExperiment": "Try StudyMinutes(5) + 3 and inspect the TypeError; do not silently treat a bare integer as an agreed domain unit."
+  },
+  "procedure": ["Define the value and its validity rules first.", "Write __repr__ using safe, useful fields.", "Write __eq__ for the supported type; return NotImplemented for others.", "Write __add__ only if addition has a clear result, preferably a fresh value object.", "Test valid operands, unsupported operands, unchanged inputs, and hash behavior."],
+  "commonMistakes": [
+    {"mistake": "Returning False from every unsupported equality comparison.", "why": "It prevents the other operand's reflected comparison from participating as intended.", "avoid": "Return NotImplemented for a type you do not know how to compare."},
+    {"mistake": "Adding a hash to a mutable value whose equality can change.", "why": "Dictionary and set lookups can fail after mutation changes the hash-related value.", "avoid": "Keep mutable value objects unhashable or design a truly stable immutable hash contract."},
+    {"mistake": "Using __repr__ to print tokens or private user fields.", "why": "Representations often appear in logs and exceptions.", "avoid": "Include only non-sensitive diagnostic fields."}
+  ],
+  "lab": {
+    "title": "Build a safe value object for study time",
+    "safety": "In-memory fictional minute counts only.",
+    "starterCode": "class StudyMinutes:\n    def __init__(self, amount):\n        # Reject negative, boolean or non-integer amounts.\n        pass\n\n    def __repr__(self):\n        pass\n\n    def __eq__(self, other):\n        pass\n\n    def __add__(self, other):\n        pass\n\n# Print the total, equality, original first value, and hashability check.\n",
+    "guidedSteps": ["Validate an exact integer amount that is at least zero.", "Return a safe representation containing only the minute count.", "Implement equality for StudyMinutes and NotImplemented for other types.", "Implement addition that returns a new StudyMinutes.", "Print the combined result, equality with a separately constructed 45-minute value, the unchanged 20-minute source, and whether __hash__ is None."],
+    "checks": ["Output is StudyMinutes(45), True, StudyMinutes(20), True.", "StudyMinutes(True) is rejected.", "Unsupported addition does not silently coerce units.", "No identity or private data appears in repr."],
+    "hints": ["Use type(amount) is not int to reject bool.", "Return NotImplemented when other is not StudyMinutes.", "return StudyMinutes(self.amount + other.amount)"],
+    "solution": "class StudyMinutes:\n    def __init__(self, amount):\n        if type(amount) is not int or amount < 0:\n            raise ValueError('amount must be a non-negative whole number')\n        self.amount = amount\n\n    def __repr__(self):\n        return f'StudyMinutes({self.amount})'\n\n    def __eq__(self, other):\n        if not isinstance(other, StudyMinutes):\n            return NotImplemented\n        return self.amount == other.amount\n\n    def __add__(self, other):\n        if not isinstance(other, StudyMinutes):\n            return NotImplemented\n        return StudyMinutes(self.amount + other.amount)\n\nfirst = StudyMinutes(20)\ncombined = first + StudyMinutes(25)\nprint(repr(combined))\nprint(combined == StudyMinutes(45))\nprint(first)\nprint(StudyMinutes.__hash__ is None)\n",
+    "solutionExplanation": "The operations implement an explicit minute-unit contract and leave the original object untouched. Equality without a matching hash keeps this mutable object out of hash tables.",
+    "challenges": ["Predict whether StudyMinutes(4) == 4 should be True.", "Find the bug in __add__ if it changes self.amount before returning.", "Experiment: catch TypeError from adding a StudyMinutes and a plain int."]
+  },
+  "projectConnection": {"project": "Cross-track study-planning dashboard", "milestone": "Represent planned minutes with validated value semantics before combining daily estimates.", "definitionOfDone": "Tests cover representation, equal values, new-object addition, unchanged operands, invalid input and unsupported operand types."},
+  "assessment": [
+    {"question": "What should an unsupported __add__ operand return from the method?", "answer": "NotImplemented.", "explanation": "Python may try a reflected operation, then raise TypeError if neither operand supports the combination."},
+    {"question": "Why is StudyMinutes unhashable after defining __eq__ without __hash__?", "answer": "Python disables hashing to avoid an inconsistent equality/hash contract.", "explanation": "Mutable equality-relevant state should not usually be a dictionary key."},
+    {"question": "Should __repr__ include a private learner token for convenience?", "answer": "No.", "explanation": "Representations can enter logs or error reports."}
+  ]
+}

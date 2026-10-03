@@ -1,0 +1,126 @@
+{
+  "id": "boolean-rules-and-de-morgan",
+  "title": "Translate a product rule with Boolean logic",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python 3.14 Standard Library: Built-in Types, Truth Value Testing and Boolean Operations",
+    "MIT OpenCourseWare 6.042J Mathematics for Computer Science: Chapter 1, Propositions (Fall 2010)"
+  ],
+  "masterChecklist": [
+    "Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic",
+    "Defensive conditions, validation order, readable Boolean expressions and edge cases"
+  ],
+  "whyItMatters": "Access and data-validation rules often contain several conditions. A misplaced not can reject valid work or accept invalid work. A tiny truth table makes the rule testable before it is embedded in a larger program.",
+  "simpleExplanation": "Suppose a study session is allowed only when it is active AND the learner has consented. If A means active and C means consented, the allow rule is A and C. The reject rule is not (A and C). De Morgan's law says this is the same as (not A) or (not C): reject if either requirement is missing. List all four true/false combinations before coding to check that both versions agree. In Python, and and or short-circuit and can return an operand rather than a bool, so use actual Boolean predicates when a function promises a Boolean result.",
+  "mentalModel": "Two gates are in series: both must be open for entry. To explain why entry failed, it is enough that either gate is closed.",
+  "outcomes": [
+    "Write a positive and negative form of the same two-condition rule.",
+    "Check the rule against all four Boolean input pairs.",
+    "Explain the difference between mathematical Boolean propositions and Python operand-returning and/or expressions.",
+    "Keep policy decisions separate from actual authentication or authorization controls."
+  ],
+  "realWorldExample": {
+    "scenario": "A learning app decides whether to show an optional practice session after a learner has consented.",
+    "riskWithoutSetup": "A developer writes not active and not consented, which rejects only when both requirements are absent; one missing requirement slips through.",
+    "professionalApproach": "Write the allow rule in words, derive the reject rule with De Morgan's law, check every Boolean pair, then keep the policy check beside tested server-side controls where applicable."
+  },
+  "workedExample": {
+    "filename": "session_rule.py",
+    "code": "from itertools import product\n\ndef allowed(active: bool, consented: bool) -> bool:\n    return active and consented\n\ndef rejected(active: bool, consented: bool) -> bool:\n    return (not active) or (not consented)\n\nfor active, consented in product((False, True), repeat=2):\n    print(active, consented, allowed(active, consented), rejected(active, consented))\n    assert rejected(active, consented) == (not allowed(active, consented))\n",
+    "explanation": [
+      "itertools.product generates the four Boolean input pairs, including the two mixed cases that expose a faulty rule.",
+      "allowed requires both conditions. rejected requires at least one condition to be false.",
+      "The assertion compares the negative form with the negation of the positive form for every pair.",
+      "The annotations communicate intended input and output types; Python does not enforce them automatically."
+    ],
+    "expectedOutput": "False False False True\nFalse True False True\nTrue False False True\nTrue True True False",
+    "safeExperiment": "Replace or in rejected with and. Predict which two mixed rows fail the assertion, then restore or."
+  },
+  "procedure": [
+    "Name each condition in a short sentence and decide what True means.",
+    "Write the positive rule first, with parentheses where they aid reading.",
+    "Negate the whole rule; apply not(A and C) = (not A) or (not C).",
+    "Enumerate all four combinations, especially A=True/C=False and A=False/C=True.",
+    "Use explicit input validation at trust boundaries; type annotations alone do not validate input.",
+    "Treat this as a policy-expression exercise, not a complete security control."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Changing not(A and C) into (not A) and (not C).",
+      "why": "That expression is false when exactly one requirement is missing.",
+      "avoid": "Swap and for or when moving not inside, then check mixed truth-table rows."
+    },
+    {
+      "mistake": "Assuming Python's and/or always return True or False.",
+      "why": "They select an operand and may return a string, list or other value.",
+      "avoid": "Use Boolean predicates or explicitly convert at a boundary that requires bool."
+    },
+    {
+      "mistake": "Treating a front-end policy check as a complete access-control system.",
+      "why": "A local display rule does not authenticate a user or enforce permissions elsewhere.",
+      "avoid": "Enforce sensitive policy at the appropriate trusted boundary."
+    }
+  ],
+  "lab": {
+    "title": "Check every case of a release rule",
+    "safety": "Uses only local Boolean values and does not handle accounts, secrets or real permissions. The static site guides this exercise but does not yet run Python in the browser.",
+    "starterCode": "from itertools import product\n\ndef can_release(reviewed, approved):\n    # Return True only if both requirements hold.\n    pass\n\ndef must_hold(reviewed, approved):\n    # Write the equivalent negative rule using not/or.\n    pass\n\n# Check all four Boolean input pairs.\n",
+    "guidedSteps": [
+      "Write can_release as reviewed and approved.",
+      "Write must_hold as (not reviewed) or (not approved).",
+      "Generate all four pairs with itertools.product.",
+      "Assert must_hold is not can_release for each pair and inspect the mixed rows."
+    ],
+    "checks": [
+      "Both True allows release and does not hold it.",
+      "Either missing requirement holds the release.",
+      "The two functions are opposites for every Boolean pair."
+    ],
+    "hints": [
+      "The release rule needs both conditions.",
+      "Negating an AND changes it to an OR of negated parts.",
+      "product((False, True), repeat=2) generates all four cases."
+    ],
+    "solution": "from itertools import product\n\ndef can_release(reviewed, approved):\n    return reviewed and approved\n\ndef must_hold(reviewed, approved):\n    return (not reviewed) or (not approved)\n\nfor reviewed, approved in product((False, True), repeat=2):\n    assert must_hold(reviewed, approved) == (not can_release(reviewed, approved))\nassert can_release(True, True) is True\nassert must_hold(True, False) is True\nprint('four release cases checked')\n",
+    "solutionExplanation": "The positive rule needs both requirements. The negative rule needs at least one missing requirement. Checking the entire two-variable truth table catches the common error of using and between the negated parts.",
+    "challenges": [
+      "Predict the result for reviewed=True and approved=False before running.",
+      "Find the bug: must_hold returns not reviewed and not approved.",
+      "Experiment with a third Boolean requirement and count the truth-table rows."
+    ],
+    "simulation": {
+      "prompt": "Which rule means a release must be held if either review OR approval is missing?",
+      "choices": [
+        "(not reviewed) or (not approved)",
+        "(not reviewed) and (not approved)"
+      ],
+      "correctIndex": 0,
+      "explanation": "Either missing requirement is enough to hold the release."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress release checklist",
+    "milestone": "Express a two-condition release gate in positive and negative forms and attach a four-row truth-table test.",
+    "definitionOfDone": "Both mixed cases are tested, the hold rule is equivalent to negating the release rule, and the team does not mistake the local check for full authorization."
+  },
+  "assessment": [
+    {
+      "question": "What is the equivalent of not(A and C)?",
+      "answer": "(not A) or (not C).",
+      "explanation": "The negation moves to each condition and AND becomes OR."
+    },
+    {
+      "question": "Why test A=True and C=False separately?",
+      "answer": "It reveals a faulty rule that rejects only when both conditions are false.",
+      "explanation": "Mixed rows distinguish OR from AND after negation."
+    },
+    {
+      "question": "Does a bool annotation enforce Boolean arguments at runtime?",
+      "answer": "No.",
+      "explanation": "Annotations convey intent; validation or a static checker is a separate concern."
+    }
+  ]
+}

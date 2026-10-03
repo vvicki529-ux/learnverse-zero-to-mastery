@@ -98,7 +98,8 @@
       "A guard clause can combine checks: if limit < 0 or spent < 0: ...",
       "effective_spent can be spent + pending_charge if include_pending else spent."
     ],
-    "solution": "def remaining_budget(limit: float, spent: float, *, include_pending: bool = False) -> float:\n    if limit < 0 or spent < 0:\n        raise ValueError('limit and spent must be non-negative')\n\n    pending_charge = 5.0 if include_pending else 0.0\n    effective_spent = spent + pending_charge\n    return limit - effective_spent\n"
+    "solution": "def remaining_budget(limit: float, spent: float, *, include_pending: bool = False) -> float:\n    if limit < 0 or spent < 0:\n        raise ValueError('limit and spent must be non-negative')\n\n    pending_charge = 5.0 if include_pending else 0.0\n    effective_spent = spent + pending_charge\n    return limit - effective_spent\n",
+    "solutionExplanation": "The guard clause rejects impossible inputs before calculation. The keyword-only flag makes the optional rule explicit at a call site, and returning a value rather than printing keeps the function reusable and easy to test."
   },
   "projectConnection": {
     "project": "CLI habit tracker",

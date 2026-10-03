@@ -99,7 +99,8 @@
       "An if statement needs an indented block after its colon.",
       "Use f'Delivery fee: ${delivery_fee:.2f}' only for the message, after delivery_fee has been chosen."
     ],
-    "solution": "order_total = 50.00\nmember = True\nthreshold = 50\n\nqualifies = member and order_total >= threshold\n\nif qualifies:\n    delivery_fee = 0\n    message = 'Free delivery applied'\nelse:\n    delivery_fee = 4.99\n    message = f'Delivery fee: ${delivery_fee:.2f}'\n\nprint(message)\n"
+    "solution": "order_total = 50.00\nmember = True\nthreshold = 50\n\nqualifies = member and order_total >= threshold\n\nif qualifies:\n    delivery_fee = 0\n    message = 'Free delivery applied'\nelse:\n    delivery_fee = 4.99\n    message = f'Delivery fee: ${delivery_fee:.2f}'\n\nprint(message)\n",
+    "solutionExplanation": "The named qualifies value makes the business rule readable: a member qualifies at the exact threshold or above. The code chooses a numeric fee first and formats a display message afterwards, making the 50.00 boundary easy to test."
   },
   "projectConnection": {
     "project": "CLI habit tracker",

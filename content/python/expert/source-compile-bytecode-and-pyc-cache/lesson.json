@@ -1,0 +1,45 @@
+{
+  "id": "source-compile-bytecode-and-pyc-cache",
+  "title": "From source to code objects and .pyc cache files",
+  "track": "python",
+  "level": "expert",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: py_compile and dis; Python 3.14 Language Reference: import system and code objects; reviewed 2026-10-03"],
+  "masterChecklist": ["Bytecode, compilation, .pyc, import execution, frames, call stack, namespaces"],
+  "whyItMatters": "An import may create a cache file, yet the module's top-level code can still run. Understanding the separation helps diagnose import side effects and avoid treating a .pyc file as source protection.",
+  "simpleExplanation": "Python source must be compiled into a code object before execution. compile(source, filename, mode) creates such an object without running it. CPython's dis tool can show implementation-specific bytecode instructions from a code object; opcode details can change between releases. py_compile.compile writes a .pyc cache file from a source file, commonly under __pycache__. Compilation does not run the module's top-level statements; a normal first import executes them and usually caches the module object in sys.modules. Later normal imports in that process generally reuse that object. A .pyc cache is a performance artifact, not encrypted source, a safe sandbox, or a reason to rely on stable bytecode across implementations.",
+  "mentalModel": "Source is a recipe, the code object is a prepared set of interpreter instructions, .pyc is a saved preparation, and import is the act of running the recipe's top-level setup and keeping the resulting module on a shelf.",
+  "outcomes": ["Distinguish compile from execute.", "Create a disposable .pyc cache and observe that compile alone did not run the module.", "Observe first-import side effects and same-process module reuse.", "Treat dis output as a CPython diagnostic rather than a portable API."],
+  "realWorldExample": {"scenario": "A study app imports a helper module that unexpectedly prints a demo banner during tests.", "riskWithoutSetup": "A developer blames the __pycache__ folder and deletes it, but the banner is caused by top-level import execution and reappears.", "professionalApproach": "Move demo behavior under a main guard, keep imports side-effect-light, and use disposable compilation/import probes to distinguish caching from execution."},
+  "workedExample": {
+    "filename": "compile_import_probe.py",
+    "code": "import importlib\nimport py_compile\nimport sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\ncode = compile('total = 2 + 3', '<demo>', 'exec')\nprint(type(code).__name__)  # No assignment has run here.\n\nwith TemporaryDirectory() as folder:\n    source = Path(folder) / 'lv_compile_probe.py'\n    source.write_text(\"print('module executed')\\nvalue = 7\\n\", encoding='utf-8')\n    cached = py_compile.compile(str(source), doraise=True)\n    print(Path(cached).suffix, 'lv_compile_probe' in sys.modules)\n    sys.path.insert(0, folder)\n    try:\n        first = importlib.import_module('lv_compile_probe')\n        second = importlib.import_module('lv_compile_probe')\n        print(first is second, second.value)\n    finally:\n        sys.path.remove(folder)\n        sys.modules.pop('lv_compile_probe', None)\n",
+    "explanation": ["compile returns a code object and does not execute the source string.", "py_compile writes a .pyc file in a temporary directory but does not import or run the probe module, so its name is absent from sys.modules.", "The first import executes the top-level print once. The second import reuses the cached module object in the same process.", "The unique module name, temporary directory, and finally cleanup avoid changing a real project; the exact cache filename and bytecode are interpreter-specific."],
+    "expectedOutput": "code\n.pyc False\nmodule executed\nTrue 7",
+    "safeExperiment": "Move the probe print under if __name__ == '__main__': inside the disposable source string and predict whether import prints it."
+  },
+  "procedure": ["Compile a harmless source string and confirm no side effect occurred.", "Create a uniquely named module in a disposable temporary directory.", "Call py_compile.compile and observe a .pyc path without importing the module.", "Temporarily add the directory to sys.path, import twice, and observe one execution plus module reuse.", "Restore sys.path and sys.modules, and never treat cache deletion as a fix for top-level side effects."],
+  "commonMistakes": [
+    {"mistake": "Assuming .pyc creation means top-level module code ran.", "why": "Compilation and execution are different steps.", "avoid": "Observe py_compile and import separately."},
+    {"mistake": "Treating a .pyc file as a secure distribution format.", "why": "It is a bytecode cache, not encryption or a sandbox.", "avoid": "Do not place secrets in distributable code and use real isolation for untrusted execution."},
+    {"mistake": "Depending on exact dis opcode names across Python releases.", "why": "CPython bytecode is explicitly an implementation detail.", "avoid": "Program against language behavior and label version-specific diagnostics."}
+  ],
+  "lab": {
+    "title": "Separate compilation from first import",
+    "safety": "Creates one harmless Python file and .pyc only inside a disposable temporary directory; no network or existing project files.",
+    "starterCode": "import importlib\nimport py_compile\nimport sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\n# Compile a tiny source string, then write/compile/import a unique temporary module.\n",
+    "guidedSteps": ["Call compile on 'total = 2 + 3' and print the returned type name.", "Write a unique temporary module that prints once and defines value = 7.", "Call py_compile.compile with doraise=True and show that the module is not yet in sys.modules.", "Add the folder to sys.path temporarily and import the same name twice.", "Print object identity and value, then restore path and cache entries in finally."],
+    "checks": ["Output shows code, .pyc False, one module executed line, then True 7.", "The temporary module is not run during compilation.", "The second import reuses the same module object.", "Path/cache changes are cleaned up."],
+    "hints": ["type(compile('total = 2 + 3', '<demo>', 'exec')).__name__", "py_compile.compile(str(source), doraise=True)", "importlib.import_module('lv_compile_probe')"],
+    "solution": "import importlib\nimport py_compile\nimport sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\ncode = compile('total = 2 + 3', '<demo>', 'exec')\nprint(type(code).__name__)\nwith TemporaryDirectory() as folder:\n    source = Path(folder) / 'lv_compile_probe.py'\n    source.write_text(\"print('module executed')\\nvalue = 7\\n\", encoding='utf-8')\n    cached = py_compile.compile(str(source), doraise=True)\n    print(Path(cached).suffix, 'lv_compile_probe' in sys.modules)\n    sys.path.insert(0, folder)\n    try:\n        first = importlib.import_module('lv_compile_probe')\n        second = importlib.import_module('lv_compile_probe')\n        print(first is second, second.value)\n    finally:\n        sys.path.remove(folder)\n        sys.modules.pop('lv_compile_probe', None)\n",
+    "solutionExplanation": "The probe makes compilation, cache creation, first-import execution and same-process reuse separate observable events.",
+    "challenges": ["Predict what changes if the print is placed under a main guard.", "Find the misconception in deleting __pycache__ to fix an import-time print.", "Experiment: inspect a simple function with dis locally, but avoid asserting exact opcodes in a portable test."]
+  },
+  "projectConnection": {"project": "Cross-track study CLI", "milestone": "Make reusable modules side-effect-light and put demos under an explicit main guard.", "definitionOfDone": "Tests import helper modules without demo output, direct entry-point execution still works, and no correctness rule depends on a .pyc filename or bytecode sequence."},
+  "assessment": [
+    {"question": "Does compile(source, ..., 'exec') run the source?", "answer": "No; it returns a code object.", "explanation": "Execution is a separate step."},
+    {"question": "What does py_compile.compile create?", "answer": "A bytecode cache file for the source, commonly ending in .pyc.", "explanation": "It does not by itself import and run the module's top-level code."},
+    {"question": "Why can deleting __pycache__ fail to stop an import-time print?", "answer": "The print comes from top-level code executed during import, not from the mere presence of the cache.", "explanation": "Move demo behavior behind an explicit entry point."}
+  ]
+}

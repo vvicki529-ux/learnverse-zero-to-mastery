@@ -1,0 +1,108 @@
+{
+  "id": "csv-normalization-and-data-quality-checks",
+  "title": "CSV normalization and data-quality checks",
+  "track": "python",
+  "level": "intermediate",
+  "status": "complete",
+  "lastReviewed": "2026-10-02",
+  "sources": [
+    "Python standard library: csv",
+    "Python documentation: text encodings and file handling"
+  ],
+  "masterChecklist": [
+    "JSON, CSV, and structured-data shapes; validation and schema thinking",
+    "CSV/JSON schema and data normalization",
+    "Data engineering: CSV/JSON, SQL, pandas/NumPy basics, data quality, pipelines"
+  ],
+  "whyItMatters": "CSV looks simple, but columns can be missing, headers can vary in case or spaces, values may be blank, and a comma inside quoted text is not a new column. Treating it as plain split(',') text creates quiet data errors.",
+  "simpleExplanation": "Use Python's csv module to read CSV because it understands quoting and delimiters. Normalize superficial differences such as surrounding whitespace at the boundary, validate required columns, and keep a clear distinction between a missing value, an empty string, and an invalid value.",
+  "mentalModel": "A CSV import is a stack of paper forms. Normalization straightens harmless formatting differences; validation checks that required fields are actually present before the forms enter the system.",
+  "outcomes": [
+    "Use csv.DictReader for header-based records.",
+    "Normalize a header/value deliberately instead of assuming input is clean.",
+    "Reject missing required columns early.",
+    "Explain why CSV parsing must use the csv module rather than split(',')."
+  ],
+  "realWorldExample": {
+    "scenario": "A study app imports a CSV export with lesson_id and completed_on columns.",
+    "riskWithoutSetup": "One export writes ' lesson_id ' and another has a quoted lesson title containing a comma. A manual split or unchecked dictionary lookup either corrupts rows or fails late.",
+    "professionalApproach": "Read through DictReader, normalize header names once, check required columns, validate each row, and retain a safe row number for feedback."
+  },
+  "workedExample": {"filename":"completed_csv.py","code":"import csv\nfrom io import StringIO\n\ndef load_completed(text):\n    rows = csv.DictReader(StringIO(text))\n    names = {name.strip().lower(): name for name in (rows.fieldnames or [])}\n    required = {'lesson_id', 'completed_on'}\n    if not required <= names.keys():\n        raise ValueError('CSV needs lesson_id and completed_on columns.')\n\n    result = []\n    for number, row in enumerate(rows, start=2):\n        lesson_id = row[names['lesson_id']]\n        completed_on = row[names['completed_on']]\n        if lesson_id is None or completed_on is None:\n            raise ValueError(f'Row {number} is missing a field.')\n        lesson_id, completed_on = lesson_id.strip(), completed_on.strip()\n        if not lesson_id or not completed_on:\n            raise ValueError(f'Row {number} has a blank required field.')\n        result.append({'lesson_id': lesson_id, 'completed_on': completed_on})\n    return result\n\ntext = ' lesson_id ,completed_on\\nloops,2026-10-02\\n'\nprint(load_completed(text))\n","explanation":["DictReader uses the first CSV row as labels and respects CSV quoting.","The normalized-to-original header map accepts harmless header spaces while preserving the actual DictReader keys.","A short row may contain None because DictReader fills missing fields; check before calling strip.","Invalid rows receive a safe row number and reason instead of being silently discarded."],"expectedOutput":"[{'lesson_id': 'loops', 'completed_on': '2026-10-02'}]","safeExperiment":"Try the header 'LESSON_ID,completed_on' and then a row with a missing second field; predict both results."},
+  "procedure": [
+    "Specify required columns and allowed value shapes before importing.",
+    "Use csv.DictReader with an explicit encoding when opening real text files.",
+    "Normalize header spelling and whitespace once at the boundary.",
+    "Validate each row and report safe row numbers/reasons for rejected records.",
+    "Keep original raw data only when retention is necessary and privacy-safe."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Parsing CSV with line.split(',').",
+      "why": "Quoted commas, newlines, and delimiters make the apparent columns incorrect.",
+      "avoid": "Use csv.reader or csv.DictReader."
+    },
+    {
+      "mistake": "Treating blank, missing, and invalid values as the same thing.",
+      "why": "The repair action may differ for each condition.",
+      "avoid": "Define and validate each state deliberately."
+    },
+    {
+      "mistake": "Assuming headers always use exact spelling and whitespace.",
+      "why": "Exports from tools and manual edits often vary superficially.",
+      "avoid": "Normalize carefully, then validate the required normalized set."
+    }
+  ],
+  "lab": {
+    "title": "Normalize fictional CSV lesson IDs",
+    "safety": "Uses a short in-memory CSV string only.",
+    "starterCode": "import csv\nfrom io import StringIO\n\ndef lesson_ids(text):\n    # Return non-empty lesson IDs with surrounding spaces removed.\n    pass\n\nprint(lesson_ids('lesson_id\\n loops \\n\\nfiles\\n'))\n",
+    "guidedSteps": [
+      "Create csv.DictReader(StringIO(text)).",
+      "Loop over its rows.",
+      "Read row['lesson_id'] and call strip().",
+      "Keep only non-empty values.",
+      "Return the accumulated list."
+    ],
+    "checks": [
+      "Uses csv.DictReader rather than split(',').",
+      "Returns loops and files without spaces.",
+      "Excludes the blank row.",
+      "Preserves the input order."
+    ],
+    "hints": [
+      "rows = csv.DictReader(StringIO(text))",
+      "value = row['lesson_id'].strip()",
+      "if value: result.append(value)"
+    ],
+    "solution": "import csv\nfrom io import StringIO\n\ndef lesson_ids(text):\n    rows = csv.DictReader(StringIO(text))\n    result = []\n    for row in rows:\n        value = row['lesson_id'].strip()\n        if value:\n            result.append(value)\n    return result\n\nprint(lesson_ids('lesson_id\\n loops \\n\\nfiles\\n'))\n",
+    "solutionExplanation": "DictReader keeps parsing rules in the csv module. The code normalizes only harmless surrounding spaces and intentionally ignores blank IDs.",
+    "challenges": [
+      "Predict what a manual split(',') does to a quoted comma in a CSV field.",
+      "Find the bug in code that calls strip on a missing header value without validation.",
+      "Experiment: require completed_on too and return rejected row numbers for incomplete rows."
+    ]
+  },
+  "projectConnection": {
+    "project": "Local progress CSV importer",
+    "milestone": "Import a small CSV progress export with required-column checks, value normalization, and safe row-level feedback.",
+    "definitionOfDone": "Quoted CSV values parse correctly, required headers are checked before processing, blank IDs are not accepted, and rejected rows have a clear reason."
+  },
+  "assessment": [
+    {
+      "question": "Why use csv.DictReader?",
+      "answer": "It parses CSV format correctly and provides records by header name.",
+      "explanation": "It handles quoting and delimiters that manual splitting gets wrong."
+    },
+    {
+      "question": "What should happen before processing rows?",
+      "answer": "Validate that required columns exist after any intentional normalization.",
+      "explanation": "This prevents confusing failures later in the import."
+    },
+    {
+      "question": "Why distinguish missing and blank values?",
+      "answer": "They can signal different data-quality problems and require different corrections.",
+      "explanation": "A clear importer preserves that meaning instead of silently guessing."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "data-versus-nondata-descriptor-lookup",
+  "title": "Why some descriptors override instance values and others do not",
+  "track": "python",
+  "level": "expert",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Descriptor HOWTO: descriptor protocol, instance lookup and data/non-data descriptor precedence; reviewed 2026-10-03"],
+  "masterChecklist": ["Descriptors, decorators, metaclasses, class creation hooks — advanced/internals"],
+  "whyItMatters": "A property may keep working even when an object has a same-named entry in its instance dictionary, while a computed attribute may be shadowed. This lookup rule explains surprising framework and ORM behavior.",
+  "simpleExplanation": "A descriptor is stored on a class and defines __get__, __set__, or __delete__. A data descriptor defines __set__ or __delete__; when ordinary instance lookup finds it, it has priority over a same-named entry in the instance dictionary. A non-data descriptor defines __get__ only; a same-named instance entry wins instead. Plain functions are non-data descriptors, which is why an instance can shadow a method. The simplified order for ordinary instance lookup is: data descriptor, instance dictionary, non-data descriptor, ordinary class attribute, then __getattr__ if present. Custom __getattribute__ and metaclass behavior can change how lookup works, so this is the normal rule, not a promise for every possible object.",
+  "mentalModel": "A data descriptor is a guarded service desk that takes priority. A non-data descriptor is a fallback sign behind the object's own notebook entry.",
+  "outcomes": ["Identify data versus non-data descriptors by their methods.", "Predict which value wins when an instance dictionary has the same name.", "Explain how functions become bound methods and can be shadowed on an instance.", "Avoid confusing a naming convention with lookup priority."],
+  "realWorldExample": {"scenario": "A model object has a validated percent property and a computed display label.", "riskWithoutSetup": "A developer writes directly to obj.__dict__ and assumes both values will override class behavior in the same way.", "professionalApproach": "Use public APIs rather than tampering with __dict__; understand precedence when debugging a framework's managed fields."},
+  "workedExample": {
+    "filename": "descriptor_priority.py",
+    "code": "class NonDataLabel:\n    def __get__(self, instance, owner):\n        return 'computed' if instance is not None else self\n\nclass DataPercent:\n    def __get__(self, instance, owner):\n        return instance._percent if instance is not None else self\n\n    def __set__(self, instance, value):\n        if type(value) is not int or not 0 <= value <= 100:\n            raise ValueError('percent must be 0..100')\n        instance._percent = value\n\nclass Progress:\n    label = NonDataLabel()\n    percent = DataPercent()\n\n    def __init__(self):\n        self.percent = 25\n\nitem = Progress()\nitem.__dict__['label'] = 'instance label'\nitem.__dict__['percent'] = 999  # Deliberate diagnostic bypass, not valid app code.\nprint(item.label)\nprint(item.percent)\nprint(isinstance(Progress.label, NonDataLabel))\n",
+    "explanation": ["NonDataLabel only defines __get__, so the instance's label entry wins and prints instance label.", "DataPercent defines __set__ as well, so it wins over the deliberately injected percent dictionary entry and returns the validated backing value 25.", "Writing directly to __dict__ bypasses normal validation and is shown only to reveal precedence. Never treat that as a production update path.", "Class-level access returns the descriptor itself, allowing introspection without calling it for an instance."],
+    "expectedOutput": "instance label\n25\nTrue",
+    "safeExperiment": "Remove the two __dict__ assignments, then predict label and percent. Do not build app logic around direct dictionary injection."
+  },
+  "procedure": ["Locate the attribute in the class, not only on the instance.", "Check whether its class implements __set__ or __delete__ to classify it as a data descriptor.", "For normal lookup, compare descriptor priority with a same-named instance dictionary entry.", "Use public assignment through the descriptor for real updates.", "Use direct __dict__ manipulation only as a controlled learning demonstration, never to bypass invariants."],
+  "commonMistakes": [
+    {"mistake": "Assuming every descriptor beats an instance attribute.", "why": "Only data descriptors have that priority in ordinary instance lookup.", "avoid": "Check for __set__ or __delete__; __get__ alone makes a non-data descriptor."},
+    {"mistake": "Treating obj.__dict__ injection as a normal setter.", "why": "It bypasses validation and can leave contradictory state.", "avoid": "Use the public property or descriptor assignment path."},
+    {"mistake": "Assuming this exact order holds after overriding __getattribute__.", "why": "Custom lookup code can change behavior.", "avoid": "State the ordinary lookup rule and inspect custom overrides separately."}
+  ],
+  "lab": {
+    "title": "Predict two different descriptor lookup results",
+    "safety": "Only fictional in-memory objects; direct __dict__ injection is a controlled diagnostic and not a recommended update path.",
+    "starterCode": "class NonDataLabel:\n    def __get__(self, instance, owner):\n        return 'computed' if instance is not None else self\n\nclass DataPercent:\n    # Add __get__ and validated __set__.\n    pass\n\nclass Progress:\n    label = NonDataLabel()\n    percent = DataPercent()\n\n# Create Progress, set percent normally, inject same-named dict entries for comparison.\n",
+    "guidedSteps": ["Implement DataPercent.__get__ returning _percent for an instance and self for class access.", "Implement __set__ validating an exact integer from 0 to 100.", "Initialize a Progress instance with percent 25 using normal assignment.", "For diagnostic comparison only, put label and percent entries directly into the instance dictionary.", "Print both lookup results and class-level descriptor identity."],
+    "checks": ["Outputs instance label, 25, True.", "The data descriptor's __set__ enforces normal assignment.", "The non-data descriptor loses to the instance label entry.", "The lesson does not recommend direct __dict__ mutation in applications."],
+    "hints": ["A data descriptor has __set__ in addition to __get__.", "Read instance._percent in __get__.", "For class access, if instance is None: return self."],
+    "solution": "class NonDataLabel:\n    def __get__(self, instance, owner):\n        return 'computed' if instance is not None else self\n\nclass DataPercent:\n    def __get__(self, instance, owner):\n        return instance._percent if instance is not None else self\n\n    def __set__(self, instance, value):\n        if type(value) is not int or not 0 <= value <= 100:\n            raise ValueError('percent must be 0..100')\n        instance._percent = value\n\nclass Progress:\n    label = NonDataLabel()\n    percent = DataPercent()\n\n    def __init__(self):\n        self.percent = 25\n\nitem = Progress()\nitem.__dict__['label'] = 'instance label'\nitem.__dict__['percent'] = 999\nprint(item.label)\nprint(item.percent)\nprint(isinstance(Progress.label, NonDataLabel))\n",
+    "solutionExplanation": "The same-named dictionary entry shadows only the non-data descriptor. The data descriptor keeps priority and reads validated backing state.",
+    "challenges": ["Predict both values without dictionary injection.", "Find the broken invariant if code reads vars(item)['percent'] instead of item.percent.", "Experiment: assign item.percent = 101 normally and confirm ValueError."]
+  },
+  "projectConnection": {"project": "Cross-track progress domain model", "milestone": "Document which managed fields use data-descriptor precedence and prohibit direct state-dictionary writes.", "definitionOfDone": "Tests show normal assignment validation, class-level access and the distinct shadowing behavior without shipping a bypass path."},
+  "assessment": [
+    {"question": "Which descriptor wins over a same-named instance dictionary entry?", "answer": "A data descriptor.", "explanation": "It defines __set__ or __delete__ and has higher ordinary lookup priority."},
+    {"question": "Can an instance entry shadow a descriptor that only has __get__?", "answer": "Yes.", "explanation": "That is a non-data descriptor, which follows the instance dictionary in ordinary lookup."},
+    {"question": "Should application code set obj.__dict__['percent'] to bypass a property?", "answer": "No.", "explanation": "It bypasses the validated public assignment path and creates contradictory state."}
+  ]
+}

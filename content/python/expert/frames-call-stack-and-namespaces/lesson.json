@@ -1,0 +1,45 @@
+{
+  "id": "frames-call-stack-and-namespaces",
+  "title": "Read the call stack without confusing local and global names",
+  "track": "python",
+  "level": "expert",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Tutorial: scopes and namespaces; Python 3.14 Standard Library: traceback.extract_stack, locals() and globals(); Python 3.14 Language Reference: frame objects; reviewed 2026-10-03"],
+  "masterChecklist": ["Bytecode, compilation, .pyc, import execution, frames, call stack, namespaces"],
+  "whyItMatters": "A traceback lists the functions that led to an error. Understanding local, enclosing, global and built-in names helps you find where a wrong value came from without assuming every name lives in one shared dictionary.",
+  "simpleExplanation": "Each active function call has an execution frame with its own local namespace and a link to the calling context. The call stack is the chain of active calls. traceback.extract_stack() gives safe frame summaries for display; a traceback after an exception records the path to failure. A local name belongs to one call; an inner function may refer to a name from an enclosing function; a global name belongs to the module; built-ins are searched after the module namespace. Assignment to a name normally binds in the innermost scope unless global or nonlocal is declared. locals() and globals() expose mappings for inspection, but do not make application logic depend on mutating locals(); some values may be sensitive, so do not dump these mappings into logs. Frame summaries are diagnostic data, not proof of a fixed bytecode layout.",
+  "mentalModel": "Each function call is a desk with local notes. An inner desk can read a note from an enclosing desk, and every desk can see the module noticeboard and built-in handbook. The stack trace is the route through those desks.",
+  "outcomes": ["Identify caller and callee names in a captured stack summary.", "Distinguish local and module namespaces.", "Explain an enclosing name read without mistaking it for a global.", "Avoid logging complete locals or relying on frame implementation details."],
+  "realWorldExample": {"scenario": "A score formatter raises because a nested helper received an unexpected value.", "riskWithoutSetup": "A developer searches only module globals and misses that the value came from the enclosing call; dumping full locals may expose private learner data.", "professionalApproach": "Read the stack function names and relevant safe arguments, then reproduce with fictional values rather than logging entire frame dictionaries."},
+  "workedExample": {
+    "filename": "stack_namespaces.py",
+    "code": "import traceback\n\nmodule_label = 'course'\n\ndef outer():\n    topic = 'loops'\n\n    def inner():\n        print(topic, module_label)\n        names = [entry.name for entry in traceback.extract_stack()[-3:]]\n        print(names)\n        print('topic' in locals(), 'topic' in globals())\n\n    inner()\n\nouter()\n",
+    "explanation": ["inner reads topic from its enclosing outer call and module_label from the module namespace.", "extract_stack returns summaries; the last three names are the module entry, outer and inner for this direct script run.", "Because topic is referenced, the inner call has access to that enclosed value; it is not a module global. The boolean check shows topic in inner locals for this Python execution and absent from globals.", "Do not print real locals() values from a learner or production frame; they may contain secrets or personal data."],
+    "expectedOutput": "loops course\n['<module>', 'outer', 'inner']\nTrue False",
+    "safeExperiment": "Move topic to the module scope and predict the final booleans. Keep printed values fictional."
+  },
+  "procedure": ["Read the traceback or stack summaries from the most recent call back to its caller.", "Identify which values are parameters/locals, enclosed names, module globals or built-ins.", "Use a small fictional reproduction to inspect the relevant names only.", "Avoid mutating the mapping returned by locals() as an application technique.", "Do not retain live frames or dump all locals into logs; use concise, safe diagnostic fields."],
+  "commonMistakes": [
+    {"mistake": "Assuming an inner function's referenced topic is a global.", "why": "It can come from an enclosing function's scope.", "avoid": "Trace lexical nesting and check where the name is bound."},
+    {"mistake": "Assigning to a name in a function and expecting it to change an enclosing binding automatically.", "why": "Ordinary assignment creates a local binding unless nonlocal or global is declared.", "avoid": "Return a result or use an explicit nonlocal/global declaration only when that shared mutation is justified."},
+    {"mistake": "Logging every frame local to debug a crash.", "why": "It may expose tokens or personal data and retain large objects.", "avoid": "Log selected safe identifiers and use fictional reproductions."}
+  ],
+  "lab": {
+    "title": "Trace a nested call and classify two names",
+    "safety": "Only fictional strings and stack summaries; do not log real frame-local data.",
+    "starterCode": "import traceback\n\nmodule_label = 'course'\n\ndef outer():\n    topic = 'loops'\n\n    def inner():\n        # Print the two labels, last three stack function names, and namespace checks.\n        pass\n\n    inner()\n\nouter()\n",
+    "guidedSteps": ["Read topic and module_label from inner and print them.", "Use traceback.extract_stack() and print the last three .name values.", "Print whether topic is in locals() and in globals().", "Explain why topic is enclosing rather than module-global.", "Keep diagnostic output restricted to fictional names and values."],
+    "checks": ["Outputs loops course, ['<module>', 'outer', 'inner'], True False in direct script execution.", "No eval, exec or live-frame retention is used.", "The local/enclosing versus global difference is explained.", "No full local mapping is printed."],
+    "hints": ["[entry.name for entry in traceback.extract_stack()[-3:]]", "'topic' in locals()", "'topic' in globals()"],
+    "solution": "import traceback\n\nmodule_label = 'course'\n\ndef outer():\n    topic = 'loops'\n\n    def inner():\n        print(topic, module_label)\n        names = [entry.name for entry in traceback.extract_stack()[-3:]]\n        print(names)\n        print('topic' in locals(), 'topic' in globals())\n\n    inner()\n\nouter()\n",
+    "solutionExplanation": "The stack summary identifies three active calls. The inner function reads topic from the enclosed outer scope, while module_label comes from module globals.",
+    "challenges": ["Predict names if outer calls a third helper before inner.", "Find the security issue in print(locals()) for a production request.", "Experiment: define topic at module scope instead and compare namespace checks."]
+  },
+  "projectConnection": {"project": "Cross-track learner progress diagnostics", "milestone": "Make a safe fictional failure reproduction and document the stack path and source of one wrong value.", "definitionOfDone": "A diagnostic report names the relevant functions and safe inputs without printing full locals or depending on CPython-specific bytecode."},
+  "assessment": [
+    {"question": "What does a stack summary show?", "answer": "The active call path, including function names and source positions.", "explanation": "It helps locate where a failing value was passed or used."},
+    {"question": "Is topic in this example a module global?", "answer": "No; it is defined in outer and read by inner as an enclosing name.", "explanation": "Lexical nesting provides that access."},
+    {"question": "Why avoid printing locals() in production logs?", "answer": "It may expose private values and large objects.", "explanation": "Select only safe diagnostic fields instead."}
+  ]
+}

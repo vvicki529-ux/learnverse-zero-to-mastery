@@ -1,0 +1,50 @@
+{
+  "id": "inject-clock-for-deterministic-tests",
+  "title": "Make time-based behavior testable with an injected clock",
+  "track": "python",
+  "level": "production",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: datetime.now and timezone-aware datetime objects", "Python 3.14 Standard Library: unittest.mock concepts for controlled dependencies"],
+  "masterChecklist": ["Unit, integration, end-to-end, regression, property-based, and contract-test concepts", "unittest, unittest.mock, test doubles, patching namespaces correctly", "Automation and scripting: files, APIs, browser/task automation concepts, scheduling, resilience"],
+  "whyItMatters": "A test that reads the real clock can pass in the morning and fail at midnight. Passing a clock function into the code lets the test choose an exact instant and exercise deadline boundaries reliably.",
+  "simpleExplanation": "A clock is a dependency: a function that returns the current time. Instead of calling datetime.now() deep inside your business rule, accept a clock callable and ask it for the time. Production can pass a function that returns datetime.now(timezone.utc); a test can pass a tiny lambda that returns a fixed aware UTC datetime. The rule can then compare two moments with known values. This pattern is dependency injection: the caller supplies a boundary the code needs. It is often simpler than patching a global name.",
+  "mentalModel": "A practice exam uses a controllable wall clock so you can replay exactly the moment before and after the deadline.",
+  "outcomes": ["Identify the real clock as a nondeterministic dependency.", "Pass a clock callable into a function.", "Use aware UTC datetime values for this exercise.", "Test just-before, exactly-at and just-after deadline cases."],
+  "realWorldExample": {
+    "scenario": "A study assignment closes at a published UTC deadline.",
+    "riskWithoutSetup": "A test compares to the real clock and becomes flaky near the deadline or when machines use different local time zones.",
+    "professionalApproach": "Define the boundary rule in words, inject an aware UTC clock, and test instants on both sides of the deadline. Keep actual user-facing timezone presentation as a separate concern."
+  },
+  "workedExample": {
+    "filename": "deadline.py",
+    "code": "from datetime import datetime, timedelta, timezone\n\ndef is_open(deadline, clock):\n    now = clock()\n    if now.tzinfo is None or deadline.tzinfo is None:\n        raise ValueError('aware datetimes required')\n    return now < deadline\n\ndeadline = datetime(2026, 10, 5, 12, 0, tzinfo=timezone.utc)\nfixed = deadline - timedelta(seconds=1)\nprint(is_open(deadline, lambda: fixed))\nprint(is_open(deadline, lambda: deadline))\n",
+    "explanation": ["clock is called once so this decision uses one instant.", "The example rejects naive datetimes because their intended timezone is ambiguous.", "A moment one second before the deadline is open.", "At the exact deadline the result is false because the contract uses a strict less-than comparison.", "Production can pass lambda: datetime.now(timezone.utc); this example uses fixed values so its output is repeatable."],
+    "expectedOutput": "True\nFalse",
+    "safeExperiment": "Change the comparison to <= and predict the exact-deadline output before running."
+  },
+  "procedure": ["State the boundary rule: open strictly before deadline, closed at and after it.", "Represent both the deadline and returned clock value as aware datetimes.", "Pass a clock callable rather than reading time inside the rule.", "Call the clock once per decision.", "Test before, equal and after instants with fixed values.", "Use a real aware UTC clock at the application boundary; do not assume annotations validate timezone awareness."],
+  "commonMistakes": [
+    {"mistake": "Calling datetime.now() directly inside every testable rule.", "why": "Tests depend on the current wall clock and can become flaky.", "avoid": "Inject a clock or a fixed now value at the boundary."},
+    {"mistake": "Mixing naive local and aware UTC datetimes.", "why": "The values have different interpretation and Python may reject an ordering comparison.", "avoid": "Choose and validate an aware time convention for the rule."},
+    {"mistake": "Failing to define the exact deadline case.", "why": "Using < versus <= changes whether an action at the deadline is accepted.", "avoid": "Write an exact-boundary test and document the policy."}
+  ],
+  "lab": {
+    "title": "Test a review-window deadline",
+    "safety": "Uses fixed in-memory datetime values only. The static site guides practice but does not yet execute Python in-browser.",
+    "starterCode": "from datetime import datetime, timedelta, timezone\n\ndef can_submit(deadline, clock):\n    # Reject naive times. Return True only before deadline.\n    pass\n\n# Test before, equal and after deadline.\n",
+    "guidedSteps": ["Call clock once and save its returned value.", "Reject a naive now or deadline with ValueError.", "Return now < deadline.", "Build an aware UTC deadline and fixed clocks before, equal and after it.", "Assert each expected result and add a naive-input rejection check."],
+    "checks": ["Calls the clock once.", "Before is open; equal and after are closed.", "Rejects naive datetimes.", "Does not read the real clock in the tests."],
+    "hints": ["now = clock()", "if now.tzinfo is None or deadline.tzinfo is None: raise ValueError(...)", "Use deadline - timedelta(seconds=1) for the before case."],
+    "solution": "from datetime import datetime, timedelta, timezone\n\ndef can_submit(deadline, clock):\n    now = clock()\n    if now.tzinfo is None or deadline.tzinfo is None:\n        raise ValueError('aware datetimes required')\n    return now < deadline\n\ndeadline = datetime(2026, 10, 5, 12, 0, tzinfo=timezone.utc)\nassert can_submit(deadline, lambda: deadline - timedelta(seconds=1)) is True\nassert can_submit(deadline, lambda: deadline) is False\nassert can_submit(deadline, lambda: deadline + timedelta(seconds=1)) is False\ntry:\n    can_submit(deadline, lambda: datetime(2026, 10, 5, 11, 0))\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('naive clock accepted')\nprint('deadline boundary tests passed')\n",
+    "solutionExplanation": "The injected fixed clock makes all three boundary cases reproducible. The function validates that both values have timezone information before comparing them and reads the clock only once.",
+    "challenges": ["Predict the result exactly at the deadline.", "Find the bug: call clock twice, once for validation and again for comparison.", "Experiment with a fixed aware time in a non-UTC offset and explain why it can still represent the same instant."],
+    "simulation": {"prompt": "Why inject a fixed clock in a deadline test?", "choices": ["To make the tested instant repeatable", "To make the real clock run faster"], "correctIndex": 0, "explanation": "A fixed clock removes wall-clock timing from the test."}
+  },
+  "projectConnection": {"project": "Study-progress submission service", "milestone": "Make the deadline rule use an injected clock and add before/equal/after boundary tests.", "definitionOfDone": "The rule has a documented exact-deadline policy, deterministic tests, aware datetime validation and one clock read per decision."},
+  "assessment": [
+    {"question": "What is the dependency being injected?", "answer": "A callable that returns the current datetime.", "explanation": "The caller can supply a real or fixed clock."},
+    {"question": "Why test the exact deadline instant?", "answer": "It distinguishes a strict-before rule from an inclusive deadline rule.", "explanation": "A one-character comparison change alters product behavior."},
+    {"question": "Why avoid mixing naive and aware datetimes here?", "answer": "Naive values do not unambiguously identify an instant or timezone.", "explanation": "An explicit aware-time convention makes comparisons and tests clearer."}
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "gil-builds-and-portable-thread-safety",
+  "title": "Understand the GIL without assuming threads are safe",
+  "track": "python",
+  "level": "expert",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 documentation: Free-threading Python HOWTO; threading — Thread-based parallelism; sys._is_gil_enabled and sysconfig.get_config_var"],
+  "masterChecklist": ["CPython GIL, implementation portability, when details are CPython-specific"],
+  "whyItMatters": "A course-progress service may update shared counters from several workers. Assuming that the GIL makes a read-modify-write operation safe can lose updates, and assuming that every CPython build has the same GIL behavior is now outdated.",
+  "simpleExplanation": "The global interpreter lock (GIL) is a CPython implementation mechanism, not a Python-language promise that your program's shared data is safe. A normal GIL-enabled CPython build generally executes Python bytecode in only one thread at a time. CPython also offers optional free-threaded builds, starting with Python 3.13, that can run Python threads in parallel when the GIL is disabled. Support in the installed build and the GIL's current runtime state are different questions. Some imported C extensions can cause a free-threaded process to enable the GIL. Other Python implementations may have different behavior. Use a lock for a shared multi-step update regardless of build; use measured workloads to choose threads, processes, or another architecture.",
+  "mentalModel": "The GIL is a runtime traffic rule, not a lock around your application's entire account balance. A free-threaded build changes that traffic rule; your own shared-state rules still need explicit protection.",
+  "outcomes": ["Distinguish the Python language from a CPython build detail.", "Distinguish free-threaded build support from current GIL state.", "Protect a shared update with threading.Lock instead of relying on incidental interpreter behavior."],
+  "realWorldExample": {"scenario": "Two background threads record completed lessons into one in-memory count.", "riskWithoutSetup": "A multi-step read-then-write update can race; a passing test on one interpreter does not prove safety on another build.", "professionalApproach": "Place the update in a short critical section guarded by a lock; test the required target builds, and measure throughput separately from correctness."},
+  "workedExample": {
+    "filename": "inspect_thread_runtime.py",
+    "code": "import platform\nimport sys\nimport sysconfig\n\nimplementation = platform.python_implementation()\nprint('implementation:', implementation)\nif implementation == 'CPython':\n    free_threaded_build = sysconfig.get_config_var('Py_GIL_DISABLED') == 1\n    print('free-threaded build:', free_threaded_build)\n    probe = getattr(sys, '_is_gil_enabled', None)\n    if callable(probe):\n        print('GIL currently enabled:', probe())\n    else:\n        print('GIL state probe unavailable on this version')\nelse:\n    print('CPython-specific GIL checks not applicable')\n",
+    "explanation": ["platform.python_implementation() identifies the interpreter, so CPython-only checks are not treated as universal Python rules.", "Py_GIL_DISABLED asks whether this CPython build supports free-threading; it does not report the current GIL state.", "The documented but underscored sys._is_gil_enabled() probe reports current state when this interpreter exposes it. The fallback handles older versions and other runtimes.", "Neither result makes unsynchronized shared writes safe."],
+    "expectedOutput": "Prints the local implementation and build capability; current-GIL line or unavailable notice depends on the installed Python version and build.",
+    "safeExperiment": "Compare the result on another local Python installation if you have one. Do not infer application thread safety from the probe."
+  },
+  "procedure": ["Check the interpreter and supported build before making CPython-specific statements.", "Use the runtime probe only if present, and do not treat build capability as current state.", "Identify mutable state shared between threads.", "Guard multi-step updates with threading.Lock, or avoid shared mutation.", "Test correctness first; benchmark CPU and I/O workloads on the target runtime before choosing concurrency."],
+  "commonMistakes": [
+    {"mistake": "The GIL makes count += 1 a portable synchronization strategy.", "why": "A read-modify-write operation is not an application-level transaction, and free-threaded CPython changes the runtime behavior.", "avoid": "Use a lock around the complete shared update."},
+    {"mistake": "Py_GIL_DISABLED reports whether the GIL is currently enabled.", "why": "It describes build capability, not the process's current state.", "avoid": "Use the optional runtime probe for diagnostics and keep correctness independent of either answer."},
+    {"mistake": "Threads always speed up CPU-bound Python code.", "why": "Performance depends on the interpreter build, extensions, synchronization and workload.", "avoid": "Measure a representative workload and consider processes where appropriate."}
+  ],
+  "lab": {
+    "title": "Make a shared progress counter correct on either CPython build",
+    "safety": "Local in-memory threads only; no files, network or external services.",
+    "starterCode": "from threading import Lock, Thread\n\nclass ProgressCounter:\n    def __init__(self):\n        self.value = 0\n        # Add a lock.\n\n    def add(self, amount):\n        # Protect the whole read-modify-write update.\n        pass\n\ncounter = ProgressCounter()\n# Start two workers, each adding 1 one hundred times; join them and check 200.\n",
+    "guidedSteps": ["Store a Lock in the counter constructor.", "Use with self._lock: to protect the entire update in add.", "Start two Thread objects whose targets each call add(1) one hundred times.", "Join both workers before inspecting the value.", "Assert the final value is 200, then explain why a successful unlocked run would not prove correctness."],
+    "checks": ["The whole update occurs inside one Lock critical section.", "Both threads are joined before reading the final result.", "The final assertion and print show 200.", "The design does not rely on GIL state."],
+    "hints": ["self._lock = Lock()", "with self._lock: self.value += amount", "Keep thread objects in a list so both can be joined."],
+    "solution": "from threading import Lock, Thread\n\nclass ProgressCounter:\n    def __init__(self):\n        self.value = 0\n        self._lock = Lock()\n\n    def add(self, amount):\n        with self._lock:\n            self.value += amount\n\ncounter = ProgressCounter()\ndef worker():\n    for _ in range(100):\n        counter.add(1)\n\nworkers = [Thread(target=worker) for _ in range(2)]\nfor thread in workers:\n    thread.start()\nfor thread in workers:\n    thread.join()\nassert counter.value == 200\nprint(counter.value)\n",
+    "solutionExplanation": "The lock makes each shared update one protected operation at the application level. Joining waits for both workers before the assertion. This is a correctness check, not a parallel-speed benchmark.",
+    "challenges": ["Predict why reading the result before join is incorrect.", "Find the bug if the lock is created inside add on every call.", "Experiment with more workers while keeping the lock and final assertion."]
+  },
+  "projectConnection": {"project": "Cross-track learner-progress service", "milestone": "Document supported Python runtimes and protect the shared progress counter under concurrent updates.", "definitionOfDone": "Tests join all workers and pass under the supported runtime; no correctness claim depends on GIL state or a timing result."},
+  "assessment": [
+    {"question": "Does a free-threaded CPython build guarantee the GIL is currently disabled?", "answer": "No; build capability and runtime state are different.", "explanation": "The build may support disabling it, while runtime conditions can enable it."},
+    {"question": "Can an unlocked shared read-modify-write be considered safe because a GIL-enabled test passed?", "answer": "No.", "explanation": "That test does not establish a portable application-level synchronization guarantee."},
+    {"question": "What must happen before the main thread checks a worker result?", "answer": "Join all relevant worker threads and protect their shared updates with a lock.", "explanation": "Join establishes completion; the lock protects each update."}
+  ]
+}

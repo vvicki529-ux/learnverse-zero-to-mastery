@@ -1,0 +1,45 @@
+{
+  "id": "class-construction-and-bound-methods",
+  "title": "Create objects and understand bound methods",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Tutorial, chapter 9 Classes: class objects, instance objects, method objects; reviewed 2026-10-03"],
+  "masterChecklist": ["Classes, instances, methods, self, constructors, attributes, class versus instance variables"],
+  "whyItMatters": "A learner-progress object can carry its own name and completed lessons. Understanding how a method receives its object makes class code easier to read and debug.",
+  "simpleExplanation": "A class defines behavior shared by many objects. Calling the class creates a new instance; if the class has __init__, Python calls it with that new instance so it can set initial state. In an ordinary instance method, self is the conventional name for that instance. When you write learner.complete('loops'), Python creates a bound method and supplies learner as the first argument. The explicit form Learner.complete(learner, 'loops') does the same work for an ordinary Python method, though normal code should use the dot-call form. __init__ initializes a new object; it is not the whole allocation process and must not return a value other than None.",
+  "mentalModel": "The class is a shared instruction card. Each instance is a separate progress notebook. A bound method is an instruction card already paired with one notebook.",
+  "outcomes": ["Create an instance with validated starting state.", "Explain self and method binding without treating self as a keyword.", "Call a saved bound method and see which instance it changes.", "Keep mutable state separate for two instances."],
+  "realWorldExample": {"scenario": "A course app loads two learners and records a completed lesson for only one of them.", "riskWithoutSetup": "If the completed list lives on the class, both learners can see the same progress; if self is misunderstood, code may update the wrong object.", "professionalApproach": "Initialize each learner's list in __init__, expose a small completion method, and test two independent instances."},
+  "workedExample": {
+    "filename": "bound_progress.py",
+    "code": "class Learner:\n    def __init__(self, name):\n        if not name.strip():\n            raise ValueError('name is required')\n        self.name = name\n        self.completed = []\n\n    def complete(self, lesson):\n        self.completed.append(lesson)\n\nmina = Learner('Mina')\nleo = Learner('Leo')\nsaved_action = mina.complete  # A method bound to Mina's instance.\nsaved_action('loops')\nprint(mina.completed)\nprint(leo.completed)\nprint(saved_action.__self__ is mina)\n",
+    "explanation": ["Each Learner(...) call creates its own instance, then __init__ sets its name and a fresh list.", "saved_action is a bound method: it remembers mina, so calling it later still updates Mina's list.", "The second learner's list remains empty. __self__ exposes the instance bound to an ordinary bound method and is used here only to make that relationship visible."],
+    "expectedOutput": "['loops']\n[]\nTrue",
+    "safeExperiment": "Change saved_action to leo.complete and predict which list changes."
+  },
+  "procedure": ["Define a class with focused state and behavior.", "Use __init__(self, ...) to set each instance's initial attributes and reject invalid initial values.", "Create two objects to prove they do not share mutable state.", "Save one object's method in a variable, call it, and observe which object changes.", "Prefer instance.method(...) in everyday code; use explicit Class.method(instance, ...) only to understand binding."],
+  "commonMistakes": [
+    {"mistake": "Thinking self is a special keyword automatically inserted into a method definition.", "why": "It is a normal parameter name supplied when an ordinary method is accessed through an instance.", "avoid": "Read obj.method(value) as a call that carries obj into the method's first parameter."},
+    {"mistake": "Returning an object from __init__.", "why": "__init__ must return None; Python raises TypeError for another return value.", "avoid": "Set attributes in __init__ and let class construction return the instance."},
+    {"mistake": "Putting completed = [] on the class for per-learner state.", "why": "The list is shared until an instance explicitly replaces it.", "avoid": "Set self.completed = [] in __init__."}
+  ],
+  "lab": {
+    "title": "Build two independent study notebooks",
+    "safety": "Fictional in-memory names and lessons only; no account or file access.",
+    "starterCode": "class Learner:\n    def __init__(self, name):\n        # Keep a name and a fresh list for this instance.\n        pass\n\n    def complete(self, lesson):\n        # Record a lesson for this instance.\n        pass\n\nmina = Learner('Mina')\nleo = Learner('Leo')\n# Save Mina's complete method, call it, then print both lists.\n",
+    "guidedSteps": ["Initialize name and an empty completed list on self.", "Append the incoming lesson to self.completed.", "Create Mina and Leo; save mina.complete in a variable.", "Call the saved method with 'loops' and print both lists.", "Check that the saved method is still bound to mina."],
+    "checks": ["Mina prints ['loops'] and Leo prints [].", "saved_action.__self__ is mina is True.", "Each instance gets a new list in __init__.", "No file or network dependency."],
+    "hints": ["self.completed = []", "self.completed.append(lesson)", "saved_action = mina.complete"],
+    "solution": "class Learner:\n    def __init__(self, name):\n        self.name = name\n        self.completed = []\n\n    def complete(self, lesson):\n        self.completed.append(lesson)\n\nmina = Learner('Mina')\nleo = Learner('Leo')\nsaved_action = mina.complete\nsaved_action('loops')\nprint(mina.completed)\nprint(leo.completed)\nprint(saved_action.__self__ is mina)\n",
+    "solutionExplanation": "The saved method carries its receiver, so it changes Mina even when called later. The two lists were separately created by __init__.",
+    "challenges": ["Predict the result of Learner.complete(leo, 'lists').", "Find the bug in a class-level completed = [] declaration.", "Experiment: save leo.complete and call it after saving Mina's method."]
+  },
+  "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Create per-learner progress objects with independent completed lists and a clear completion method.", "definitionOfDone": "Two fictional learners can complete different lessons without data leaking between instances; empty names are rejected."},
+  "assessment": [
+    {"question": "What does self refer to in an ordinary instance method?", "answer": "The instance receiving that method call.", "explanation": "Python supplies that instance when the method is accessed through it."},
+    {"question": "If action = mina.complete, which learner changes when action('loops') runs?", "answer": "Mina.", "explanation": "action is already bound to mina."},
+    {"question": "Why create completed inside __init__?", "answer": "So each newly created learner receives its own list.", "explanation": "A mutable class attribute would otherwise be shared."}
+  ]
+}

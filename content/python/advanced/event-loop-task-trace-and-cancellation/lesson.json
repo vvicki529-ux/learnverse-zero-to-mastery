@@ -1,0 +1,45 @@
+{
+  "id": "event-loop-task-trace-and-cancellation",
+  "title": "Trace an event loop task from start to cancellation",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: asyncio coroutines and tasks, Task object/cooperative scheduling, task cancellation and asyncio.Event; reviewed 2026-10-03"],
+  "masterChecklist": ["Async internals, event-loop concepts, cooperative scheduling, cancellation, backpressure"],
+  "whyItMatters": "When an async report job appears stuck, you need to know whether its coroutine was only created, scheduled as a task, awaiting an event, or cancelled during cleanup.",
+  "simpleExplanation": "Calling an async function creates a coroutine object but does not run its body. asyncio.create_task schedules it on the running event loop. The loop runs a ready task until it awaits something unfinished; then another ready task can run. That is cooperative scheduling, not automatic parallel CPU execution. A cancel request causes CancelledError to be delivered at a suitable suspension point. Use finally for local cleanup and await the cancelled task so its end state is observed. Scheduling order is not an application contract: use an Event to establish when a worker has actually started, instead of hoping that one sleep(0) will always arrange the order you want.",
+  "mentalModel": "The event loop is a coordinator. A coroutine is a job description; a Task is a registered job. An await is a handoff point, and an Event is a signal that removes guesswork about whether another job reached a milestone.",
+  "outcomes": ["Distinguish coroutine creation from task scheduling.", "Trace when a task yields and resumes.", "Coordinate a cancellation demo with an Event rather than a timing guess.", "Run cleanup in finally and observe cancellation by awaiting the task."],
+  "realWorldExample": {"scenario": "A user closes a page while a long-running progress-refresh operation waits for new data.", "riskWithoutSetup": "A background task is abandoned or cancelled before it starts, and borrowed resources may never be released or the cancelled result observed.", "professionalApproach": "Keep a handle to the task, signal readiness explicitly, release local resources in finally, and await task termination during controlled shutdown."},
+  "workedExample": {
+    "filename": "task_lifecycle.py",
+    "code": "import asyncio\n\nasync def main():\n    started = asyncio.Event()\n    trace = []\n\n    async def worker():\n        trace.append('started')\n        started.set()\n        try:\n            await asyncio.Event().wait()  # Wait until cancelled.\n        finally:\n            trace.append('cleaned up')\n\n    coroutine = worker()\n    trace.append('coroutine created')\n    task = asyncio.create_task(coroutine)\n    await started.wait()  # Worker definitely reached its first wait.\n    task.cancel()\n    try:\n        await task\n    except asyncio.CancelledError:\n        trace.append('cancellation observed')\n    print(trace)\n\nasyncio.run(main())\n",
+    "explanation": ["worker() creates a coroutine object; its body has not started, so the first trace entry is only 'coroutine created'.", "create_task schedules the coroutine; awaiting started.wait() lets the loop run the worker and tells main that it has reached a known point.", "The worker awaits an unset Event, so it yields to the loop. main requests cancellation only after the start signal.", "The worker's finally block runs during cancellation; awaiting task delivers CancelledError to main, which records the deliberate shutdown outcome."],
+    "expectedOutput": "['coroutine created', 'started', 'cleaned up', 'cancellation observed']",
+    "safeExperiment": "Remove create_task without running the coroutine: its body will not execute. Close any unused coroutine object to avoid an unawaited-coroutine warning."
+  },
+  "procedure": ["Create a coroutine and decide whether to await it directly or schedule a managed Task.", "Use a synchronization signal for task milestones that affect correctness.", "Keep a reference to every background Task and make its lifetime explicit.", "When stopping, cancel the task and await it.", "Use finally for local cleanup; normally propagate cancellation from within the worker."],
+  "commonMistakes": [
+    {"mistake": "Assuming calling an async function runs its body.", "why": "It only creates a coroutine object until it is awaited or scheduled.", "avoid": "Await it or register it with a managed task."},
+    {"mistake": "Using sleep(0) as a correctness guarantee about another task's state.", "why": "Yielding does not express the specific milestone you need.", "avoid": "Use Event or another explicit synchronization primitive."},
+    {"mistake": "Calling cancel and discarding the Task.", "why": "Cleanup and the final outcome may not be observed.", "avoid": "Await the task and handle expected cancellation at the shutdown boundary."}
+  ],
+  "lab": {
+    "title": "Prove that an async worker started before cancelling it",
+    "safety": "Local event-loop trace only; no network, files or external services.",
+    "starterCode": "import asyncio\n\nasync def main():\n    started = asyncio.Event()\n    trace = []\n\n    async def worker():\n        # Record start, signal started, wait, and clean up in finally.\n        pass\n\n    # Schedule worker, await its start signal, cancel and await it.\n\nasyncio.run(main())\n",
+    "guidedSteps": ["Append 'start' inside worker and call started.set().", "Inside try, await a newly created unset asyncio.Event().wait().", "In finally, append 'cleanup'.", "Schedule worker as a task, then await started.wait() before task.cancel().", "Await task, catch expected CancelledError in main, append 'cancelled', and print the trace."],
+    "checks": ["The worker start is observed through an Event, not an arbitrary delay.", "The task is cancelled only after the signal.", "The worker cleanup runs in finally.", "The trace is ['start', 'cleanup', 'cancelled']."],
+    "hints": ["task = asyncio.create_task(worker())", "await started.wait()", "try: await task; except asyncio.CancelledError: trace.append('cancelled')"],
+    "solution": "import asyncio\n\nasync def main():\n    started = asyncio.Event()\n    trace = []\n\n    async def worker():\n        trace.append('start')\n        started.set()\n        try:\n            await asyncio.Event().wait()\n        finally:\n            trace.append('cleanup')\n\n    task = asyncio.create_task(worker())\n    await started.wait()\n    task.cancel()\n    try:\n        await task\n    except asyncio.CancelledError:\n        trace.append('cancelled')\n    print(trace)\n\nasyncio.run(main())\n",
+    "solutionExplanation": "The Event proves the worker ran before cancellation. Its pending await receives cancellation, finally records cleanup, and main observes the cancelled task by awaiting it.",
+    "challenges": ["Predict what happens if worker() is called but neither awaited nor scheduled.", "Find the bug if task.cancel() is called before started.wait().", "Experiment: give the worker a second explicit Event that allows normal completion, then compare the traces."]
+  },
+  "projectConnection": {"project": "Cross-track live progress dashboard", "milestone": "Give refresh tasks explicit start and shutdown signals with cleanup rather than relying on scheduler timing.", "definitionOfDone": "Tests cover normal completion and cancellation, await task termination, and verify local cleanup; remote side effects have a separate retry/idempotency policy."},
+  "assessment": [
+    {"question": "Does calling worker() execute an async worker's body?", "answer": "No; it creates a coroutine object.", "explanation": "Awaiting it or scheduling it as a Task starts execution."},
+    {"question": "Why await started.wait() before cancelling in this example?", "answer": "It proves the worker reached the intended milestone.", "explanation": "A timing guess would not establish that invariant."},
+    {"question": "Where should cleanup run during task cancellation?", "answer": "In a finally block or an appropriate async context manager.", "explanation": "Cancellation interrupts a suspension point, but cleanup must still occur."}
+  ]
+}

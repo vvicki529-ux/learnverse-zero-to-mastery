@@ -1,0 +1,45 @@
+{
+  "id": "tracemalloc-snapshots-and-memory-ownership",
+  "title": "Measure Python allocations before blaming a memory leak",
+  "track": "python",
+  "level": "expert",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: tracemalloc tracing allocations, snapshots, compare_to and get_traced_memory(); reviewed 2026-10-03"],
+  "masterChecklist": ["Mutability, interning/caching caveats, copy semantics, memory profiling"],
+  "whyItMatters": "A large export can hold more memory than expected because of retained copies or caches. A measurement can separate that from an unproven guess.",
+  "simpleExplanation": "tracemalloc traces many Python-managed memory allocations after you start it. get_traced_memory() returns current and peak traced sizes; take_snapshot() captures allocation traces and compare_to() compares snapshots. These are measurements of traced Python allocations, not a complete reading of process RSS or every native-library allocation. Take a baseline, run a representative workload, keep the output alive if you want to measure retention, then compare. Trace early enough to observe the allocations you care about; start() does not retroactively trace earlier objects. Report workload and environment, not only one number. A growing current allocation can be expected while you intentionally retain data; it is not automatically a leak.",
+  "mentalModel": "A snapshot is a photo of traced Python allocation tickets. Two photos can show what changed, but you still need to ask who owns the new objects and whether that growth is expected.",
+  "outcomes": ["Start tracemalloc before the target workload.", "Distinguish current from peak traced allocations.", "Compare snapshots without claiming every positive difference is a leak.", "Name limits of tracemalloc for process-wide or native allocations."],
+  "realWorldExample": {"scenario": "A progress export builds a list of formatted rows for 10,000 learners.", "riskWithoutSetup": "A developer sees high memory and rewrites unrelated code without checking whether the retained output list is the main owner.", "professionalApproach": "Measure before and after the export, inspect the largest allocation differences, then decide whether streaming or chunking can preserve output behavior with lower retained memory."},
+  "workedExample": {
+    "filename": "trace_export_allocations.py",
+    "code": "import tracemalloc\n\ntracemalloc.start()\nbefore = tracemalloc.take_snapshot()\nrows = [f'learner-{i:05d}: completed' for i in range(1_000)]\nafter = tracemalloc.take_snapshot()\ncurrent, peak = tracemalloc.get_traced_memory()\nchanges = after.compare_to(before, 'lineno')\nprint(len(rows))\nprint(current > 0, peak >= current)\nprint(any(stat.size_diff > 0 for stat in changes))\ntracemalloc.stop()\n",
+    "explanation": ["Tracing starts before rows are allocated, and snapshots bracket the workload.", "The output list stays alive, so retained Python allocations are expected; this does not prove a leak.", "The code prints stable boolean observations for this local exercise rather than pretending byte counts are universal.", "The comparison groups changes by source line; a real investigation would inspect top statistics and distinguish Python allocations from native/process memory."],
+    "expectedOutput": "1000\nTrue True\nTrue",
+    "safeExperiment": "Reduce the row count and inspect measured current/peak numbers locally. Expect variation by interpreter, build, and surrounding allocations."
+  },
+  "procedure": ["Define the workload and what counts as unacceptable memory use.", "Start tracemalloc before the relevant allocations and take a baseline snapshot.", "Run the representative operation, keep or release outputs according to the question, and take a second snapshot.", "Compare snapshots and current/peak traced sizes while recording input size and environment.", "Identify expected ownership before calling a positive difference a leak; consider process-level tools separately for native memory."],
+  "commonMistakes": [
+    {"mistake": "Calling every positive snapshot difference a leak.", "why": "Retained output or caches may be expected for the workload.", "avoid": "Explain object ownership and compare after a full lifecycle, not only mid-operation."},
+    {"mistake": "Starting tracemalloc after the suspected objects were created.", "why": "Earlier allocations were not traced retroactively.", "avoid": "Start tracing before the target work or at process startup for broader investigations."},
+    {"mistake": "Treating traced Python bytes as total process memory.", "why": "Native extensions and process overhead may be outside this trace.", "avoid": "State the metric clearly and use appropriate process/native tools for other memory sources."}
+  ],
+  "lab": {
+    "title": "Compare two allocation snapshots of a local export",
+    "safety": "In-memory fictional row strings only; no files, accounts, network or external process access.",
+    "starterCode": "import tracemalloc\n\n# Start tracing, snapshot before/after a list of 1000 fictional rows, then inspect current/peak.\n",
+    "guidedSteps": ["Call tracemalloc.start before building any rows.", "Take a before snapshot and build 1,000 formatted fictional row strings.", "Take an after snapshot and read current/peak traced memory.", "Compare snapshots by lineno and print count and stable boolean observations.", "Stop tracing, then explain why retaining rows is not automatically a leak."],
+    "checks": ["Prints 1000, True True, True in the bundled local run.", "Tracing begins before target allocation.", "The output does not hard-code exact byte counts.", "The explanation distinguishes traced Python allocation from total process memory."],
+    "hints": ["before = tracemalloc.take_snapshot()", "changes = after.compare_to(before, 'lineno')", "current, peak = tracemalloc.get_traced_memory()"],
+    "solution": "import tracemalloc\n\ntracemalloc.start()\nbefore = tracemalloc.take_snapshot()\nrows = [f'learner-{i:05d}: completed' for i in range(1_000)]\nafter = tracemalloc.take_snapshot()\ncurrent, peak = tracemalloc.get_traced_memory()\nchanges = after.compare_to(before, 'lineno')\nprint(len(rows))\nprint(current > 0, peak >= current)\nprint(any(stat.size_diff > 0 for stat in changes))\ntracemalloc.stop()\n",
+    "solutionExplanation": "The snapshots bracket a retained pure-Python workload. Positive traced growth is expected because rows remains reachable; further analysis must identify whether retention is required.",
+    "challenges": ["Predict what happens to retained rows when the list name is deleted and the lifecycle ends.", "Find the measurement bug if tracing starts after rows is built.", "Experiment: compare a list-returning export with a generator consumed one row at a time, preserving result checks."]
+  },
+  "projectConnection": {"project": "Cross-track progress export", "milestone": "Measure one representative export with Python allocation snapshots and record whether retained rows or a cache owns the growth.", "definitionOfDone": "The report includes input size, current/peak traced Python allocation, top difference location, correctness check, and a clear statement of what tracemalloc does not measure."},
+  "assessment": [
+    {"question": "Does tracemalloc.start() trace objects allocated before it was called?", "answer": "No.", "explanation": "Start tracing before the workload of interest."},
+    {"question": "Does a positive snapshot difference by itself prove a leak?", "answer": "No.", "explanation": "The program may intentionally retain the output; inspect ownership and full lifecycle."},
+    {"question": "Is get_traced_memory() a complete process-RSS measurement?", "answer": "No.", "explanation": "It reports traced Python allocations, not every native or process allocation."}
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "id": "set-reconciliation-and-subset-proof",
+  "title": "Reconcile two inventories with set operations",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python 3.14 Standard Library: Built-in Types, Set Types — set and frozenset",
+    "MIT OpenCourseWare 6.042J Mathematics for Computer Science: set notation and set identities"
+  ],
+  "masterChecklist": [
+    "Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic",
+    "Sets and frozensets: uniqueness, membership, set algebra, hashability"
+  ],
+  "whyItMatters": "Real systems compare expected IDs with observed IDs. A count alone cannot reveal which IDs are missing or unexpected. Set difference expresses the two questions directly, and subset checks make the completion rule precise.",
+  "simpleExplanation": "A set stores unique values. If E is the set of expected lesson IDs and S is the set of submitted lesson IDs, E - S contains missing IDs, while S - E contains unexpected IDs. E & S contains IDs present in both. The submissions are complete when E is a subset of S; they are an exact match only when E == S. The order of a set is not a presentation order, and converting a list to a set discards duplicates. If duplicates themselves matter, check them before converting.",
+  "mentalModel": "Put two checklists on transparent sheets: the overlap is shared, one uncovered side is missing, and the other uncovered side is unexpected.",
+  "outcomes": [
+    "Choose the correct direction for each set difference.",
+    "Distinguish subset completion from exact equality.",
+    "Report duplicate input separately before set conversion.",
+    "Sort set results when stable output is required."
+  ],
+  "realWorldExample": {
+    "scenario": "A course import expects three lesson IDs and receives a list of submitted IDs.",
+    "riskWithoutSetup": "Checking only list lengths misses a substituted ID or duplicated ID.",
+    "professionalApproach": "Validate nonempty string IDs, reject duplicate submissions if the contract requires uniqueness, then compute sorted missing and unexpected IDs from two sets."
+  },
+  "workedExample": {
+    "filename": "reconcile.py",
+    "code": "expected = {'intro', 'loops', 'functions'}\nsubmitted = {'intro', 'functions', 'files'}\n\nmissing = expected - submitted\nunexpected = submitted - expected\nshared = expected & submitted\nprint(sorted(missing))\nprint(sorted(unexpected))\nprint(sorted(shared))\nprint(expected <= submitted)\nprint(expected == submitted)\n",
+    "explanation": [
+      "expected - submitted answers which required IDs did not arrive.",
+      "submitted - expected answers which submitted IDs were not in the expected inventory.",
+      "The intersection contains IDs present in both sets.",
+      "Sorting makes display deterministic; set iteration order is not a learner-facing ordering contract.",
+      "Subset completion and exact equality are both false for this example, but they answer different questions."
+    ],
+    "expectedOutput": "['loops']\n['files']\n['functions', 'intro']\nFalse\nFalse",
+    "safeExperiment": "Add loops to submitted without removing files. Predict that expected <= submitted becomes True while expected == submitted remains False."
+  },
+  "procedure": [
+    "Define whether duplicate input is allowed; if not, inspect the sequence before converting it to a set.",
+    "Validate each ID against the product's input contract.",
+    "Convert the expected and submitted IDs to sets.",
+    "Compute expected - submitted for missing and submitted - expected for unexpected.",
+    "Use expected <= submitted for coverage and expected == submitted for an exact inventory match.",
+    "Sort the reported IDs; preserve the original sequence separately if original order matters."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Reversing the subtraction and labeling unexpected IDs as missing.",
+      "why": "Set difference is directional.",
+      "avoid": "Read E - S aloud as expected but not submitted."
+    },
+    {
+      "mistake": "Treating equal lengths as equal contents.",
+      "why": "One ID can replace another without changing the count.",
+      "avoid": "Compare sets and report both differences."
+    },
+    {
+      "mistake": "Converting to a set before checking duplicate submissions.",
+      "why": "Conversion removes duplicate evidence.",
+      "avoid": "Validate duplicates on the original sequence when duplicates are an error."
+    }
+  ],
+  "lab": {
+    "title": "Build a deterministic inventory-difference report",
+    "safety": "Uses small in-memory examples only. The static site guides this exercise but does not yet execute Python in the browser.",
+    "starterCode": "def reconcile(expected_ids, submitted_ids):\n    # Reject repeated submitted IDs.\n    # Return sorted missing and unexpected ID lists.\n    pass\n\n# Try an exact match, one missing ID, and one unexpected ID.\n",
+    "guidedSteps": [
+      "Check submitted_ids for duplicates before making a set.",
+      "Create expected and submitted sets.",
+      "Compute missing as expected minus submitted.",
+      "Compute unexpected in the opposite direction.",
+      "Sort both lists so the same inputs produce the same display."
+    ],
+    "checks": [
+      "Returns empty lists for an exact match.",
+      "Reports missing and unexpected in the correct directions.",
+      "Rejects a duplicate submitted ID before discarding it.",
+      "Produces sorted results."
+    ],
+    "hints": [
+      "Compare len(submitted_ids) with len(set(submitted_ids)) first.",
+      "Use expected - submitted for missing.",
+      "Use sorted(...) on both differences."
+    ],
+    "solution": "def reconcile(expected_ids, submitted_ids):\n    if len(submitted_ids) != len(set(submitted_ids)):\n        raise ValueError('duplicate submitted ID')\n    expected = set(expected_ids)\n    submitted = set(submitted_ids)\n    return sorted(expected - submitted), sorted(submitted - expected)\n\nassert reconcile(['intro', 'loops'], ['loops', 'intro']) == ([], [])\nassert reconcile(['intro', 'loops'], ['intro', 'files']) == (['loops'], ['files'])\ntry:\n    reconcile(['intro'], ['intro', 'intro'])\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('duplicate accepted')\nprint('inventory checks passed')\n",
+    "solutionExplanation": "The duplicate check runs while the original submitted sequence is still available. The two directional differences then create stable missing/unexpected reports. In production, add explicit element-type and normalization rules at the input boundary.",
+    "challenges": [
+      "Predict why two inventories can have the same size but still differ.",
+      "Find the bug: label submitted - expected as missing.",
+      "Experiment: add one expected ID to submitted while keeping an extra ID."
+    ],
+    "simulation": {
+      "prompt": "Expected is {A, B}; submitted is {A, C}. Which expression finds the missing ID?",
+      "choices": [
+        "expected - submitted",
+        "submitted - expected"
+      ],
+      "correctIndex": 0,
+      "explanation": "Expected minus submitted leaves B, the required ID that did not arrive."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress import reconciliation",
+    "milestone": "Display stable missing/unexpected lesson IDs and reject duplicate submission rows before comparison.",
+    "definitionOfDone": "The project tests exact, missing, unexpected and duplicate cases; reports both differences in the right direction; and documents its input-ID validation boundary."
+  },
+  "assessment": [
+    {
+      "question": "What does expected - submitted return?",
+      "answer": "Expected IDs that are missing from submissions.",
+      "explanation": "Difference is directional: keep members of the left set absent from the right."
+    },
+    {
+      "question": "Can expected be a subset of submitted without being equal to it?",
+      "answer": "Yes.",
+      "explanation": "Submitted may contain every expected ID plus extra IDs."
+    },
+    {
+      "question": "Why check duplicate list entries before set conversion?",
+      "answer": "A set silently removes duplicate occurrences.",
+      "explanation": "If duplicate input violates the contract, conversion would hide the evidence."
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "id": "compare-tested-resolved-set-with-environment",
+  "title": "Compare a tested dependency set with the current environment",
+  "track": "python",
+  "level": "production",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python Packaging User Guide: pylock.toml Specification, lock-version and packages (reviewed 2026-10-03)",
+    "Python 3.14.8 Standard Library: importlib.metadata distributions"
+  ],
+  "masterChecklist": [
+    "Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy",
+    "Dependency management: pip, virtual environments, requirements, lockfiles, editable installs"
+  ],
+  "whyItMatters": "Tests certify a particular combination of package versions. If deployment uses another combination, the passing test result does not describe what actually shipped.",
+  "simpleExplanation": "A dependency declaration may allow many versions. A resolved set records the versions selected for a tested environment. Python's standardized `pylock.toml` format can describe packages for reproducible installation, including environment details and package entries; a casual installed-package inventory is not itself a lock. Before release, compare the versions observed in the intended environment with the exact versions in the approved test record. Missing, extra, or changed packages require investigation. This lesson models that comparison with fictional data and does not claim to parse or install a complete pylock file.",
+  "mentalModel": "A recipe permits several brands of flour. The tested batch record names the exact ingredients used. A new kitchen must compare its shelves with that batch record before saying it reproduced the same cake.",
+  "outcomes": [
+    "Distinguish allowed requirements, a resolved set, and an observed environment.",
+    "Detect missing, extra and changed package versions.",
+    "Explain why platform markers and multiple lock targets need deliberate handling.",
+    "Avoid calling a name/version comparison a full integrity or security check."
+  ],
+  "realWorldExample": {
+    "scenario": "A team tested a study-service build with two specific distributions but a deployment environment was reused.",
+    "riskWithoutSetup": "An extra package and a version drift go unnoticed even though the test suite was green in another environment.",
+    "professionalApproach": "Compare the intended target's resolved set and current inventory, rebuild the environment if it drifts, then run representative tests plus artifact and advisory review for the exact release."
+  },
+  "workedExample": {
+    "filename": "compare_resolved.py",
+    "code": "def differences(expected, observed):\n    names = sorted(set(expected) | set(observed))\n    return [(name, expected.get(name), observed.get(name))\n            for name in names if expected.get(name) != observed.get(name)]\n\n# Fictional names and versions; no package is installed here.\ntested = {'alpha-demo': '1.0', 'beta-demo': '2.0'}\ncurrent = {'alpha-demo': '1.1', 'beta-demo': '2.0', 'extra-demo': '0.1'}\nprint(differences(tested, current))\n",
+    "explanation": [
+      "The keys are fictional normalized distribution names; values are the exact versions in two records.",
+      "The union includes packages present on only one side, so missing and extra entries are visible.",
+      "A tuple shows the expected and observed version; None marks an absent side.",
+      "The code compares records only. It does not resolve dependencies, verify wheel hashes, interpret environment markers, scan advisories, or prove that files match their recorded versions."
+    ],
+    "expectedOutput": "[('alpha-demo', '1.0', '1.1'), ('extra-demo', None, '0.1')]",
+    "safeExperiment": "Remove beta-demo from current and predict the extra difference tuple before running."
+  },
+  "procedure": [
+    "Identify the specific Python version, OS/architecture and dependency groups that were tested.",
+    "Keep the approved resolved set or tool-generated lock record for that target.",
+    "Capture the intended deployment environment's installed distribution inventory.",
+    "Compare names and versions; investigate missing, extra and changed entries.",
+    "Recreate the environment from approved inputs rather than editing the test record to match drift.",
+    "Run tests and separate artifact integrity, source, license and current-advisory review on the exact set.",
+    "Record which target/environment the evidence covers; do not assume one platform lock applies to all targets."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Comparing only direct dependencies.",
+      "why": "Transitive packages can change while direct requirements remain unchanged.",
+      "avoid": "Review the full resolved set for the target."
+    },
+    {
+      "mistake": "Calling a pip freeze output a universal lock for every platform.",
+      "why": "It reflects one environment and may not capture portability, hashes or marker decisions.",
+      "avoid": "Use the project's deliberate lock/reproducibility workflow for each supported target."
+    },
+    {
+      "mistake": "Treating matching versions as matching package bytes.",
+      "why": "Name/version records do not verify artifacts.",
+      "avoid": "Keep approved hashes or equivalent artifact controls separately."
+    }
+  ],
+  "lab": {
+    "title": "Find missing, changed and extra fictional distributions",
+    "safety": "Pure in-memory dictionaries only. No pip command, download, install or file change. The current static website guides this exercise but does not yet execute Python in-browser.",
+    "starterCode": "def differences(expected, observed):\n    # Return sorted (name, expected_version, observed_version) tuples.\n    pass\n\n# Test one changed, one missing, and one extra package.\n",
+    "guidedSteps": [
+      "Take the union of expected and observed names.",
+      "Sort names to make reports stable.",
+      "Keep only names whose versions differ, including absent values.",
+      "Test a changed package, one missing from observed, and one extra in observed.",
+      "Explain why the report does not prove artifact integrity."
+    ],
+    "checks": [
+      "Changed version appears with both versions.",
+      "Missing package has observed None; extra package has expected None.",
+      "Matching packages do not appear.",
+      "No installation or advisory-scan claim is made."
+    ],
+    "hints": [
+      "Use `set(expected) | set(observed)`.",
+      "`dict.get` returns None when a name is absent.",
+      "Keep a tuple only when the two retrieved values differ."
+    ],
+    "solution": "def differences(expected, observed):\n    return [(name, expected.get(name), observed.get(name))\n            for name in sorted(set(expected) | set(observed))\n            if expected.get(name) != observed.get(name)]\n\nexpected = {'a-demo': '1', 'b-demo': '2'}\nobserved = {'a-demo': '3', 'c-demo': '1'}\nassert differences(expected, observed) == [\n    ('a-demo', '1', '3'), ('b-demo', '2', None), ('c-demo', None, '1')]\nprint('resolved-set differences checked')\n",
+    "solutionExplanation": "The comparison detects version drift and both kinds of membership difference. It is a release review input, not a package resolver or lockfile parser.",
+    "challenges": [
+      "Predict the result when both dictionaries are empty.",
+      "Find the bug: iterate only expected keys and miss extra packages.",
+      "Experiment: add a matching package and confirm it disappears from the report."
+    ],
+    "simulation": {
+      "prompt": "Two environments have matching direct requirements but different transitive versions. Can the test environment's result automatically stand for deployment?",
+      "choices": [
+        "No; compare the full resolved set and retest the target",
+        "Yes; direct requirements are enough"
+      ],
+      "correctIndex": 0,
+      "explanation": "Transitive version drift changes the actual environment."
+    }
+  },
+  "projectConnection": {
+    "project": "Maintained study-progress service",
+    "milestone": "Attach a tested resolved-set record and a deployment inventory comparison to the release checklist.",
+    "definitionOfDone": "The comparison catches missing, changed and extra packages and explicitly lists separate artifact, license, advisory and runtime-test gates."
+  },
+  "assessment": [
+    {
+      "question": "What is a resolved dependency set?",
+      "answer": "The selected package versions for a particular tested target or environment.",
+      "explanation": "It is more specific than a broad requirement declaration."
+    },
+    {
+      "question": "Why compare the union of expected and observed names?",
+      "answer": "To detect packages missing from either side, including unexpected extras.",
+      "explanation": "Comparing only expected names would miss extras."
+    },
+    {
+      "question": "Does matching name/version data prove wheel bytes are identical?",
+      "answer": "No.",
+      "explanation": "Artifact integrity requires separate trusted hash or equivalent checks."
+    }
+  ]
+}

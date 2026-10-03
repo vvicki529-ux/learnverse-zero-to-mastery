@@ -1,0 +1,45 @@
+{
+  "id": "dataclass-records-and-enum-boundaries",
+  "title": "Use dataclasses and enums without skipping validation",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: dataclasses and enum; reviewed 2026-10-03"],
+  "masterChecklist": ["dataclass, enums, abstract base classes, protocols, design trade-offs"],
+  "whyItMatters": "A course task has a name, state, and completed steps. Clear records and named states reduce typo-prone code, but generated constructors do not automatically validate business rules.",
+  "simpleExplanation": "@dataclass generates routine methods such as an initializer, representation, and equality from annotated fields. The annotations do not normally enforce types at runtime. field(default_factory=list) creates a new list for each instance; writing a shared mutable class default is wrong. __post_init__ runs after the generated initializer and is a place to validate rules. Enum defines named members such as Stage.DONE. Converting external text with Stage(text) rejects unknown values, but an annotated dataclass field can still receive a raw string unless you validate it. A frozen dataclass blocks ordinary field reassignment, but a mutable object nested inside it can still change; frozen is not deep immutability.",
+  "mentalModel": "The dataclass is a preprinted form, the enum is an approved-state menu, and __post_init__ is the clerk checking a submitted form. A printed field label alone does not stop a caller writing nonsense on the form.",
+  "outcomes": ["Create an independent mutable field with default_factory.", "Validate an enum field and nonblank title in __post_init__.", "Convert external text into an enum at a boundary.", "Explain generated-method convenience versus invariant ownership."],
+  "realWorldExample": {"scenario": "The dashboard imports a CSV task row with a state string and records completed milestones.", "riskWithoutSetup": "A typo like 'dnoe' or passing a raw 'done' string directly to an annotated Stage field can leave an invalid record; a shared steps list can leak one learner's progress to another.", "professionalApproach": "Parse the state text with Stage(...), validate the record in __post_init__, and allocate each steps list with default_factory."},
+  "workedExample": {
+    "filename": "validated_task.py",
+    "code": "from dataclasses import dataclass, field\nfrom enum import Enum\n\nclass Stage(Enum):\n    TODO = 'todo'\n    DONE = 'done'\n\n@dataclass\nclass Task:\n    title: str\n    stage: Stage = Stage.TODO\n    completed_steps: list[str] = field(default_factory=list)\n\n    def __post_init__(self):\n        if not self.title.strip():\n            raise ValueError('title is required')\n        if not isinstance(self.stage, Stage):\n            raise TypeError('stage must be a Stage')\n\nrow = {'title': 'Review loops', 'stage': 'done'}\nfirst = Task(row['title'], Stage(row['stage']))\nsecond = Task('Review classes')\nfirst.completed_steps.append('read')\nprint(first.stage is Stage.DONE)\nprint(first.completed_steps, second.completed_steps)\ntry:\n    Task('Bad state', 'done')\nexcept TypeError as error:\n    print(type(error).__name__)\n",
+    "explanation": ["The enum conversion validates the external string before it enters trusted model state.", "__post_init__ also rejects a raw string passed directly despite the Stage annotation; annotations alone are not runtime validators.", "default_factory=list calls list separately for each Task, so the second task stays empty.", "The dataclass generates the routine initializer and repr, while the programmer owns business validation."],
+    "expectedOutput": "True\n['read'] []\nTypeError",
+    "safeExperiment": "Change row['stage'] to 'dnoe' and catch the ValueError raised by Stage(...)."
+  },
+  "procedure": ["Choose a dataclass for a focused data record, not a class with complex behavior and hidden invariants.", "Represent a finite state vocabulary with Enum members.", "Convert external strings to enum members before constructing the record.", "Use field(default_factory=list) for per-instance mutable collections.", "Use __post_init__ to validate rules that generated initialization does not enforce, and test bad direct construction too."],
+  "commonMistakes": [
+    {"mistake": "Assuming a Stage annotation rejects 'done' at runtime.", "why": "Dataclass generation normally does not enforce annotated types.", "avoid": "Validate in __post_init__ and parse external text explicitly."},
+    {"mistake": "Using one shared list as a class-level default for every task.", "why": "One task can affect another's steps.", "avoid": "Use field(default_factory=list)."},
+    {"mistake": "Assuming frozen=True deeply freezes nested lists.", "why": "The field binding is protected, but the referenced list can remain mutable.", "avoid": "Use immutable nested values when deep immutability is required."}
+  ],
+  "lab": {
+    "title": "Build two independent validated tasks",
+    "safety": "Uses fictional in-memory task rows only.",
+    "starterCode": "from dataclasses import dataclass, field\nfrom enum import Enum\n\nclass Stage(Enum):\n    TODO = 'todo'\n    DONE = 'done'\n\n@dataclass\nclass Task:\n    title: str\n    stage: Stage = Stage.TODO\n    completed_steps: list[str] = field(default_factory=list)\n\n    # Add __post_init__ to reject blank titles and non-Stage values.\n",
+    "guidedSteps": ["Add __post_init__ to reject a blank or whitespace-only title.", "Reject a stage that is not a Stage member.", "Create a Task from external text using Stage('done').", "Create a second task, append a step to the first, and print both lists.", "Attempt direct Task('Bad state', 'done') and print the exception type."],
+    "checks": ["Outputs True, ['read'] [], TypeError.", "The second task's list stays empty.", "Invalid direct enum-string construction fails.", "Stage('dnoe') raises ValueError at the boundary."],
+    "hints": ["Use if not self.title.strip().", "Use isinstance(self.stage, Stage).", "Pass Stage(row['stage']) when converting external text."],
+    "solution": "from dataclasses import dataclass, field\nfrom enum import Enum\n\nclass Stage(Enum):\n    TODO = 'todo'\n    DONE = 'done'\n\n@dataclass\nclass Task:\n    title: str\n    stage: Stage = Stage.TODO\n    completed_steps: list[str] = field(default_factory=list)\n\n    def __post_init__(self):\n        if not self.title.strip():\n            raise ValueError('title is required')\n        if not isinstance(self.stage, Stage):\n            raise TypeError('stage must be a Stage')\n\nrow = {'title': 'Review loops', 'stage': 'done'}\nfirst = Task(row['title'], Stage(row['stage']))\nsecond = Task('Review classes')\nfirst.completed_steps.append('read')\nprint(first.stage is Stage.DONE)\nprint(first.completed_steps, second.completed_steps)\ntry:\n    Task('Bad state', 'done')\nexcept TypeError as error:\n    print(type(error).__name__)\n",
+    "solutionExplanation": "The explicit boundary conversion and post-init checks protect the model, while default_factory keeps mutable steps independent.",
+    "challenges": ["Predict the error from Stage('dnoe').", "Find the bug if __post_init__ only checks title and trusts the stage annotation.", "Experiment: replace the mutable steps list with a tuple for a value-oriented frozen design."]
+  },
+  "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Model imported tasks with validated enum states and independent per-task milestones.", "definitionOfDone": "Tests cover valid import, unknown external state, direct wrong-type construction, blank title and independent lists."},
+  "assessment": [
+    {"question": "Does a dataclass Stage annotation reject a raw string by itself?", "answer": "No.", "explanation": "Runtime validation must be added explicitly when the application needs that guarantee."},
+    {"question": "Why use field(default_factory=list)?", "answer": "It creates a fresh list for each constructed instance.", "explanation": "One task's progress then cannot appear in another task through a shared default."},
+    {"question": "Where should an external 'done' string become Stage.DONE?", "answer": "At the input boundary, using Stage('done') with error handling.", "explanation": "The trusted model should hold enum members, not arbitrary text."}
+  ]
+}

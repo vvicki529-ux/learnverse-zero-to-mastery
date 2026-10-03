@@ -1,0 +1,45 @@
+{
+  "id": "metaclass-new-and-class-creation-order",
+  "title": "See when a metaclass builds a class",
+  "track": "python",
+  "level": "expert",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Language Reference, data model: metaclasses, preparing class namespace, creating class object and class decorators; reviewed 2026-10-03"],
+  "masterChecklist": ["Descriptors, decorators, metaclasses, class creation hooks — advanced/internals"],
+  "whyItMatters": "Some frameworks change classes at definition time. A tiny metaclass experiment shows that this happens before you create any instances—and why a simpler decorator or subclass hook is preferable for ordinary rules.",
+  "simpleExplanation": "An ordinary class is itself an object made by the metaclass type. A custom metaclass can subclass type and override __new__(mcls, name, bases, namespace) to inspect or alter class creation. This receives the class name, base classes and body namespace, then should delegate to type.__new__ through super().__new__. In the standard class-creation path, type.__new__ also arranges descriptor __set_name__ calls and parent __init_subclass__ calls; decorators are applied after the class object exists. A custom metaclass is powerful but can conflict with bases using incompatible metaclasses. Use a simple function, class decorator or __init_subclass__ when those express the rule.",
+  "mentalModel": "The metaclass is the factory that makes a class blueprint; __init__ later sets up each instance made from that blueprint. A decorator labels the completed blueprint afterward.",
+  "outcomes": ["Distinguish class creation from instance construction.", "Trace a tiny metaclass __new__ call and a class decorator.", "Delegate to type.__new__ so normal class machinery still runs.", "Name a case where simpler hooks are preferable and recognize metaclass-conflict risk."],
+  "realWorldExample": {"scenario": "A reporting framework wants a definition-time check that every report type declares a title.", "riskWithoutSetup": "A silent metaclass can surprise maintainers, and composing it with another framework's metaclass may fail.", "professionalApproach": "Prefer __init_subclass__ for a simple inherited title rule. Use a custom metaclass only for framework-level construction needs, with documented order and tests."},
+  "workedExample": {
+    "filename": "class_creation_order.py",
+    "code": "events = []\n\nclass TraceMeta(type):\n    def __new__(mcls, name, bases, namespace):\n        events.append('meta:' + name)\n        return super().__new__(mcls, name, bases, namespace)\n\ndef labelled(cls):\n    events.append('decorator:' + cls.__name__)\n    cls.label = 'study'\n    return cls\n\n@labelled\nclass StudyReport(metaclass=TraceMeta):\n    def __init__(self):\n        events.append('instance:init')\n\nprint(events)\nStudyReport()\nprint(events)\nprint(type(StudyReport).__name__)\n",
+    "explanation": ["TraceMeta.__new__ runs while Python constructs StudyReport, before any StudyReport instance exists.", "The decorator receives the completed class and then adds a label.", "StudyReport.__init__ runs only after StudyReport() creates an instance.", "Delegating to super().__new__ retains normal type-based construction; this is a learning trace, not a recommendation to install TraceMeta across an app."],
+    "expectedOutput": "['meta:StudyReport', 'decorator:StudyReport']\n['meta:StudyReport', 'decorator:StudyReport', 'instance:init']\nTraceMeta",
+    "safeExperiment": "Remove @labelled and predict the events. Do not modify type.__new__ or create dynamic classes from untrusted strings."
+  },
+  "procedure": ["First decide whether a decorator or __init_subclass__ would state the requirement more clearly.", "For learning, subclass type and record when __new__ receives the class name and namespace.", "Delegate to super().__new__ so Python's class construction continues normally.", "Apply a decorator and compare its event position with metaclass creation.", "Create one instance and compare when __init__ runs; keep the example isolated from production design."],
+  "commonMistakes": [
+    {"mistake": "Confusing metaclass __new__ with instance __init__.", "why": "They run at different phases: class definition versus instance creation.", "avoid": "Trace events before and after calling the class."},
+    {"mistake": "Replacing type.__new__ behavior without delegating or handling __classcell__.", "why": "Normal descriptor, subclass and zero-argument super machinery can break.", "avoid": "Delegate to super().__new__ for an ordinary custom metaclass."},
+    {"mistake": "Using a metaclass for a one-off label.", "why": "It adds complexity and possible metaclass conflicts for a trivial change.", "avoid": "Use a class decorator or explicit attribute instead."}
+  ],
+  "lab": {
+    "title": "Trace class definition before instance initialization",
+    "safety": "In-memory event strings only; no dynamic execution, plugins, files or network.",
+    "starterCode": "events = []\n\nclass TraceMeta(type):\n    def __new__(mcls, name, bases, namespace):\n        # Record class creation and delegate to type.__new__.\n        pass\n\ndef labelled(cls):\n    # Record decorator application, set a label, return cls.\n    pass\n\n@labelled\nclass StudyReport(metaclass=TraceMeta):\n    def __init__(self):\n        events.append('instance:init')\n\n# Print events before and after StudyReport().\n",
+    "guidedSteps": ["Append meta:StudyReport inside TraceMeta.__new__ and delegate with super().__new__.", "Make labelled append decorator:StudyReport, set label and return the class.", "Print events before constructing an instance.", "Construct one instance and print events again.", "Print type(StudyReport).__name__ and compare it with the instance's class name."],
+    "checks": ["Before instantiation, the metaclass and decorator events are present, but no instance:init.", "After instantiation, instance:init appears last.", "The class metatype name prints TraceMeta.", "The decorator returns the class and metaclass delegates to type."],
+    "hints": ["return super().__new__(mcls, name, bases, namespace)", "The class decorator receives cls after class construction.", "StudyReport() triggers its instance initializer."],
+    "solution": "events = []\n\nclass TraceMeta(type):\n    def __new__(mcls, name, bases, namespace):\n        events.append('meta:' + name)\n        return super().__new__(mcls, name, bases, namespace)\n\ndef labelled(cls):\n    events.append('decorator:' + cls.__name__)\n    cls.label = 'study'\n    return cls\n\n@labelled\nclass StudyReport(metaclass=TraceMeta):\n    def __init__(self):\n        events.append('instance:init')\n\nprint(events)\nStudyReport()\nprint(events)\nprint(type(StudyReport).__name__)\n",
+    "solutionExplanation": "The trace separates class-object construction, decorator application and instance initialization in that order.",
+    "challenges": ["Predict events if @labelled is removed.", "Find the bug if labelled forgets to return cls.", "Experiment: define another class with the same metaclass and observe that class creation is traced before any instance is made."]
+  },
+  "projectConnection": {"project": "Cross-track report catalog", "milestone": "Document class-definition-time behavior in the report registration design and use the simpler subclass hook unless a framework-level factory is justified.", "definitionOfDone": "A test proves the metaclass/decorator/instance event order, and the design note explains why production uses or avoids the metaclass."},
+  "assessment": [
+    {"question": "When does a custom metaclass __new__ run?", "answer": "When the class object is created during class definition.", "explanation": "It runs before any instance is constructed."},
+    {"question": "When is a class decorator applied in the normal class-creation path?", "answer": "After the class object has been created.", "explanation": "The decorator receives that class and its return value is bound to the class name."},
+    {"question": "Why call super().__new__ in this metaclass?", "answer": "To delegate ordinary class construction to type's machinery.", "explanation": "Skipping it can break important class-creation hooks and behavior."}
+  ]
+}

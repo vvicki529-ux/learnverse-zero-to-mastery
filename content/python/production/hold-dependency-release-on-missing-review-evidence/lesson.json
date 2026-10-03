@@ -1,0 +1,128 @@
+{
+  "id": "hold-dependency-release-on-missing-review-evidence",
+  "title": "Hold a dependency release when review evidence is missing",
+  "track": "python",
+  "level": "production",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python Packaging User Guide: Core metadata specifications, License-Expression and License-File (reviewed 2026-10-03)",
+    "PyPA pip-audit project documentation: known-vulnerability audit scope and limits (reviewed 2026-10-03)"
+  ],
+  "masterChecklist": [
+    "Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy"
+  ],
+  "whyItMatters": "A team may have a version number but no reliable license or vulnerability review. Shipping because a field is blank or a scan is unavailable turns missing evidence into a false approval.",
+  "simpleExplanation": "Dependency release review has separate questions: which distribution and version will ship, where did its artifact come from, does its license fit project policy, are there known advisories for that resolved version, and do tests pass? Modern Python package metadata may include a License-Expression and License-File fields, but missing metadata is not permission to assume a license. An advisory scanner checks reported problems in its data; a clean result does not prove a package harmless or detect every issue. In this offline exercise, a fictional review record says whether each question has been answered. A release is held if required evidence is missing. A real team must obtain current advisory results and policy decisions through approved processes; this website does not pretend its offline sample is a live scan.",
+  "mentalModel": "A pilot's checklist distinguishes 'checked and safe' from 'not checked.' A blank box never means 'passed.'",
+  "outcomes": [
+    "Separate license review from known-advisory review and functional testing.",
+    "Recognize that License-Expression is metadata, not a legal decision.",
+    "Treat unavailable or stale advisory evidence as pending, not clean.",
+    "Implement a fail-closed review decision for a fictional release record."
+  ],
+  "realWorldExample": {
+    "scenario": "A study-service dependency is proposed for release, but the build machine is offline.",
+    "riskWithoutSetup": "The team sees no advisory alert and interprets silence as proof of safety, while the license field is also absent.",
+    "professionalApproach": "Record the exact distribution/version, hold the release pending current approved advisory and license review, then test and document the final decision. Do not silently substitute a different package or waive policy."
+  },
+  "workedExample": {
+    "filename": "review_gate.py",
+    "code": "def release_ready(record):\n    required = ('name', 'version', 'artifact_checked',\n                'license_reviewed', 'advisories_reviewed', 'tests_passed')\n    if any(key not in record for key in required):\n        return False\n    return bool(record['name'] and record['version'] and\n                all(record[key] is True for key in required[2:]))\n\nreview = {'name': 'fictional-study-lib', 'version': '1.0',\n          'artifact_checked': True, 'license_reviewed': True,\n          'advisories_reviewed': False, 'tests_passed': True}\nprint('release ready:', release_ready(review))\nreview['advisories_reviewed'] = True  # Simulates separate approved evidence.\nprint('release ready after evidence:', release_ready(review))\n",
+    "explanation": [
+      "The record is fictional and in memory; it is not an actual license or vulnerability scan.",
+      "The gate checks that every required field exists before deciding anything.",
+      "`is True` prevents a nonempty string like 'pending' from counting as completed evidence.",
+      "The second assignment models what happens after a separate approved review supplies evidence; merely editing a field in a real release record would not be proof.",
+      "The function answers whether documented gates are complete, not whether the software is guaranteed safe."
+    ],
+    "expectedOutput": "release ready: False\nrelease ready after evidence: True",
+    "safeExperiment": "Set license_reviewed to the string 'pending' and predict the result. Do not change real release records to bypass a gate."
+  },
+  "procedure": [
+    "Record the exact distribution name/version and the artifact intended for release.",
+    "Check the artifact against an independently approved integrity record.",
+    "Review the distribution's license declaration and files against project policy; refer uncertain cases to the responsible reviewer.",
+    "Use current approved advisory data for the resolved dependency set. An offline or unavailable scan is pending, not clean.",
+    "Run representative tests and record the evidence and reviewer/date.",
+    "Hold or reject releases with missing evidence; record remediation and re-review after changes."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Treating a missing license field as public domain or automatic permission.",
+      "why": "Package metadata can be incomplete; legal terms need separate review.",
+      "avoid": "Hold the decision until an approved reviewer examines the actual license evidence."
+    },
+    {
+      "mistake": "Treating 'no alert' from an offline environment as a clean advisory scan.",
+      "why": "No current advisory data may have been checked.",
+      "avoid": "Record the scan as pending or unavailable."
+    },
+    {
+      "mistake": "Treating a known-vulnerability audit as detection of malicious code.",
+      "why": "Advisory databases and package-code trust are different questions.",
+      "avoid": "Keep source/provenance and code-review controls separate."
+    }
+  ],
+  "lab": {
+    "title": "Build a fail-closed dependency review gate",
+    "safety": "All records are fictional in-memory dictionaries. No install, scan, network request or license judgment is performed. The current static site guides the lab but does not yet run Python in-browser.",
+    "starterCode": "def release_ready(record):\n    # Require a name, version, and four completed review booleans.\n    pass\n\n# Test: all complete, one missing, and one 'pending' string.\n",
+    "guidedSteps": [
+      "List the six required keys from the worked example.",
+      "Reject a missing name or version.",
+      "Require each review flag to be exactly True.",
+      "Test a complete record, one without license_reviewed, and one with advisories_reviewed='pending'.",
+      "Explain why this gate needs real external evidence before production use."
+    ],
+    "checks": [
+      "Complete fictional record returns True.",
+      "Missing license review returns False.",
+      "String 'pending' never counts as approved.",
+      "Code does not perform a scan or claim a legal decision."
+    ],
+    "hints": [
+      "Use `if any(key not in record for key in required): return False`.",
+      "Use `all(record[key] is True for key in required[2:])`.",
+      "A Boolean gate only checks supplied evidence states; it cannot create evidence."
+    ],
+    "solution": "def release_ready(record):\n    required = ('name', 'version', 'artifact_checked',\n                'license_reviewed', 'advisories_reviewed', 'tests_passed')\n    if any(key not in record for key in required):\n        return False\n    return bool(record['name'] and record['version'] and\n                all(record[key] is True for key in required[2:]))\n\ncomplete = dict(name='fictional-study-lib', version='1.0',\n                artifact_checked=True, license_reviewed=True,\n                advisories_reviewed=True, tests_passed=True)\nassert release_ready(complete)\nassert not release_ready({k: v for k, v in complete.items() if k != 'license_reviewed'})\nassert not release_ready({**complete, 'advisories_reviewed': 'pending'})\nprint('review gate checked')\n",
+    "solutionExplanation": "The gate fails closed for absent or incomplete evidence. It is useful only when real approved workflows populate the fields honestly.",
+    "challenges": [
+      "Predict what happens when the version is an empty string.",
+      "Find the bug: `bool(record['advisories_reviewed'])` accepts 'pending'.",
+      "Experiment: add a reviewer/date field to the fictional record without calling it a vulnerability scan."
+    ],
+    "simulation": {
+      "prompt": "Your offline machine has no current advisory data for a dependency. What release status is justified?",
+      "choices": [
+        "Pending current review; do not claim clean",
+        "Clean, because no alert appeared"
+      ],
+      "correctIndex": 0,
+      "explanation": "Unavailable evidence is not positive evidence."
+    }
+  },
+  "projectConnection": {
+    "project": "Maintained study-progress service",
+    "milestone": "Attach a review gate to the release checklist and record separate artifact, license, advisory and test evidence.",
+    "definitionOfDone": "Missing or pending evidence holds the fictional release; a real release requires approved current data and a documented reviewer."
+  },
+  "assessment": [
+    {
+      "question": "Does an absent License-Expression field mean use is automatically permitted?",
+      "answer": "No.",
+      "explanation": "Missing package metadata is not a legal or policy conclusion."
+    },
+    {
+      "question": "Does a clean known-vulnerability audit prove no malicious code exists?",
+      "answer": "No.",
+      "explanation": "Known advisories and package-code trust are separate checks."
+    },
+    {
+      "question": "How should an offline release gate treat unavailable current advisory data?",
+      "answer": "As pending, not clean.",
+      "explanation": "The team must obtain approved current evidence before claiming review completion."
+    }
+  ]
+}

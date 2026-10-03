@@ -1,0 +1,130 @@
+{
+  "id": "prove-first-seen-dedup-with-loop-invariant",
+  "title": "Reason through a loop invariant before trusting a data-cleaning loop",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Cornell University CS 2112: Loop Invariants (course lecture, reviewed 2026-10-03)",
+    "Python 3.14.8 Standard Types: set and list behavior"
+  ],
+  "masterChecklist": [
+    "Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning",
+    "Abstract data types, representation invariants, immutability, defensive copying, design by contract"
+  ],
+  "whyItMatters": "A loop can pass a few sample tests yet fail on a later input. An invariant gives a reason that every iteration keeps the result correct, not just a hope based on examples.",
+  "simpleExplanation": "A precondition says what the input must satisfy. A postcondition says what the function promises when it returns. A loop invariant is a statement that is true before the first iteration and remains true after each iteration. For a first-seen deduplicator, after processing the first k IDs, the output must contain exactly the distinct IDs from that prefix in their original first-seen order. The seen set must contain the same IDs as the output list. Check three things: initialization makes the claim true, one new or repeated ID preserves it, and at loop end the prefix is the whole input. Tests still matter; the invariant explains why the design should work for every finite input of valid hashable IDs.",
+  "mentalModel": "A running tally is trustworthy when its rule is correct before counting starts, remains correct after each new item, and covers every item at the finish.",
+  "outcomes": [
+    "State a precondition and postcondition for a loop.",
+    "Write an invariant for first-seen deduplication.",
+    "Check initialization, preservation and termination separately.",
+    "Distinguish executable assertions from a full mathematical proof."
+  ],
+  "realWorldExample": {
+    "scenario": "A study-progress event importer must keep the first occurrence of each event ID while preserving order.",
+    "riskWithoutSetup": "A loop that appends before checking the set may duplicate IDs; a loop using only a set may lose the explicit order contract.",
+    "professionalApproach": "Specify hashable IDs and first-seen order, maintain a list and set together, test empty/repeated inputs, and explain why every iteration preserves the same invariant."
+  },
+  "workedExample": {
+    "filename": "dedup_invariant.py",
+    "code": "def first_seen(ids):\n    seen = set()\n    result = []\n    for event_id in ids:\n        # Invariant before/after: result holds unique first-seen IDs\n        # from the processed prefix, and seen == set(result).\n        if event_id not in seen:\n            seen.add(event_id)\n            result.append(event_id)\n        assert seen == set(result)\n    return result\n\nprint(first_seen(['b', 'a', 'b', 'c']))\n",
+    "explanation": [
+      "The precondition is that IDs are hashable; set membership would fail for unhashable values like a list.",
+      "Before iteration, both containers are empty, so the invariant holds for an empty processed prefix.",
+      "For a repeated ID neither container changes; for a new ID both containers gain that ID and result appends it at its first position.",
+      "The assertion checks the set/list relationship on small examples, but it does not by itself prove the order claim. The explanation of both branches supplies that reasoning.",
+      "The finite loop visits every input item; at return, the processed prefix is the whole input."
+    ],
+    "expectedOutput": "['b', 'a', 'c']",
+    "safeExperiment": "Move result.append(event_id) outside the if block. The set-equality assertion can still pass while duplicates appear. Which missing part of the full invariant catches the bug?"
+  },
+  "procedure": [
+    "Write the precondition: IDs must support hashing and equality consistently.",
+    "Write the postcondition: output contains each distinct ID exactly once in first-seen order.",
+    "Define the processed prefix and the relation between seen and result before coding.",
+    "Check the base case when both containers are empty.",
+    "Reason separately about a repeated ID and a new ID to show the invariant is preserved.",
+    "At loop end, connect the invariant for the full prefix to the postcondition.",
+    "Use tests for empty input, all repeats, mixed order and invalid/unhashable input; decide how the API should reject invalid inputs."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Calling a few passing assertions a proof for all inputs.",
+      "why": "Tests cover selected cases; the invariant argument covers the loop structure.",
+      "avoid": "Explain initialization, both update branches and completion."
+    },
+    {
+      "mistake": "Writing an invariant that only says seen == set(result).",
+      "why": "That relation alone does not establish first-seen order or uniqueness of the result list.",
+      "avoid": "State the prefix and ordering claim explicitly."
+    },
+    {
+      "mistake": "Ignoring input preconditions.",
+      "why": "A set cannot hold unhashable IDs.",
+      "avoid": "Document or validate the accepted ID type at the boundary."
+    }
+  ],
+  "lab": {
+    "title": "Explain and test an invariant for a first-seen report",
+    "safety": "Uses only fictional in-memory IDs. The current static site guides practice but does not yet execute Python in-browser.",
+    "starterCode": "def first_seen(ids):\n    seen = set()\n    result = []\n    # Add each new ID once, preserving first-seen order.\n    return result\n\n# Test empty, repeated, and mixed IDs.\n",
+    "guidedSteps": [
+      "State the input precondition and output postcondition in words.",
+      "Initialize an empty seen set and result list.",
+      "For each ID, add it to both containers only when it is new.",
+      "After each iteration, check seen == set(result) and explain why result order also remains correct.",
+      "Test empty input, three copies of one ID, and a mixed sequence."
+    ],
+    "checks": [
+      "Returns [] for empty input.",
+      "Returns one value for all-repeated input.",
+      "Preserves first-seen order for mixed input.",
+      "Learner explains why both loop branches preserve the invariant."
+    ],
+    "hints": [
+      "A repeated ID changes neither container.",
+      "A new ID is appended exactly once and added to seen.",
+      "At termination the processed prefix is all of ids."
+    ],
+    "solution": "def first_seen(ids):\n    seen = set()\n    result = []\n    for event_id in ids:\n        if event_id not in seen:\n            seen.add(event_id)\n            result.append(event_id)\n        assert seen == set(result)\n    return result\n\nassert first_seen([]) == []\nassert first_seen(['x', 'x', 'x']) == ['x']\nassert first_seen(['b', 'a', 'b', 'c']) == ['b', 'a', 'c']\nprint('invariant examples checked')\n",
+    "solutionExplanation": "The tests exercise representative cases. The stronger reasoning is that before each iteration result contains first appearances from the processed prefix; a repeat changes nothing, while a new ID is appended once, keeping order. When the loop finishes, the prefix is the whole input.",
+    "challenges": [
+      "Predict the output for ['c', 'b', 'c', 'a', 'b'].",
+      "Find the bug: append before checking membership.",
+      "Experiment: pass an unhashable list ID and decide whether your production API should validate or propagate TypeError."
+    ],
+    "simulation": {
+      "prompt": "Which reasoning step is needed to argue a loop invariant holds for the whole loop?",
+      "choices": [
+        "Show it starts true and each iteration preserves it",
+        "Test only one sample input"
+      ],
+      "correctIndex": 0,
+      "explanation": "Initialization and preservation support the claim across every iteration; termination connects it to the final result."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress event importer",
+    "milestone": "Add a documented precondition/postcondition and invariant explanation to the deduplication step, alongside tests for empty, repeated and mixed events.",
+    "definitionOfDone": "A reviewer can explain why both loop branches preserve first-seen order, and the test suite catches the append-before-check bug."
+  },
+  "assessment": [
+    {
+      "question": "What is a loop invariant?",
+      "answer": "A condition intended to hold before and after every iteration.",
+      "explanation": "It helps reason about correctness for all processed prefixes."
+    },
+    {
+      "question": "Why is seen == set(result) alone not enough for first-seen deduplication?",
+      "answer": "It does not prove result is unique or in first-seen order.",
+      "explanation": "The invariant must include the prefix and ordering claim."
+    },
+    {
+      "question": "What turns the end-of-loop invariant into the postcondition?",
+      "answer": "At termination, the processed prefix is the entire finite input.",
+      "explanation": "The invariant then describes the full result, not just a partial one."
+    }
+  ]
+}

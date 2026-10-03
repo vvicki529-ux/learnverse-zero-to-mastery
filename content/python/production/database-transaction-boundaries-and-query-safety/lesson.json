@@ -1,0 +1,80 @@
+{
+  "id": "database-transaction-boundaries-and-query-safety",
+  "title": "Database transactions, connection boundaries, and query safety",
+  "track": "python",
+  "level": "production",
+  "status": "complete",
+  "lastReviewed": "2026-09-28",
+  "sources": [
+    "Python documentation: sqlite3",
+    "SQLite documentation: transaction concepts",
+    "OWASP SQL Injection Prevention Cheat Sheet concepts"
+  ],
+  "masterChecklist": [
+    "SQL fundamentals from Python: parameterized queries, transactions, connection lifecycle, SQLite/PostgreSQL concepts",
+    "ORM concepts, migrations, query performance, N+1 query problem",
+    "Input validation, injection risks, connection ownership, consistency and error handling"
+  ],
+  "whyItMatters": "A database is shared state. A program must decide exactly when a group of changes becomes permanent, what happens when one change fails, and how values reach a query without becoming part of SQL syntax.",
+  "simpleExplanation": "A transaction groups database changes so they are committed together or rolled back together. Parameterized queries send SQL structure and data values separately. A connection is a resource with a lifecycle; use a clear owner and close it reliably.",
+  "mentalModel": "A transaction is a shopping basket at checkout: either all intended items are paid for together or the basket is returned to its previous state. Parameters are labeled items; they are not handwritten instructions that can alter the checkout rules.",
+  "outcomes": [
+    "Explain commit and rollback.",
+    "Use a parameterized SQLite query.",
+    "Describe a connection ownership boundary.",
+    "Recognize why string formatting SQL with external values is unsafe."
+  ],
+  "realWorldExample": {
+    "scenario": "A study-progress tool inserts a lesson completion and updates a total in one logical operation.",
+    "riskWithoutSetup": "If the completion insert succeeds but the total update fails, records disagree. If a title is concatenated into SQL, data can change the query structure.",
+    "professionalApproach": "Use one transaction for the related changes, parameterize values, handle expected database errors at the storage boundary, and keep query/connection details outside core business logic."
+  },
+  "workedExample": {"filename":"progress_db.py","code":"import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(':memory:')) as connection:\n    connection.execute('create table progress (title text, minutes integer)')\n    with connection:\n        connection.execute(\n            'insert into progress (title, minutes) values (?, ?)',\n            ('Functions', 30),\n        )\n    row = connection.execute(\n        'select minutes from progress where title = ?',\n        ('Functions',),\n    ).fetchone()\n    print(row[0] if row is not None else 'not found')\n","explanation":["The in-memory database keeps this example local and temporary.","The question marks are parameter placeholders; tuple values are passed separately.","The inner connection context commits or rolls back an open transaction according to sqlite3 rules; it does not close the connection.","The outer closing context explicitly closes the connection even if an error occurs.","fetchone returns one row or None, so both cases are handled."],"expectedOutput":"30","safeExperiment":"Change the search title to a missing value and observe the explicit not-found result."},
+  "procedure": [
+    "Define the consistency rule: which changes must succeed or fail together.",
+    "Open a connection at a clear application/storage boundary.",
+    "Use parameterized SQL for values; never concatenate external input into SQL text.",
+    "Commit only after the complete unit of work succeeds; roll back on failure according to policy.",
+    "Close connections and test missing rows, constraint failures, and repeated operations."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Building SQL with f-strings or string concatenation from external values.",
+      "why": "Values can alter query syntax and create injection risk.",
+      "avoid": "Use the database driver's parameter placeholders."
+    },
+    {
+      "mistake": "Committing each related change separately without a consistency plan.",
+      "why": "A failure can leave dependent records disagreeing.",
+      "avoid": "Use a transaction around one logical unit of work."
+    },
+    {
+      "mistake": "Assuming fetchone always returns a row.",
+      "why": "A valid query can match nothing.",
+      "avoid": "Handle None with a clear domain rule."
+    }
+  ],
+  "lab": {"title":"Store a fictional study record safely","safety":"Uses an in-memory SQLite database only; no external database or personal data is touched.","starterCode":"import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(':memory:')) as connection:\n    connection.execute('create table progress (title text, minutes integer)')\n    # In a nested with connection block, insert 'Functions', 30\n    # with parameters. Then select and print its minutes.\n","guidedSteps":["Use closing to own the connection lifetime.","Create an inner with connection block for the insert transaction.","Use two ? placeholders with ('Functions', 30) as values.","Query with a bound title and handle a possible missing row.","Explain why the transaction block does not close the connection."],"checks":["Uses parameter placeholders.","Uses an in-memory database.","Does not concatenate SQL values.","Acknowledges fetchone can return None."],"hints":["values (?, ?)","('Functions', 30)","where title = ?"],"solution":"import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(':memory:')) as connection:\n    connection.execute('create table progress (title text, minutes integer)')\n    with connection:\n        connection.execute(\n            'insert into progress (title, minutes) values (?, ?)',\n            ('Functions', 30),\n        )\n    row = connection.execute(\n        'select minutes from progress where title = ?',\n        ('Functions',),\n    ).fetchone()\n    print(row[0] if row is not None else 'not found')\n","solutionExplanation":"Placeholders keep the values separate from SQL syntax. The inner context commits or rolls back the open transaction; the outer closing context closes the connection.","challenges":["Predict the output.","Find the bug: use f\"... title = '{title}'\" for a value from input.","Experiment: add a uniqueness rule for title and decide how a repeated insert should behave."]},
+  "projectConnection": {
+    "project": "Study-progress reporter",
+    "milestone": "Define the transaction boundary for recording progress and use parameterized queries for every external value.",
+    "definitionOfDone": "Related updates cannot silently diverge, and no user-supplied value is concatenated into SQL text."
+  },
+  "assessment": [
+    {
+      "question": "What is a transaction?",
+      "answer": "A grouped unit of database work that is committed together or rolled back together.",
+      "explanation": "It protects a defined consistency rule."
+    },
+    {
+      "question": "Why parameterize SQL values?",
+      "answer": "It separates data values from SQL syntax and reduces injection risk.",
+      "explanation": "It also lets the driver handle value representation."
+    },
+    {
+      "question": "What should code do after fetchone?",
+      "answer": "Handle the possibility that it returned None when no row matched.",
+      "explanation": "Missing data is a normal domain case to define."
+    }
+  ]
+}

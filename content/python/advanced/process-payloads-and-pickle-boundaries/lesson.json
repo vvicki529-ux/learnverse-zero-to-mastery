@@ -1,0 +1,45 @@
+{
+  "id": "process-payloads-and-pickle-boundaries",
+  "title": "Design data that can cross a process boundary",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: multiprocessing programming guidelines, concurrent.futures ProcessPoolExecutor, pickle — Python object serialization; reviewed 2026-10-03"],
+  "masterChecklist": ["Processes, multiprocessing, pickling constraints, pools, IPC, CPU-bound work"],
+  "whyItMatters": "A process worker has separate memory. Sending a job to it requires data and callable boundaries that can be reconstructed there; a local closure or open file handle is a poor job payload.",
+  "simpleExplanation": "Threads share a process's memory, but processes do not share ordinary Python objects automatically. A ProcessPoolExecutor sends callable, argument, and result data between processes using serialization. Its worker needs an importable main module; a top-level function in a real script is a safer starting point than a lambda or nested function. Pickle can encode many Python values, but it is Python-specific and loading untrusted pickle data can execute code. Never unpickle input from an unknown person or service. A small record of primitive values is easier to reason about and test than a live connection, lock, or file handle. For persistent or external data exchange, choose a documented safe format and schema instead.",
+  "mentalModel": "A process is a different room; you send a written work order, not the desk, open notebook, and tools from your room. Serialization is the envelope, not a security filter.",
+  "outcomes": ["Explain why ordinary mutable objects are not automatically shared between processes.", "Choose a small serializable job payload and result.", "Recognize why a nested callable or lambda is not a portable ProcessPoolExecutor task.", "Avoid loading untrusted pickle data."],
+  "realWorldExample": {"scenario": "A report service sends independent CPU-heavy scoring jobs to workers.", "riskWithoutSetup": "A closure over a database connection fails to serialize; copying a huge model for each tiny job costs more than the work; an untrusted pickle becomes a code-execution risk.", "professionalApproach": "Use an importable top-level worker function, pass a minimal immutable record of IDs and numbers, measure serialization overhead, and fetch protected resources within the worker under a defined policy."},
+  "workedExample": {
+    "filename": "safe_local_payload.py",
+    "code": "import pickle\n\ndef score_job(job):\n    return {'course': job['course'], 'total': sum(job['points'])}\n\njob = {'course': 'PY-101', 'points': (2, 3, 5)}\nwire_bytes = pickle.dumps(job)  # Only our own trusted local object.\nreceived = pickle.loads(wire_bytes)\nresult = score_job(received)\nprint(received == job, result)\n",
+    "explanation": ["The payload is a small dictionary containing strings, integers, and a tuple. It is data, not a live connection or lock.", "The local round trip demonstrates the shape that can be serialized; it does not prove a ProcessPoolExecutor will run in a REPL or browser.", "score_job is a top-level function, suitable for importing from a real script module when building a process-pool version.", "pickle.loads is used only on bytes created by this same trusted local example. Do not accept serialized bytes from untrusted learners or networks."],
+    "expectedOutput": "True {'course': 'PY-101', 'total': 10}",
+    "safeExperiment": "Add a second numeric course record and verify the same function returns a fresh result without mutating its input. Do not unpickle external files."
+  },
+  "procedure": ["First measure whether the task is CPU-heavy enough to justify process startup and data transfer.", "Put the worker callable at module top level in an importable script and guard process startup with if __name__ == '__main__'.", "Pass small independent records; avoid open resources and non-importable closures.", "Retrieve results or Future exceptions explicitly and shut the pool down.", "Use only trusted local pickle traffic; define a safe external format and validation boundary separately."],
+  "commonMistakes": [
+    {"mistake": "Submitting a lambda or nested function to ProcessPoolExecutor.", "why": "Workers generally need importable, picklable callables.", "avoid": "Define a top-level worker in an importable module."},
+    {"mistake": "Assuming a process can see later parent mutations.", "why": "Ordinary process memory is separate and transferred payloads are copies.", "avoid": "Send explicit messages/results or use a deliberate IPC design."},
+    {"mistake": "Unpickling bytes from an unknown source.", "why": "Pickle is not a safe untrusted-data format and may execute code while loading.", "avoid": "Use a validated data format for untrusted input; never deserialize arbitrary pickle from it."}
+  ],
+  "lab": {
+    "title": "Prepare a minimal trusted process job record",
+    "safety": "Serialize only data created in this local exercise; never load an external pickle. No process or network is started.",
+    "starterCode": "import pickle\n\ndef score_job(job):\n    # Return course and sum of points without modifying job.\n    pass\n\njob = {'course': 'PY-102', 'points': (4, 6)}\n# Round-trip only this trusted local record; print equality and result.\n",
+    "guidedSteps": ["Implement top-level score_job with sum(job['points']).", "Call pickle.dumps on the local job, then pickle.loads on only those returned bytes.", "Check the received record equals the original.", "Print the result and confirm the original job is unchanged.", "Explain why this test does not establish that a process pool works in an interactive browser or REPL."],
+    "checks": ["The callable is top-level.", "The payload contains only a string and numeric tuple.", "Only locally created trusted bytes are loaded.", "The result total is 10 and the source record remains unchanged."],
+    "hints": ["return {'course': job['course'], 'total': sum(job['points'])}", "received = pickle.loads(pickle.dumps(job))", "Compare received == job before calling score_job."],
+    "solution": "import pickle\n\ndef score_job(job):\n    return {'course': job['course'], 'total': sum(job['points'])}\n\njob = {'course': 'PY-102', 'points': (4, 6)}\nreceived = pickle.loads(pickle.dumps(job))\nresult = score_job(received)\nassert received == job\nassert result == {'course': 'PY-102', 'total': 10}\nassert job == {'course': 'PY-102', 'points': (4, 6)}\nprint(received == job, result)\n",
+    "solutionExplanation": "This isolates the data-transfer shape and functional calculation. The later script-based pool lab must test actual process startup, importability, failures, and overhead on the target OS.",
+    "challenges": ["Predict whether changing received['course'] would change job['course'] after the round trip.", "Find the unsafe boundary if bytes come from an unknown download.", "Experiment with a larger point tuple and discuss serialization cost versus useful CPU work."]
+  },
+  "projectConnection": {"project": "Cross-track scoring pipeline", "milestone": "Define a minimal versioned job/result record for later process-pool scoring.", "definitionOfDone": "The record is serializable, the worker function is top-level and pure for the test input, no untrusted pickle is loaded, and the actual pool remains a separately tested integration step."},
+  "assessment": [
+    {"question": "Do ordinary Python objects automatically become shared mutable state across processes?", "answer": "No.", "explanation": "Processes have separate memory unless a specific IPC/shared-memory mechanism is used."},
+    {"question": "Why prefer a top-level function for process-pool work?", "answer": "Workers need an importable, serializable callable.", "explanation": "A nested function or lambda is not a portable pool task."},
+    {"question": "Is pickle.loads safe for bytes from an unknown website?", "answer": "No.", "explanation": "Unpickling untrusted bytes can execute code; use a validated external data format instead."}
+  ]
+}

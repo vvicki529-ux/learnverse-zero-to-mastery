@@ -1,0 +1,45 @@
+{
+  "id": "abc-protocol-and-composition-contracts",
+  "title": "Choose an abstract base class, a protocol, or composition",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: abc module; typing.Protocol; reviewed 2026-10-03"],
+  "masterChecklist": ["dataclass, enums, abstract base classes, protocols, design trade-offs"],
+  "whyItMatters": "Several notification providers can serve the same course workflow. The service should rely on the one operation it needs instead of knowing every provider's internal details.",
+  "simpleExplanation": "An abstract base class (ABC) is an explicit inherited contract: a subclass missing an abstract method cannot be instantiated normally. A Protocol is a structural typing contract: a static type checker can accept an object with the required method even if it does not inherit from the Protocol. A plain Protocol annotation does not perform runtime checking. Composition means a service receives and uses a notifier object instead of inheriting notification behavior. Use an ABC when a shared inherited base and runtime abstract-method enforcement are useful; use a small Protocol for a capability shared by otherwise unrelated classes; use composition to keep the consumer separate from the provider. These choices can work together, not compete.",
+  "mentalModel": "The ABC is a membership agreement signed by subclasses. The Protocol is a capability checklist checked by typing tools. Composition is the service plugging in a collaborator.",
+  "outcomes": ["Define an ABC with an abstract method and observe missing-method instantiation fail.", "Describe a Protocol's structural typing role without claiming automatic runtime checks.", "Inject a provider into a service and call only its needed method.", "Choose a small capability over a large inherited hierarchy when appropriate."],
+  "realWorldExample": {"scenario": "A study reminder service can format a message for a local console or store it in a test fake.", "riskWithoutSetup": "A hard-coded provider makes testing awkward; a forced inheritance tree couples unrelated delivery methods.", "professionalApproach": "Inject a notifier with one send method, annotate the capability with Protocol for static checks, and reserve ABC for providers that truly share an inherited contract."},
+  "workedExample": {
+    "filename": "notifier_contracts.py",
+    "code": "from abc import ABC, abstractmethod\nfrom typing import Protocol\n\nclass Notifier(Protocol):\n    def send(self, message: str) -> str: ...\n\nclass BaseNotifier(ABC):\n    @abstractmethod\n    def send(self, message: str) -> str:\n        raise NotImplementedError\n\nclass ConsoleNotifier(BaseNotifier):\n    def send(self, message: str) -> str:\n        return f'notice: {message}'\n\nclass FakeNotifier:\n    def send(self, message: str) -> str:\n        return f'fake: {message}'\n\nclass Reminder:\n    def __init__(self, notifier: Notifier):\n        self.notifier = notifier\n\n    def send(self, topic: str) -> str:\n        return self.notifier.send(f'Review {topic}')\n\nprint(Reminder(ConsoleNotifier()).send('Loops'))\nprint(Reminder(FakeNotifier()).send('Loops'))\ntry:\n    BaseNotifier()\nexcept TypeError:\n    print('abstract class blocked')\n",
+    "explanation": ["BaseNotifier is an ABC; its abstract send prevents direct instantiation, and ConsoleNotifier implements the required method.", "FakeNotifier does not inherit from BaseNotifier, yet it has the send shape expected by the Protocol for static typing.", "Reminder uses composition: it stores a collaborator and calls the one operation it needs.", "The example does not pretend the Protocol annotation validates objects at runtime; a static checker is needed for that checking."],
+    "expectedOutput": "notice: Review Loops\nfake: Review Loops\nabstract class blocked",
+    "safeExperiment": "Remove ConsoleNotifier.send and see that instantiating ConsoleNotifier raises TypeError. Keep FakeNotifier separate from the ABC."
+  },
+  "procedure": ["Identify the smallest operation the consumer needs.", "Inject the provider into the consumer instead of hard-coding it.", "Use a Protocol annotation when static structural compatibility is useful.", "Use ABC and @abstractmethod when an inherited base and runtime instantiation guard are justified.", "Test both a real in-memory implementation and a fake; use a static checker separately for Protocol analysis."],
+  "commonMistakes": [
+    {"mistake": "Assuming a Protocol annotation rejects a wrong object at runtime.", "why": "Type hints are not general runtime validators.", "avoid": "Run a static checker and validate untrusted runtime inputs at a boundary if needed."},
+    {"mistake": "Making every provider inherit an ABC for one method.", "why": "It imposes an unnecessary ancestry relationship on unrelated implementations.", "avoid": "Use a focused Protocol and composition when capability is what matters."},
+    {"mistake": "Raising NotImplementedError in a normal method and calling that an abstract contract.", "why": "It fails only when called; it does not prevent construction.", "avoid": "Use ABC plus @abstractmethod when instantiation enforcement is intended."}
+  ],
+  "lab": {
+    "title": "Swap an in-memory reminder provider",
+    "safety": "Returns strings only; no actual messages, accounts or network calls.",
+    "starterCode": "from abc import ABC, abstractmethod\nfrom typing import Protocol\n\nclass Notifier(Protocol):\n    def send(self, message: str) -> str: ...\n\nclass BaseNotifier(ABC):\n    @abstractmethod\n    def send(self, message: str) -> str:\n        raise NotImplementedError\n\n# Implement ConsoleNotifier, FakeNotifier and Reminder.\n",
+    "guidedSteps": ["Make ConsoleNotifier inherit BaseNotifier and implement send.", "Make FakeNotifier provide send without inheriting the ABC.", "Make Reminder accept a Notifier and delegate a Review message.", "Print results for both providers.", "Try constructing BaseNotifier and catch its TypeError."],
+    "checks": ["Outputs notice: Review Loops, fake: Review Loops, abstract class blocked.", "FakeNotifier is structurally compatible without ABC inheritance.", "Reminder does not inherit from a provider.", "No real delivery occurs."],
+    "hints": ["class ConsoleNotifier(BaseNotifier):", "self.notifier = notifier", "return self.notifier.send(f'Review {topic}')"],
+    "solution": "from abc import ABC, abstractmethod\nfrom typing import Protocol\n\nclass Notifier(Protocol):\n    def send(self, message: str) -> str: ...\n\nclass BaseNotifier(ABC):\n    @abstractmethod\n    def send(self, message: str) -> str:\n        raise NotImplementedError\n\nclass ConsoleNotifier(BaseNotifier):\n    def send(self, message: str) -> str:\n        return f'notice: {message}'\n\nclass FakeNotifier:\n    def send(self, message: str) -> str:\n        return f'fake: {message}'\n\nclass Reminder:\n    def __init__(self, notifier: Notifier):\n        self.notifier = notifier\n\n    def send(self, topic: str) -> str:\n        return self.notifier.send(f'Review {topic}')\n\nprint(Reminder(ConsoleNotifier()).send('Loops'))\nprint(Reminder(FakeNotifier()).send('Loops'))\ntry:\n    BaseNotifier()\nexcept TypeError:\n    print('abstract class blocked')\n",
+    "solutionExplanation": "The service depends on a tiny capability and works with both providers, while the ABC separately demonstrates runtime abstract-method enforcement.",
+    "challenges": ["Predict what happens if ConsoleNotifier lacks send.", "Find the mistaken claim that a Protocol annotation itself validates runtime input.", "Experiment: add a third in-memory provider without editing Reminder."]
+  },
+  "projectConnection": {"project": "Cross-track study reminder service", "milestone": "Make reminder formatting testable with an injected in-memory notifier and a narrow capability contract.", "definitionOfDone": "Two providers return expected strings, the abstract base cannot be instantiated directly, and static analysis is documented separately from runtime behavior."},
+  "assessment": [
+    {"question": "What does an ABC abstract method prevent?", "answer": "Normal instantiation of a subclass that has not implemented the abstract method.", "explanation": "The ABC mechanism enforces this inherited contract at construction time."},
+    {"question": "Does a Protocol annotation automatically inspect objects at runtime?", "answer": "No.", "explanation": "Protocols primarily describe structural compatibility to static type checkers."},
+    {"question": "Why does Reminder receive a notifier object?", "answer": "Composition lets its behavior vary and be tested without changing Reminder's core rule.", "explanation": "The consumer needs the send capability, not a particular provider class."}
+  ]
+}

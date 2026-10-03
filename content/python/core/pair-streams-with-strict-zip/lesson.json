@@ -1,0 +1,129 @@
+{
+  "id": "pair-streams-with-strict-zip",
+  "title": "Pair two streams without silently losing a row",
+  "track": "python",
+  "level": "core",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python 3.14.8 Built-in Functions: zip and strict option (added in Python 3.10)",
+    "Python 3.14.8 Standard Library: itertools.zip_longest"
+  ],
+  "masterChecklist": [
+    "Collections, iteration, order preservation, unequal lengths and defensive data handling",
+    "Sequence operations, iterable protocol, unpacking, starred expressions, enumerate, zip, sorted and reversed"
+  ],
+  "whyItMatters": "Reports often pair data from separate sources. If one source has an extra row, ordinary zip silently stops at the shorter one and can hide unfinished work.",
+  "simpleExplanation": "`zip(left, right)` produces pairs lazily. By default it stops when either input ends. When equal lengths are required, use `zip(left, right, strict=True)` on Python 3.10 or later. The mismatch raises `ValueError` while the iterator is consumed, not when zip is first created. For intentionally uneven data, choose a documented policy such as padding with `itertools.zip_longest`; do not use padding merely to hide a data error. Because iterators can be consumed only once, decide whether you need to materialize a bounded input before trying again.",
+  "mentalModel": "Two conveyor belts should deliver one label and one package at a time. Ordinary zip quietly stops when one belt empties; strict zip sounds an alarm when the other belt still has an item.",
+  "outcomes": [
+    "Predict ordinary zip truncation.",
+    "Use strict=True for inputs that must align.",
+    "Explain why a lazy mismatch appears during iteration.",
+    "Distinguish strict rejection from intentional padding."
+  ],
+  "realWorldExample": {
+    "scenario": "A study-progress import combines learner IDs and completion scores from two iterators.",
+    "riskWithoutSetup": "An extra ID is silently omitted, producing an incomplete report that looks successful.",
+    "professionalApproach": "Consume the pair stream with strict zip, handle a mismatch as a failed import, and validate individual IDs and scores before persistence. For very large streams, avoid materializing everything without a size policy."
+  },
+  "workedExample": {
+    "filename": "pair_scores.py",
+    "code": "names = iter(['Ada', 'Bo'])\nscores = iter([80, 90, 70])\n\ntry:\n    pairs = list(zip(names, scores, strict=True))\nexcept ValueError:\n    print('mismatched rows rejected')\n\nprint(list(zip(['Ada', 'Bo'], [80, 90, 70])))\n",
+    "explanation": [
+      "iter(...) makes the two inputs one-pass iterators, not lists with convenient len checks.",
+      "zip creates a lazy pairing iterator; list(...) consumes it, causing the mismatch to be detected.",
+      "The ValueError is caught at the import boundary so an incomplete paired report is not accepted.",
+      "The final line contrasts ordinary zip: it returns only two pairs and silently drops the unmatched score. This line is a demonstration, not the recommended policy.",
+      "The first iterators have been consumed during the failed attempt; create fresh iterators before retrying."
+    ],
+    "expectedOutput": "mismatched rows rejected\n[('Ada', 80), ('Bo', 90)]",
+    "safeExperiment": "Move list(...) outside the try block. Which line raises? Then restore the controlled error handling."
+  },
+  "procedure": [
+    "Write down whether unmatched rows are errors or expected data.",
+    "For Python 3.10+, pair equal-length streams with zip(..., strict=True).",
+    "Consume the iterator within the error-handling boundary; merely assigning it does not check lengths.",
+    "On mismatch, reject the partial result and do not persist rows already produced unless a deliberate transaction/rollback strategy exists.",
+    "If uneven rows are valid, document how missing values are represented; zip_longest can pad but requires careful handling of real None values.",
+    "Test shorter-left and shorter-right cases, not just a successful pair."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Assuming strict zip checks at construction time.",
+      "why": "zip is lazy; the error appears only during iteration.",
+      "avoid": "Consume it inside the try block and keep persistence outside until validation succeeds."
+    },
+    {
+      "mistake": "Reusing a one-pass iterator after a failed zip.",
+      "why": "The attempted pairing already consumed values.",
+      "avoid": "Create a fresh iterator or deliberately buffer bounded inputs."
+    },
+    {
+      "mistake": "Padding a genuine data error with zip_longest.",
+      "why": "It can turn a missing score into a plausible-looking value.",
+      "avoid": "Use padding only when the domain explicitly allows missing records."
+    }
+  ],
+  "lab": {
+    "title": "Reject an unmatched score",
+    "safety": "Uses only small fictional in-memory data. No files or network. The current static site guides the lab but does not yet execute Python in-browser.",
+    "starterCode": "def paired_rows(names, scores):\n    # Return a complete list of pairs, or let ValueError show a mismatch.\n    pass\n\n# Test equal inputs and both directions of mismatch.\n",
+    "guidedSteps": [
+      "Return list(zip(names, scores, strict=True)).",
+      "Test two names and two scores.",
+      "Test one extra name and catch ValueError.",
+      "Test one extra score and catch ValueError.",
+      "Explain why the call to list is inside the test's try block."
+    ],
+    "checks": [
+      "Matching inputs produce all pairs.",
+      "Both mismatch directions raise ValueError.",
+      "No partial paired result is returned after failure.",
+      "The learner knows strict is available from Python 3.10."
+    ],
+    "hints": [
+      "`list(zip(names, scores, strict=True))` forces consumption.",
+      "Wrap each invalid call in try/except ValueError.",
+      "If no exception appears, raise AssertionError in the test."
+    ],
+    "solution": "def paired_rows(names, scores):\n    return list(zip(names, scores, strict=True))\n\nassert paired_rows(['Ada', 'Bo'], [80, 90]) == [('Ada', 80), ('Bo', 90)]\nfor names, scores in ((['Ada', 'Bo'], [80]), (['Ada'], [80, 90])):\n    try:\n        paired_rows(names, scores)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('mismatch was accepted')\nprint('strict pairing checked')\n",
+    "solutionExplanation": "The function materializes a complete small result only if the streams align. Both mismatch directions are explicitly tested.",
+    "challenges": [
+      "Predict the result for two empty lists.",
+      "Find the bug: return zip(...) without consuming it before saving records.",
+      "Experiment: replace strict zip with ordinary zip and see which assertions stop protecting you."
+    ],
+    "simulation": {
+      "prompt": "When does zip(..., strict=True) report unequal input lengths?",
+      "choices": [
+        "When the zip iterator is consumed",
+        "As soon as zip(...) is called"
+      ],
+      "correctIndex": 0,
+      "explanation": "zip is lazy, so the mismatch is discovered during iteration."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress importer",
+    "milestone": "Pair learner IDs and scores with strict zip before committing an imported batch.",
+    "definitionOfDone": "Both shorter-left and shorter-right tests reject mismatches and no incomplete batch is persisted."
+  },
+  "assessment": [
+    {
+      "question": "What does ordinary zip do with unequal-length inputs?",
+      "answer": "It stops at the shortest input.",
+      "explanation": "Unmatched values can be silently omitted."
+    },
+    {
+      "question": "Does zip(..., strict=True) raise immediately at construction?",
+      "answer": "No, the mismatch is raised during consumption.",
+      "explanation": "zip returns a lazy iterator."
+    },
+    {
+      "question": "When is zip_longest appropriate?",
+      "answer": "When missing values are expected and the padding policy is explicit.",
+      "explanation": "It should not mask a mismatch that is a data error."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "cooperative-super-mixins-and-polymorphism",
+  "title": "Inheritance, mixins, polymorphism, and cooperative super",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Tutorial, Classes: inheritance and multiple inheritance; Python 3.14 built-in functions: super(); Python 3.14 Data Model: class method resolution; reviewed 2026-10-03"],
+  "masterChecklist": ["Inheritance, composition, mixins, multiple inheritance, MRO, super, polymorphism"],
+  "whyItMatters": "A subclass or mixin can add behavior, but multiple inheritance becomes surprising unless you understand which method runs next. A small example lets you predict that order before building a larger design.",
+  "simpleExplanation": "Inheritance says a specialized class can use and extend behavior from a base class. Polymorphism means callers can use different objects through the same expected operation without checking each concrete class. A mixin is a narrow class intended to contribute one behavior, often without standing alone as a domain object. In multiple inheritance, Python computes a method resolution order (MRO); Class.__mro__ shows the order. super() delegates to the next class in that order for the current instance, not necessarily to one named parent. A cooperative chain works only if each participating override calls super() and its signatures are compatible. Composition—a class holding a collaborator—is often easier than a wide inheritance hierarchy.",
+  "mentalModel": "Think of a line of helpers. Each helper may wrap the work, then hand it to the next helper in a defined queue. super() means 'next in this queue', not 'my favorite parent'.",
+  "outcomes": ["Read a class's MRO and predict a cooperative call chain.", "Explain a narrow mixin and why direct parent calls can skip behavior.", "Use one shared method name polymorphically.", "Choose composition when a collaborator is more natural than an is-a subtype."],
+  "realWorldExample": {"scenario": "A study-report object needs base report text plus a small prefix and audit marker.", "riskWithoutSetup": "Calling Report.render(self) directly from one mixin could skip the other mixin. A class hierarchy built only for small formatting changes can become hard to maintain.", "professionalApproach": "Use an explicit and tested cooperative chain only when the inheritance relationship is justified; otherwise inject small formatting or audit collaborators."},
+  "workedExample": {
+    "filename": "cooperative_report.py",
+    "code": "class Report:\n    def render(self):\n        return 'progress'\n\nclass PrefixMixin:\n    def render(self):\n        return 'study: ' + super().render()\n\nclass AuditMixin:\n    def render(self):\n        return super().render() + ' [checked]'\n\nclass StudyReport(PrefixMixin, AuditMixin, Report):\n    pass\n\nreport = StudyReport()\nprint([cls.__name__ for cls in StudyReport.__mro__])\nprint(report.render())\nprint(isinstance(report, Report))\n",
+    "explanation": ["The MRO lists StudyReport, PrefixMixin, AuditMixin, Report and object in the order Python searches for render.", "PrefixMixin calls super(), which continues at AuditMixin; AuditMixin continues at Report. The returned strings are combined while the calls unwind.", "StudyReport is a Report subclass, so code expecting Report.render can call it without knowing its concrete type. This is the simple polymorphic contract shown here.", "This is a small demonstration, not a recommendation to use many mixins for ordinary reports; composition may be clearer."],
+    "expectedOutput": "['StudyReport', 'PrefixMixin', 'AuditMixin', 'Report', 'object']\nstudy: progress [checked]\nTrue",
+    "safeExperiment": "Swap PrefixMixin and AuditMixin in StudyReport's base list and predict the new MRO and render output before running."
+  },
+  "procedure": ["Start with the operation callers need, such as render(), and its expected result.", "Ask if a collaborator would express the design more clearly; use inheritance only if a true subtype contract exists.", "If narrow mixins are justified, make each override call super() with a compatible signature.", "Print __mro__ in a small local experiment to confirm method order.", "Test the result and a polymorphic call through the base-class interface."],
+  "commonMistakes": [
+    {"mistake": "Thinking super() always calls a class's visually listed parent.", "why": "It follows the runtime MRO for the current instance.", "avoid": "Inspect the concrete class's __mro__ and use cooperative calls throughout the chain."},
+    {"mistake": "Calling Report.render(self) directly inside a mixin.", "why": "This can bypass another mixin and break the cooperative chain.", "avoid": "Use super().render() when every participant is designed to cooperate."},
+    {"mistake": "Building multiple inheritance solely to avoid passing a small collaborator.", "why": "The MRO and state initialization can become more complex than the original task.", "avoid": "Consider composition or a plain function for replaceable behavior."}
+  ],
+  "lab": {
+    "title": "Predict and test a cooperative report chain",
+    "safety": "Fictional in-memory report strings only; no network or personal records.",
+    "starterCode": "class Report:\n    def render(self):\n        return 'progress'\n\nclass PrefixMixin:\n    def render(self):\n        # Add 'study: ' before the next result.\n        pass\n\nclass AuditMixin:\n    def render(self):\n        # Add ' [checked]' after the next result.\n        pass\n\nclass StudyReport(PrefixMixin, AuditMixin, Report):\n    pass\n\n# Print the class order and rendered result.\n",
+    "guidedSteps": ["Make PrefixMixin.render call super().render() and prepend study: .", "Make AuditMixin.render call super().render() and append [checked].", "Print the names in StudyReport.__mro__.", "Create StudyReport and print render().", "Confirm it is a Report subtype using isinstance."],
+    "checks": ["MRO is StudyReport, PrefixMixin, AuditMixin, Report, object.", "Rendered text is study: progress [checked].", "isinstance(report, Report) is True.", "Both mixins call super() rather than naming Report directly."],
+    "hints": ["return 'study: ' + super().render()", "return super().render() + ' [checked]'", "[cls.__name__ for cls in StudyReport.__mro__]"],
+    "solution": "class Report:\n    def render(self):\n        return 'progress'\n\nclass PrefixMixin:\n    def render(self):\n        return 'study: ' + super().render()\n\nclass AuditMixin:\n    def render(self):\n        return super().render() + ' [checked]'\n\nclass StudyReport(PrefixMixin, AuditMixin, Report):\n    pass\n\nreport = StudyReport()\nprint([cls.__name__ for cls in StudyReport.__mro__])\nprint(report.render())\nprint(isinstance(report, Report))\n",
+    "solutionExplanation": "Each override hands work to the next class in the MRO, so both mixins contribute exactly once to the final report.",
+    "challenges": ["Predict the output after swapping mixin order.", "Find the lost behavior if PrefixMixin calls Report.render(self) directly.", "Experiment: replace one formatting mixin with an injected formatter object and compare the design complexity."]
+  },
+  "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Choose a clear report extension strategy and document why a mixin or a composed collaborator fits.", "definitionOfDone": "Tests prove the intended render contract, exact contribution order, and one reasonable alternative design using composition."},
+  "assessment": [
+    {"question": "What does super() follow in a cooperative multiple-inheritance call?", "answer": "The current object's method resolution order.", "explanation": "It is not simply a hard-coded call to one named parent."},
+    {"question": "Why can Report.render(self) be a bug inside PrefixMixin?", "answer": "It can skip AuditMixin's contribution.", "explanation": "A direct base-class call bypasses the cooperative MRO chain."},
+    {"question": "When might composition be preferable?", "answer": "When a report merely uses replaceable formatting behavior rather than being a genuine subtype hierarchy.", "explanation": "Holding a collaborator avoids making method order part of a simple formatting feature."}
+  ]
+}

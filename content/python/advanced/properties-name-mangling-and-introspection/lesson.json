@@ -1,0 +1,45 @@
+{
+  "id": "properties-name-mangling-and-introspection",
+  "title": "Properties, naming conventions, and inspecting object state",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Tutorial, Classes: private variables and name mangling; Python 3.14 built-in functions: property(), vars(), getattr(); Python 3.14 Data Model: custom instances; reviewed 2026-10-03"],
+  "masterChecklist": ["Encapsulation conventions, properties, name mangling, __dict__, introspection"],
+  "whyItMatters": "A progress percentage must not become 300 through an ordinary assignment. A property can keep that rule in one place, while introspection helps diagnose state without mistaking naming conventions for a security boundary.",
+  "simpleExplanation": "A single leading underscore, such as _percent, asks callers to treat a name as an internal detail; Python does not block access. A double leading underscore, such as __token, is rewritten inside the class to a name like _ClassName__token to reduce accidental collisions in subclasses. It is not encryption or access control. A property lets code read or assign obj.percent while Python runs a getter or setter. A setter should validate before changing stored state. For an ordinary instance with a dictionary, vars(obj) and obj.__dict__ show its own stored attributes. getattr(obj, name) can read an attribute by string but may run a property or other descriptor; inspect only trusted objects/names, never dump private values into logs. Some classes use slots and have no instance __dict__.",
+  "mentalModel": "The object is a small machine. A property is a guarded control dial; the underscore is a 'service personnel' label, not a lock. The instance dictionary is a diagnostic panel, not a public data contract.",
+  "outcomes": ["Validate a value through a property setter.", "Explain why a single or double leading underscore is not security.", "Inspect ordinary instance attributes without logging secrets.", "Recognize that not every object has __dict__ and that getattr may execute code."],
+  "realWorldExample": {"scenario": "A learning dashboard stores completion percentage and an internal audit marker.", "riskWithoutSetup": "A careless assignment can store an impossible percentage, and a generic vars(obj) logger can expose internal metadata.", "professionalApproach": "Use a property for the range invariant, keep diagnostics narrow and allowlisted, and avoid treating name mangling as secrecy."},
+  "workedExample": {
+    "filename": "safe_progress_state.py",
+    "code": "class Progress:\n    def __init__(self, percent=0):\n        self.__audit_marker = 'internal-demo'\n        self.percent = percent\n\n    @property\n    def percent(self):\n        return self._percent\n\n    @percent.setter\n    def percent(self, value):\n        if type(value) is not int or not 0 <= value <= 100:\n            raise ValueError('percent must be an integer from 0 to 100')\n        self._percent = value\n\nitem = Progress(25)\nitem.percent = 50\nprint(item.percent)\nprint(sorted(name for name in vars(item) if name != '_Progress__audit_marker'))\ntry:\n    item.percent = True  # bool is an int subclass, but not a percentage here.\nexcept ValueError as error:\n    print(type(error).__name__)\nprint(item.percent)\n",
+    "explanation": ["The constructor uses the same setter as later assignments, so both paths enforce the range.", "type(value) is int intentionally rejects booleans; isinstance(True, int) would be True in Python.", "The diagnostic prints only allowlisted state names and never the internal marker's value. Double-underscore rewriting avoids a subclass-name collision but does not make the value secret.", "After invalid True is rejected, the previous valid percentage remains 50."],
+    "expectedOutput": "50\n['_percent']\nValueError\n50",
+    "safeExperiment": "Try setting -1 and 100. Confirm the invalid attempt leaves the prior state unchanged; do not print the internal marker."
+  },
+  "procedure": ["Write down the invariant, such as whole-number percentages from 0 through 100.", "Store the backing value under a conventional internal name and expose a property.", "Validate before writing so rejected assignments preserve the previous state.", "Use vars(obj) or obj.__dict__ only for ordinary instances that have a dictionary, and select safe fields before display.", "Use double-underscore names only to avoid accidental subclass collisions, never as a secrets vault."],
+  "commonMistakes": [
+    {"mistake": "Using isinstance(value, int) when a boolean must be rejected.", "why": "bool subclasses int, so True passes that check.", "avoid": "Use type(value) is int for this intentionally narrow input contract, or state explicitly that booleans are accepted."},
+    {"mistake": "Assuming __token is private or encrypted.", "why": "Name mangling only rewrites the attribute name and can be inspected.", "avoid": "Keep real secrets outside diagnostic object dumps; use access controls at the system boundary."},
+    {"mistake": "Logging vars(obj) or calling getattr on arbitrary names from untrusted input.", "why": "It can disclose internal state, and attribute access may execute property or descriptor code.", "avoid": "Allowlist safe diagnostic fields and use only trusted names and objects."}
+  ],
+  "lab": {
+    "title": "Guard a progress value and inspect only safe state",
+    "safety": "Fictional in-memory progress only; never log actual account metadata or secrets.",
+    "starterCode": "class Progress:\n    def __init__(self, percent=0):\n        self.__audit_marker = 'internal-demo'\n        self.percent = percent\n\n    # Add a percent property and validated setter.\n\nitem = Progress(25)\n# Set to 50, inspect only safe state names, reject True, then print percent.\n",
+    "guidedSteps": ["Add @property percent returning _percent.", "Add @percent.setter and reject values whose exact type is not int or whose range is outside 0..100.", "Set item.percent to 50 and print it.", "Print only the safe _percent attribute name from vars(item); do not print the audit marker.", "Attempt item.percent = True and confirm ValueError; print the unchanged percentage."],
+    "checks": ["Outputs 50, ['_percent'], ValueError, 50 in order.", "The setter checks before assigning _percent.", "The internal marker value is never printed.", "A 0 or 100 assignment succeeds; -1, 101 and True fail."],
+    "hints": ["@percent.setter goes above def percent(self, value).", "Use type(value) is not int or not 0 <= value <= 100.", "Filter names from vars(item) rather than printing the whole mapping."],
+    "solution": "class Progress:\n    def __init__(self, percent=0):\n        self.__audit_marker = 'internal-demo'\n        self.percent = percent\n\n    @property\n    def percent(self):\n        return self._percent\n\n    @percent.setter\n    def percent(self, value):\n        if type(value) is not int or not 0 <= value <= 100:\n            raise ValueError('percent must be an integer from 0 to 100')\n        self._percent = value\n\nitem = Progress(25)\nitem.percent = 50\nprint(item.percent)\nprint(sorted(name for name in vars(item) if name == '_percent'))\ntry:\n    item.percent = True\nexcept ValueError as error:\n    print(type(error).__name__)\nprint(item.percent)\n",
+    "solutionExplanation": "The property enforces the invariant on both construction and assignment. The diagnostic allowlists the safe backing-field name, and the rejected boolean does not change state.",
+    "challenges": ["Predict whether isinstance(True, int) is True and why that matters here.", "Find the bug in a setter that assigns _percent before checking its range.", "Experiment with a class defining __slots__ and observe whether vars(instance) works."]
+  },
+  "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Use a validated progress property and narrow diagnostic fields without exposing internal audit data.", "definitionOfDone": "Normal assignments preserve 0..100 integer state, rejected values do not mutate it, and a test confirms diagnostic output omits internal marker values."},
+  "assessment": [
+    {"question": "Does a double-underscore attribute make a secret inaccessible?", "answer": "No. It is name mangling for collision avoidance, not a security boundary.", "explanation": "The rewritten name can be inspected and read."},
+    {"question": "Why reject True explicitly from an integer percentage?", "answer": "Because bool is a subclass of int in Python, so isinstance(True, int) succeeds.", "explanation": "The intended contract is an actual whole-number percentage, not a boolean flag."},
+    {"question": "Should a diagnostic log print vars(obj) for a user record?", "answer": "No. Select safe fields deliberately.", "explanation": "The instance dictionary may include sensitive or internal attributes."}
+  ]
+}

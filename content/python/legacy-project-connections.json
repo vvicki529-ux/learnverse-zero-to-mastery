@@ -1,0 +1,17 @@
+{
+  "first-program-comments-names-and-operators": {
+    "project": "Commerce operations calculator",
+    "milestone": "Create a small order-total function with named inputs, comments that explain the rule, and examples for a normal order and a boundary value.",
+    "definitionOfDone": "The calculation has a clear input/output contract, produces the expected total for its examples, and is ready for later validation, files, tests, and database work."
+  },
+  "specialized-containers-and-priority-queues": {
+    "project": "Reliable local work scheduler",
+    "milestone": "Choose one collection for a real report, validation grouping, recent-event buffer, or priority queue, and document why it matches the repeated operation.",
+    "definitionOfDone": "The project uses Counter, defaultdict, deque, heapq, or another collection for a specific behavior rather than adding it only to appear advanced."
+  },
+  "gui-and-event-driven-apps": {
+    "project": "Optional desktop interface for the Python project staircase",
+    "milestone": "Add a small desktop interface only after the command-line core works, reusing the existing validation functions, tests, data model, and safe sample data.",
+    "definitionOfDone": "The GUI remains an interface layer: core rules are still testable without opening a window, and the application does not duplicate validation or business logic in event handlers."
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "id": "count-possible-pairs-with-combinations",
+  "title": "Count possible review pairs before generating them",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python 3.14.8 Standard Library: math.comb and math.perm",
+    "Python 3.14.8 Standard Library: itertools.combinations"
+  ],
+  "masterChecklist": [
+    "Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic",
+    "Complexity analysis: Big-O/Theta/Omega, amortized analysis, time/space trade-offs, empirical benchmarking"
+  ],
+  "whyItMatters": "A feature that creates every pair of learners or topics can grow much faster than its input. Counting combinations first prevents a small prototype from turning into an unexpectedly huge job.",
+  "simpleExplanation": "If order does not matter, choosing two different items from n items gives `math.comb(n, 2)` pairs. For n=5, that is 10. If order matters, `(A, B)` and `(B, A)` are different, so use `math.perm(n, 2)` instead; for n=5 it is 20. `math.comb` counts without building the pairs. `itertools.combinations` generates the actual pairs lazily, but turning them all into a list still uses memory proportional to the number of pairs. Validate that the requested pair size and collection are suitable for your feature.",
+  "mentalModel": "Before printing invitations for every two-person study team, count how many envelopes the plan needs. Counting is cheap; producing every envelope can be expensive.",
+  "outcomes": [
+    "Distinguish unordered combinations from ordered permutations.",
+    "Use math.comb to estimate output size before generation.",
+    "Explain why n choose 2 grows quadratically.",
+    "Avoid materializing a large combinations iterator without a cap."
+  ],
+  "realWorldExample": {
+    "scenario": "A study platform wants to create optional peer-review pairs among learners.",
+    "riskWithoutSetup": "A developer converts all possible pairs to a list for a large cohort and consumes excessive time and memory.",
+    "professionalApproach": "Estimate pair count, enforce a product limit or stream work in bounded batches, and generate pairs only after the user accepts the expected scale."
+  },
+  "workedExample": {
+    "filename": "pair_budget.py",
+    "code": "from math import comb, perm\nfrom itertools import combinations\n\nnames = ['Ada', 'Bo', 'Cy', 'De', 'Em']\nprint('unordered pairs:', comb(len(names), 2))\nprint('ordered pairs:', perm(len(names), 2))\nprint('first two:', list(combinations(names, 2))[:2])\n",
+    "explanation": [
+      "math.comb(5, 2) counts unordered pairs without constructing them.",
+      "math.perm(5, 2) counts ordered selections, so it is twice as large for pairs of different people.",
+      "itertools.combinations generates unordered pairs; the tiny five-name list is safe to materialize for display.",
+      "For a large input, do not call list(combinations(...)) just to view the first two; use a bounded iterator such as itertools.islice.",
+      "Counting possible work is a product and capacity decision, not a probability estimate."
+    ],
+    "expectedOutput": "unordered pairs: 10\nordered pairs: 20\nfirst two: [('Ada', 'Bo'), ('Ada', 'Cy')]",
+    "safeExperiment": "Replace five names with a range of 1,000 and print only comb(1000, 2). Do not materialize every pair."
+  },
+  "procedure": [
+    "Decide whether order matters and whether repeated items are allowed.",
+    "Count the possible outputs before constructing them.",
+    "Use math.comb(n, k) for no order/no repetition, or math.perm(n, k) when order matters.",
+    "Set a limit that matches the application's memory and review capacity.",
+    "Generate pairs lazily and consume them in bounded batches when needed.",
+    "Test n=0, n=1 and a small known result; do not infer performance only from a tiny sample."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Using permutations when the pair A-B is the same as B-A.",
+      "why": "It double-counts unordered two-person teams.",
+      "avoid": "Use combinations for unordered selections."
+    },
+    {
+      "mistake": "Assuming a lazy iterator makes list(combinations(...)) memory-free.",
+      "why": "list(...) materializes every produced pair.",
+      "avoid": "Count first and consume bounded slices or stream results."
+    },
+    {
+      "mistake": "Treating math.comb as a probability.",
+      "why": "It counts outcomes; probability needs an explicit sample-space model.",
+      "avoid": "Keep counting and likelihood as separate questions."
+    }
+  ],
+  "lab": {
+    "title": "Budget a fictional peer-review pairing",
+    "safety": "Counts and generates only tiny fictional inputs. The static site guides the lab but does not yet execute Python in-browser.",
+    "starterCode": "from math import comb\nfrom itertools import combinations\n\ndef allowed_pairs(names, limit):\n    # Reject if the number of unordered pairs exceeds limit.\n    # Otherwise return the small list of pairs.\n    pass\n\n# Test 3 names with limit 3 and 5 names with limit 3.\n",
+    "guidedSteps": [
+      "Compute comb(len(names), 2) before generating pairs.",
+      "Raise ValueError if the count is over limit.",
+      "Otherwise return list(combinations(names, 2)).",
+      "Test three names with a limit of three.",
+      "Test five names with the same limit and confirm rejection."
+    ],
+    "checks": [
+      "Count is computed before pair materialization.",
+      "Three names produce three unordered pairs.",
+      "Five names are rejected at a limit of three.",
+      "No large pair list is created in the test."
+    ],
+    "hints": [
+      "`comb(len(names), 2)` gives the planned count.",
+      "`if count > limit: raise ValueError(...)`.",
+      "`combinations(names, 2)` yields each unordered pair once."
+    ],
+    "solution": "from math import comb\nfrom itertools import combinations\n\ndef allowed_pairs(names, limit):\n    count = comb(len(names), 2)\n    if count > limit:\n        raise ValueError('too many review pairs')\n    return list(combinations(names, 2))\n\nassert allowed_pairs(['Ada', 'Bo', 'Cy'], 3) == [\n    ('Ada', 'Bo'), ('Ada', 'Cy'), ('Bo', 'Cy')]\ntry:\n    allowed_pairs(['a', 'b', 'c', 'd', 'e'], 3)\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('large request accepted')\nprint('pair budget checked')\n",
+    "solutionExplanation": "The count gate runs before constructing the list, so this small exercise rejects an oversized request at the boundary. A production limit should be chosen from measured resource and product requirements.",
+    "challenges": [
+      "Predict comb(1, 2).",
+      "Find the bug: build all pairs first and only then compare the length with limit.",
+      "Experiment: compare comb(5, 2) and perm(5, 2), explaining the role of order."
+    ],
+    "simulation": {
+      "prompt": "If A-B and B-A are the same peer-review team, which count applies?",
+      "choices": [
+        "math.comb(n, 2)",
+        "math.perm(n, 2)"
+      ],
+      "correctIndex": 0,
+      "explanation": "Combinations do not distinguish order."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress peer-review planner",
+    "milestone": "Show the number of possible teams and reject pair-generation requests above a documented limit before materializing them.",
+    "definitionOfDone": "The planner counts first, tests small/oversized cohorts, and explains whether team order matters."
+  },
+  "assessment": [
+    {
+      "question": "What does math.comb(n, 2) count?",
+      "answer": "Unordered selections of two different items from n items.",
+      "explanation": "A-B and B-A count as the same pair."
+    },
+    {
+      "question": "Why count before generating every pair?",
+      "answer": "The output can grow quadratically and exceed time or memory limits.",
+      "explanation": "A count allows a deliberate product limit first."
+    },
+    {
+      "question": "Does itertools.combinations use memory proportional to every pair immediately?",
+      "answer": "No, it yields pairs lazily; converting the entire iterator to a list materializes them.",
+      "explanation": "The consumption pattern controls the total stored output."
+    }
+  ]
+}

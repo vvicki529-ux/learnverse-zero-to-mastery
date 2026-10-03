@@ -1,0 +1,128 @@
+{
+  "id": "amortized-list-growth-and-deque-choice",
+  "title": "Explain amortized list growth and choose a queue",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "CPython source: Objects/listobject.c, list_resize overallocation comment (reviewed 2026-10-03)",
+    "Python 3.14 Standard Library: collections.deque documentation",
+    "Python 3.14 Tutorial: Data Structures, using lists as queues"
+  ],
+  "masterChecklist": [
+    "Complexity analysis: Big-O/Theta/Omega, amortized analysis, time/space trade-offs, empirical benchmarking",
+    "Core data structures: arrays/lists, stacks, queues, dequeues, hash tables, linked structures, priority queues, trees, graphs"
+  ],
+  "whyItMatters": "A single slow append does not mean every append is slow, while repeatedly removing from the front of a list can genuinely dominate a queue workload. Knowing the difference helps select a structure for the operations a program actually performs.",
+  "simpleExplanation": "Amortized cost spreads occasional expensive work over a long sequence of operations. In CPython, a list can reserve extra capacity when it grows. Most appends use spare capacity; sometimes growth reallocates storage and copies references. Over many appends, the average work per append is constant under this implementation strategy, although one particular append may be more expensive. A list is good for appending and removing at its end. For a first-in-first-out queue, use collections.deque: popleft removes from its left end without shifting all the remaining list elements. These are operation-cost models, not promises about exact elapsed milliseconds or every Python implementation.",
+  "mentalModel": "A venue buys extra chairs in batches. Adding most guests needs no new delivery; a rare delivery costs more, but the delivery cost is shared across many guests. A separate entrance/exit line is still better than repeatedly moving everyone forward one chair.",
+  "outcomes": [
+    "Explain why amortized O(1) does not mean every append is O(1).",
+    "Choose list append for a growing collection and deque popleft for FIFO work.",
+    "Avoid timing one operation as proof of an asymptotic claim.",
+    "State that CPython allocation details may change across implementations or versions."
+  ],
+  "realWorldExample": {
+    "scenario": "A study app collects events as they arrive, then processes pending events in arrival order.",
+    "riskWithoutSetup": "A developer uses list.pop(0) for every event, shifting remaining elements repeatedly as the backlog grows.",
+    "professionalApproach": "Use a list for append-only event collection or a deque when frequent left-end removal is required; confirm the decision with workload-size tests and measurements."
+  },
+  "workedExample": {
+    "filename": "event_queue.py",
+    "code": "from collections import deque\n\nevents = []\nfor event in ('opened', 'answered', 'finished'):\n    events.append(event)  # Build a sequence at the right end.\n\npending = deque(events)\nwhile pending:\n    print(pending.popleft())  # Consume oldest event first.\n",
+    "explanation": [
+      "The list grows using append; the example does not inspect CPython's internal capacity.",
+      "deque(events) makes an explicit FIFO work queue from the collected events.",
+      "popleft consumes the oldest event without repeatedly shifting a list's remaining elements.",
+      "The short example demonstrates behavior, not performance. A complexity claim needs an operation model; a speed claim needs representative measurements."
+    ],
+    "expectedOutput": "opened\nanswered\nfinished",
+    "safeExperiment": "Replace the deque with a list and popleft with pop(0). The output stays the same; the operation-cost model changes for a large backlog."
+  },
+  "procedure": [
+    "List the operations the program repeats: append right, pop right, pop left, indexing or iteration.",
+    "For a grow-at-right sequence, use list and remember that occasional resizes are included in the amortized analysis.",
+    "For repeated FIFO removal, use deque and popleft.",
+    "Keep correctness tests separate from representative benchmarks.",
+    "State which performance facts are CPython implementation details and avoid promising a fixed capacity formula."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Saying every individual list append is worst-case O(1).",
+      "why": "A resize can move references and cost more for that operation.",
+      "avoid": "Say amortized constant time across a long sequence under CPython's growth strategy."
+    },
+    {
+      "mistake": "Using list.pop(0) for a large repeatedly drained FIFO queue.",
+      "why": "Removing the first list element shifts later references.",
+      "avoid": "Use collections.deque and popleft for repeated left-end removal."
+    },
+    {
+      "mistake": "Taking one stopwatch reading as proof of Big-O.",
+      "why": "Machine noise, input size, allocation state and constant factors affect timing.",
+      "avoid": "Reason from the operation model, then benchmark representative workloads separately."
+    }
+  ],
+  "lab": {
+    "title": "Convert a FIFO task list to a deque",
+    "safety": "Works on a tiny local in-memory task list. The static site guides practice but does not yet execute Python in the browser.",
+    "starterCode": "from collections import deque\n\ndef process_in_order(tasks):\n    # Copy tasks to a deque; consume from the left.\n    # Return the processed tasks in arrival order.\n    pass\n\n# Test empty, one-task and three-task inputs.\n",
+    "guidedSteps": [
+      "Make a deque from tasks so the input is not mutated.",
+      "Create a result list.",
+      "While pending is nonempty, popleft and append the task to result.",
+      "Test empty, one and several tasks in arrival order.",
+      "Explain why this workload favors deque over repeated list.pop(0)."
+    ],
+    "checks": [
+      "Returns [] for empty input.",
+      "Preserves FIFO order for several tasks.",
+      "Does not mutate the caller's input list.",
+      "Uses popleft for repeated left-end removal."
+    ],
+    "hints": [
+      "pending = deque(tasks)",
+      "while pending: result.append(pending.popleft())",
+      "A list is still appropriate for the output accumulated at its right end."
+    ],
+    "solution": "from collections import deque\n\ndef process_in_order(tasks):\n    pending = deque(tasks)\n    result = []\n    while pending:\n        result.append(pending.popleft())\n    return result\n\noriginal = ['one', 'two', 'three']\nassert process_in_order([]) == []\nassert process_in_order(['one']) == ['one']\nassert process_in_order(original) == ['one', 'two', 'three']\nassert original == ['one', 'two', 'three']\nprint('FIFO cases checked')\n",
+    "solutionExplanation": "The deque handles repeated left-end removal; the result list handles right-end append. Copying the input to a deque preserves the caller's list. This small lab proves order and non-mutation, not a speedup; profile representative large workloads if performance is a requirement.",
+    "challenges": [
+      "Predict what changes if popleft is replaced by pop on the deque.",
+      "Find the bug: repeatedly call tasks.pop(0) and claim the caller's list remains unchanged.",
+      "Experiment with ten tasks and compare output order, then separately design a representative benchmark."
+    ],
+    "simulation": {
+      "prompt": "What does amortized O(1) append mean?",
+      "choices": [
+        "A long sequence has constant average cost per append under the growth model, though some appends resize",
+        "Every individual append is guaranteed to take exactly the same time"
+      ],
+      "correctIndex": 0,
+      "explanation": "Occasional expensive resizes are spread across many cheaper appends."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress event processor",
+    "milestone": "Replace repeated front-of-list removals with a deque and document the workload and cost trade-off.",
+    "definitionOfDone": "FIFO ordering and input non-mutation are tested; the choice is justified by repeated left-end removal rather than a one-off microbenchmark."
+  },
+  "assessment": [
+    {
+      "question": "Does amortized O(1) claim every individual append is constant-cost?",
+      "answer": "No.",
+      "explanation": "A resize can make one append expensive; the long-sequence average is the claim."
+    },
+    {
+      "question": "Which standard-library structure fits repeated FIFO popleft?",
+      "answer": "collections.deque.",
+      "explanation": "It is designed for efficient operations at both ends."
+    },
+    {
+      "question": "Why is list.pop(0) a poor repeated FIFO operation for a large backlog?",
+      "answer": "It shifts the remaining list elements.",
+      "explanation": "That movement grows with the number of elements left in the list."
+    }
+  ]
+}

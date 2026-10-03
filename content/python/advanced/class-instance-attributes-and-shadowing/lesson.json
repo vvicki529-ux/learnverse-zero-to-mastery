@@ -1,0 +1,45 @@
+{
+  "id": "class-instance-attributes-and-shadowing",
+  "title": "Class attributes, instance attributes, and shadowing",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Tutorial, chapter 9 Classes: class and instance variables; Python 3.14 Data Model: custom classes and instances; reviewed 2026-10-03"],
+  "masterChecklist": ["Classes, instances, methods, self, constructors, attributes, class versus instance variables"],
+  "whyItMatters": "A configuration value shared across every learner is different from progress that belongs to one learner. Confusing the two can leak state between users or make updates appear inconsistent.",
+  "simpleExplanation": "A class attribute belongs to the class and can be found through its instances. An instance attribute belongs to one object. For ordinary attributes, a read such as mina.label checks Mina's instance first and then looks to her class; assigning mina.label = ... stores a value on Mina and hides the class value for Mina only. This is called shadowing. Changing Learner.label later affects instances that have not shadowed it. A mutable class attribute such as a list is especially dangerous for per-user data because all instances may mutate the same list. Descriptor-backed attributes such as properties have additional lookup rules, covered in a later lesson.",
+  "mentalModel": "The class owns a shared noticeboard; each instance owns its own notebook. A notebook entry with the same name hides what that notebook would have read from the noticeboard.",
+  "outcomes": ["Distinguish class-wide defaults from per-instance data.", "Predict what happens when an instance shadows a class attribute.", "Avoid a shared mutable list for independent learners.", "Use vars(instance) to inspect the instance's own ordinary attributes."],
+  "realWorldExample": {"scenario": "A progress app has a class-wide display label and separate completed lessons for each learner.", "riskWithoutSetup": "Putting completed = [] on the class means one learner's additions can appear in another learner's record.", "professionalApproach": "Keep a simple shared default label on the class; put each learner's completed list in __init__ and test two instances."},
+  "workedExample": {
+    "filename": "attribute_sources.py",
+    "code": "class Learner:\n    label = 'member'  # Shared default, not per-user progress.\n\n    def __init__(self, name):\n        self.name = name\n        self.completed = []\n\nmina = Learner('Mina')\nleo = Learner('Leo')\nprint(mina.label, leo.label)\nmina.label = 'mentor'  # Shadows the class value for Mina only.\nmina.completed.append('loops')\nprint(mina.label, leo.label)\nprint(mina.completed, leo.completed)\nprint('label' in vars(mina), 'label' in vars(leo))\n",
+    "explanation": ["Before shadowing, both objects read Learner.label.", "mina.label = 'mentor' adds an instance attribute; Leo still reads the class default.", "The completed lists came from separate __init__ calls, so only Mina's progress changes.", "vars(instance) shows the ordinary instance namespace in this example; it is not a universal introspection API for objects without __dict__."],
+    "expectedOutput": "member member\nmentor member\n['loops'] []\nTrue False",
+    "safeExperiment": "After shadowing Mina's label, set Learner.label = 'student'. Predict Mina's and Leo's labels before running."
+  },
+  "procedure": ["Decide whether a value is shared configuration or individual object state.", "Put immutable shared defaults on the class and individual mutable data in __init__.", "Create two instances and mutate only one.", "Test reading a class default, then shadowing it on one instance.", "Inspect vars(instance) for ordinary instance attributes, while remembering some objects use slots or descriptors."],
+  "commonMistakes": [
+    {"mistake": "Declaring completed = [] in the class body for per-user progress.", "why": "Every instance can mutate the same list.", "avoid": "Create self.completed = [] for each new instance."},
+    {"mistake": "Assuming mina.label = ... changes Learner.label for everyone.", "why": "Ordinary assignment on mina creates or replaces her instance attribute.", "avoid": "Update the class explicitly only when a truly class-wide default should change."},
+    {"mistake": "Assuming every object supports vars(obj).", "why": "Some objects lack an instance __dict__, such as slotted objects.", "avoid": "Use vars only when an instance dictionary exists; use the documented public interface otherwise."}
+  ],
+  "lab": {
+    "title": "Separate shared display defaults from learner progress",
+    "safety": "In-memory fictional learners only.",
+    "starterCode": "class Learner:\n    label = 'member'\n\n    def __init__(self, name):\n        self.name = name\n        # TODO: initialize separate progress here.\n\nmina = Learner('Mina')\nleo = Learner('Leo')\n# Shadow Mina's label, complete one lesson, and print both learners.\n",
+    "guidedSteps": ["Set self.completed = [] in __init__.", "Create two learners and assign mina.label = 'mentor'.", "Append 'loops' to Mina's completed list.", "Print both labels and both lists.", "Print whether label is present in each learner's vars(...) mapping."],
+    "checks": ["Labels print mentor member.", "Lists print ['loops'] [].", "Instance-label membership prints True False.", "No mutable per-user list is declared on the class."],
+    "hints": ["self.completed = []", "mina.label = 'mentor'", "'label' in vars(mina)"],
+    "solution": "class Learner:\n    label = 'member'\n\n    def __init__(self, name):\n        self.name = name\n        self.completed = []\n\nmina = Learner('Mina')\nleo = Learner('Leo')\nmina.label = 'mentor'\nmina.completed.append('loops')\nprint(mina.label, leo.label)\nprint(mina.completed, leo.completed)\nprint('label' in vars(mina), 'label' in vars(leo))\n",
+    "solutionExplanation": "Mina shadows only her label, while both progress lists are independent instance state.",
+    "challenges": ["Predict labels after setting Learner.label = 'student' at the end.", "Find the bug if completed = [] moves to the class body.", "Experiment: delete mina.label and read her label again."]
+  },
+  "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Use a shared display default without sharing each learner's progress list.", "definitionOfDone": "Tests demonstrate two independent lists, a single-instance label override, and no accidental cross-learner change."},
+  "assessment": [
+    {"question": "Where should a learner's mutable completed list be created?", "answer": "In __init__ as self.completed = [].", "explanation": "That gives each instance its own list."},
+    {"question": "What happens after mina.label = 'mentor' when Learner.label is 'member'?", "answer": "Mina reads mentor; other instances without an override still read member.", "explanation": "Mina's ordinary instance attribute shadows the class attribute."},
+    {"question": "Does vars(instance) work for every Python object?", "answer": "No; it requires an instance dictionary.", "explanation": "Slotted and some built-in objects may not expose one."}
+  ]
+}

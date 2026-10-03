@@ -1,0 +1,131 @@
+{
+  "id": "derive-leftmost-search-boundary-with-invariant",
+  "title": "Derive a leftmost binary-search boundary",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python 3.14.8 Standard Library: bisect.bisect_left partition contract",
+    "Cornell University CS 2112: Loop Invariants, binary-search reasoning (reviewed 2026-10-03)"
+  ],
+  "masterChecklist": [
+    "Problem decomposition, specifications, preconditions/postconditions, invariants, and proofs by reasoning",
+    "Searching, sorting, hashing, heaps, trees, graphs, shortest paths, traversals, union-find, tries"
+  ],
+  "whyItMatters": "Copying a binary-search loop is easy; changing a boundary by one can silently skip the first matching record. The loop invariant explains why each update is safe.",
+  "simpleExplanation": "For a nondecreasing list, a lower bound is the first position whose value is at least the target. It is also the insertion position before equal values. Keep a half-open candidate interval `[lo, hi)`. Everything before `lo` is known to be smaller than the target; everything from `hi` onward is known to be at least the target. If the middle item is too small, discard it and the left half with `lo = mid + 1`. Otherwise keep the middle as a possible first match and set `hi = mid`. The interval shrinks until `lo == hi`, which is the boundary. In everyday code, use the tested standard-library `bisect_left`; writing the loop here teaches the reasoning.",
+  "mentalModel": "Imagine a sorted row of cards. Two fingers surround the only region where the first card meeting the target could still be. Each comparison moves one finger inward without discarding a possible answer.",
+  "outcomes": [
+    "State the sorted-input precondition.",
+    "Explain the half-open `[lo, hi)` candidate interval.",
+    "Prove why each branch preserves the lower-bound partition.",
+    "Test empty, duplicate, before-first and after-last cases."
+  ],
+  "realWorldExample": {
+    "scenario": "A study timeline needs the first completion date on or after a requested day.",
+    "riskWithoutSetup": "An off-by-one error can skip the first matching date or read beyond the list when the requested day is after every item.",
+    "professionalApproach": "Use `bisect_left` in production, define the sorted-date contract, test all boundary cases, and use the derived loop as a learning and review exercise."
+  },
+  "workedExample": {
+    "filename": "left_boundary.py",
+    "code": "from bisect import bisect_left\n\ndef left_boundary(values, target):\n    lo, hi = 0, len(values)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if values[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n\nscores = [40, 55, 55, 80]\nprint(left_boundary(scores, 55))\nprint(left_boundary(scores, 60))\nprint(left_boundary(scores, 100))\nassert left_boundary(scores, 55) == bisect_left(scores, 55)\n",
+    "explanation": [
+      "The input precondition is nondecreasing order under the same comparison rule.",
+      "Initially `[lo, hi)` covers every element whose comparison is still unknown; the final insertion position is allowed to be len(values).",
+      "When values[mid] is below target, every earlier value is also below target, so the first valid position must be after mid.",
+      "Otherwise mid may be the first valid position, so the right boundary becomes mid rather than mid - 1.",
+      "Each loop makes the candidate interval smaller. At equality, lo is the first index with value at least target, or len(values) if none exists.",
+      "The standard-library assertion checks one example; the invariant argument and wider tests support the general design."
+    ],
+    "expectedOutput": "1\n3\n4",
+    "safeExperiment": "Change `hi = mid` to `hi = mid - 1` and test duplicates. Explain which possible answer was discarded."
+  },
+  "procedure": [
+    "Specify that input values are sorted in nondecreasing order.",
+    "Define the desired postcondition: all values before the result are below target and all values at/after it are at least target.",
+    "Initialize lo=0, hi=len(values) and state the known partitions.",
+    "Check the too-small branch and the candidate-retaining branch separately.",
+    "Show termination because hi-lo strictly decreases while positive.",
+    "At lo==hi, connect the invariant to the postcondition.",
+    "Compare against bisect_left across empty, duplicate and edge cases; use the library function in production unless custom logic is required."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Using the loop on unsorted data.",
+      "why": "The branch cannot safely discard half the candidates.",
+      "avoid": "Establish and maintain the sorted-input precondition."
+    },
+    {
+      "mistake": "Setting hi = mid - 1 in this half-open lower-bound pattern.",
+      "why": "mid may itself be the first qualifying position.",
+      "avoid": "Use hi = mid in the not-too-small branch."
+    },
+    {
+      "mistake": "Assuming the returned position proves equality.",
+      "why": "A lower bound is an insertion point even when target is absent.",
+      "avoid": "Check index < len(values) and values[index] == target for membership."
+    }
+  ],
+  "lab": {
+    "title": "Find the first qualifying study score",
+    "safety": "Uses only small fictional sorted lists. The static site guides the lab but does not yet execute Python in-browser.",
+    "starterCode": "def left_boundary(values, target):\n    lo, hi = 0, len(values)\n    # Narrow [lo, hi) until the first value >= target is found.\n    return lo\n\n# Test [], duplicates, before-first and after-last targets.\n",
+    "guidedSteps": [
+      "Write the sorted-input precondition in a comment.",
+      "Loop while lo < hi and calculate mid.",
+      "Move lo to mid+1 if values[mid] < target; otherwise move hi to mid.",
+      "Return lo when both boundaries meet.",
+      "Test empty input, duplicates and targets outside the list."
+    ],
+    "checks": [
+      "Returns 0 for an empty list.",
+      "Returns the first duplicate position, not the last.",
+      "Returns 0 before the first value and len(values) after the last.",
+      "Each update shrinks the candidate interval."
+    ],
+    "hints": [
+      "Use `mid = (lo + hi) // 2`.",
+      "Keep mid when it may be the answer: `hi = mid`.",
+      "The answer can legally equal len(values)."
+    ],
+    "solution": "from bisect import bisect_left\n\ndef left_boundary(values, target):\n    lo, hi = 0, len(values)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if values[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n\ncases = [([], 5), ([2, 2, 5], 2), ([2, 5], 0), ([2, 5], 9)]\nfor values, target in cases:\n    assert left_boundary(values, target) == bisect_left(values, target)\nprint('lower-bound edges checked')\n",
+    "solutionExplanation": "The loop preserves the left-less-than-target/right-at-least-target partition and shrinks its unknown middle. The edge tests compare its result with bisect_left, but the invariant explains why the algorithm works beyond those examples.",
+    "challenges": [
+      "Predict the result for [2, 2, 5] and target 3.",
+      "Find the bug: change hi = mid to hi = mid - 1.",
+      "Experiment: use a membership check after computing the boundary, guarding against index == len(values)."
+    ],
+    "simulation": {
+      "prompt": "If values[mid] is at least target, why set hi = mid rather than mid - 1?",
+      "choices": [
+        "mid could be the first qualifying index",
+        "mid is known to be too small"
+      ],
+      "correctIndex": 0,
+      "explanation": "The lower-bound answer might be exactly mid, so it must remain in the candidate region."
+    }
+  },
+  "projectConnection": {
+    "project": "Learning-activity timeline",
+    "milestone": "Use bisect_left to find the first completion date on or after a requested date, with a short invariant explanation in the code review.",
+    "definitionOfDone": "The timeline is sorted and tests cover empty data, duplicates, before-first and after-last targets without an index error."
+  },
+  "assessment": [
+    {
+      "question": "What must be true of values before this lower-bound search?",
+      "answer": "It must be sorted in nondecreasing order under the same comparison rule.",
+      "explanation": "Only then can a midpoint comparison safely discard a region."
+    },
+    {
+      "question": "What does the result mean when it equals len(values)?",
+      "answer": "No item is at least the target; the insertion point is after all items.",
+      "explanation": "The result is a boundary, not necessarily an existing item."
+    },
+    {
+      "question": "Why does the loop terminate?",
+      "answer": "Each iteration strictly reduces the positive size of the candidate interval.",
+      "explanation": "When lo == hi, the invariant identifies the boundary."
+    }
+  ]
+}

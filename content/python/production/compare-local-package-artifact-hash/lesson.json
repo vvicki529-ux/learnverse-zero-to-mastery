@@ -1,0 +1,128 @@
+{
+  "id": "compare-local-package-artifact-hash",
+  "title": "Check a local package artifact against a recorded hash",
+  "track": "python",
+  "level": "production",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python 3.14.8 Standard Library: hashlib — Secure hashes and message digests",
+    "pip documentation: Secure installs — Hash-checking Mode (reviewed 2026-10-03)"
+  ],
+  "masterChecklist": [
+    "Security: input validation, injection risks, deserialization, path traversal, secrets, dependency risk, safe subprocess use",
+    "Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy"
+  ],
+  "whyItMatters": "A package archive may be damaged or swapped between review and installation. Comparing its bytes with a separately trusted recorded digest can catch that change before a release.",
+  "simpleExplanation": "A SHA-256 digest is a fingerprint calculated from bytes. Record the expected digest during an approved review, separately from the artifact being checked. Later, calculate the digest of the exact local archive and compare. A match only says the bytes match that recorded value. It does not prove who published the archive, that the original archive was safe, or that its dependencies lack vulnerabilities. This exercise uses fictional bytes and never installs a package.",
+  "mentalModel": "A sealed parcel and a number written on the same parcel can both be replaced together. A fingerprint kept in an independent approved record is useful because it can be compared with the parcel received later.",
+  "outcomes": [
+    "Calculate SHA-256 for bytes with hashlib.sha256(...).hexdigest().",
+    "Explain why the expected digest must come from an independently trusted record.",
+    "Reject changed bytes without executing or installing them.",
+    "Separate integrity checking from publisher identity, license, vulnerability and compatibility review."
+  ],
+  "realWorldExample": {
+    "scenario": "A team retains a reviewed package artifact for an offline study-service release.",
+    "riskWithoutSetup": "Someone checks only the filename and version and installs a different archive with the same name.",
+    "professionalApproach": "The release process keeps a reviewed hash record through an approved channel, compares the exact archive bytes before use, and separately performs provenance, advisory, license and test review. This lesson models only the local byte comparison."
+  },
+  "workedExample": {
+    "filename": "check_artifact.py",
+    "code": "import hashlib\n\n# Fictional bytes only: no download or package installation.\nreviewed_bytes = b'fictional-wheel-v1'\nexpected_sha256 = 'd60713c5bc5f58dd3970565ee644addc17bf25430ee3b6ee73a88a243a2e4bb3'\n\ndef matches_reviewed_bytes(archive, expected):\n    actual = hashlib.sha256(archive).hexdigest()\n    return actual == expected\n\nprint('reviewed bytes match:', matches_reviewed_bytes(reviewed_bytes, expected_sha256))\nprint('changed bytes match:', matches_reviewed_bytes(reviewed_bytes + b'!', expected_sha256))\n",
+    "explanation": [
+      "The stored expected value stands in for a digest obtained through an independent approved review. It must not be computed from the suspect archive at comparison time.",
+      "hashlib.sha256 accepts bytes; hexdigest gives a hexadecimal digest for recording or comparison.",
+      "Changing even this fictional byte string makes the comparison fail.",
+      "A successful comparison is an integrity check relative to the trusted record, not a security approval for real installation."
+    ],
+    "expectedOutput": "reviewed bytes match: True\nchanged bytes match: False",
+    "safeExperiment": "Change one byte of reviewed_bytes and predict which line changes. Do not download or install anything."
+  },
+  "procedure": [
+    "Identify the exact archive file that would be used in a real release and keep it inside an isolated review workflow.",
+    "Obtain the expected digest from a separately trusted, approved record; do not trust a digest supplied only alongside an untrusted archive.",
+    "Read the artifact bytes without executing or installing them and calculate SHA-256.",
+    "Reject a mismatch and investigate rather than changing the expected digest to fit the new bytes.",
+    "Separately review publisher/source, release notes, dependencies, advisories, license and compatibility; then test the approved upgrade.",
+    "For real pip deployments, follow the project's approved hashed-requirements process. This fictional exercise does not emulate pip's full hash-checking mode."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Calculating the expected digest from the artifact just received.",
+      "why": "That makes the comparison automatically pass even if the artifact was replaced.",
+      "avoid": "Keep the reviewed expected digest independently."
+    },
+    {
+      "mistake": "Treating a matching digest as proof that code is benign.",
+      "why": "A digest identifies bytes relative to a recorded value; malicious bytes can also have a valid digest.",
+      "avoid": "Review origin, advisories, policy and behavior separately."
+    },
+    {
+      "mistake": "Checking only a direct package and ignoring dependencies.",
+      "why": "Real installations may include transitive artifacts.",
+      "avoid": "Review the entire resolved set with the project's approved tooling."
+    }
+  ],
+  "lab": {
+    "title": "Reject an altered fictional archive",
+    "safety": "This lab uses only fixed, fictional in-memory bytes. It performs no network request, package installation, file write or code execution from an archive. The current static site guides the exercise but does not yet execute Python in the browser.",
+    "starterCode": "import hashlib\n\nEXPECTED = 'd60713c5bc5f58dd3970565ee644addc17bf25430ee3b6ee73a88a243a2e4bb3'\n\ndef same_artifact(data):\n    # Compare SHA-256 of data to EXPECTED.\n    pass\n\n# Test the reviewed bytes and the bytes with an added b'!'.\n",
+    "guidedSteps": [
+      "Keep EXPECTED as a fixed value supplied by the fictional approved record.",
+      "Calculate hashlib.sha256(data).hexdigest().",
+      "Return whether the actual digest equals EXPECTED.",
+      "Assert that b'fictional-wheel-v1' passes and the same bytes plus b'!' fail.",
+      "Explain in one sentence what a match cannot prove."
+    ],
+    "checks": [
+      "Reviewed fictional bytes pass.",
+      "Altered bytes fail.",
+      "The expected digest is not recomputed from the candidate data.",
+      "The code does not install or execute package contents."
+    ],
+    "hints": [
+      "Use `hashlib.sha256(data).hexdigest()`.",
+      "Compare the result directly with EXPECTED.",
+      "A hash match is not a publisher-authentication check."
+    ],
+    "solution": "import hashlib\n\nEXPECTED = 'd60713c5bc5f58dd3970565ee644addc17bf25430ee3b6ee73a88a243a2e4bb3'\n\ndef same_artifact(data):\n    return hashlib.sha256(data).hexdigest() == EXPECTED\n\nassert same_artifact(b'fictional-wheel-v1')\nassert not same_artifact(b'fictional-wheel-v1!')\nprint('local artifact integrity checks passed')\n",
+    "solutionExplanation": "The stored digest is held constant, so changing candidate bytes is detected. In a real workflow, the team must establish trust in the stored digest and inspect other package risks separately.",
+    "challenges": [
+      "Predict the result for an empty byte string.",
+      "Find the bug: set EXPECTED = hashlib.sha256(data).hexdigest() immediately before comparison.",
+      "Experiment with a one-byte change and observe rejection."
+    ],
+    "simulation": {
+      "prompt": "A package file matches a SHA-256 digest that came from an independently reviewed record. What can you conclude?",
+      "choices": [
+        "Its bytes match the reviewed record, but safety and publisher identity still need separate checks",
+        "The package is automatically safe to install"
+      ],
+      "correctIndex": 0,
+      "explanation": "A digest comparison establishes byte integrity relative to the trusted record, not overall trustworthiness."
+    }
+  },
+  "projectConnection": {
+    "project": "Maintained study-progress service",
+    "milestone": "Add a release checklist that compares a fictional artifact with an independently recorded digest and lists the separate review gates.",
+    "definitionOfDone": "The changed-byte test fails; the documentation does not claim hashes alone prove provenance or security."
+  },
+  "assessment": [
+    {
+      "question": "Why keep the expected digest separately from an untrusted archive?",
+      "answer": "So a replacement archive cannot simply arrive with its own replacement digest.",
+      "explanation": "The comparison has value only when the expected record has its own trust path."
+    },
+    {
+      "question": "What does hashlib.sha256(data).hexdigest() calculate?",
+      "answer": "A hexadecimal SHA-256 digest of the supplied bytes.",
+      "explanation": "It does not execute the data or identify the publisher."
+    },
+    {
+      "question": "Does a matching digest prove a package has no vulnerabilities?",
+      "answer": "No.",
+      "explanation": "Advisory, dependency, license and behavior review are separate tasks."
+    }
+  ]
+}

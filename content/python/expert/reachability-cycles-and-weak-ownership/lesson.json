@@ -1,0 +1,45 @@
+{
+  "id": "reachability-cycles-and-weak-ownership",
+  "title": "Names, cycles, collection, and weak ownership",
+  "track": "python",
+  "level": "expert",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Language Reference: data model, objects/values/types and lifetime; Python 3.14 Standard Library: gc and weakref; reviewed 2026-10-03"],
+  "masterChecklist": ["Names, bindings, references, object lifetime, garbage collection, reference cycles, weak references"],
+  "whyItMatters": "A cache or event listener can accidentally keep objects alive. Understanding who owns an object helps prevent retention without relying on one interpreter's cleanup timing.",
+  "simpleExplanation": "A name is a binding to an object. Assigning another name does not copy the object; deleting one name removes only that binding. An object remains reachable while a strong path to it exists. Two objects can refer to each other in a cycle; removing outside names may make the whole cycle unreachable even though the two still point at each other. CPython commonly combines reference counting with cyclic collection, but other Python implementations and future versions may collect at different times. A weak reference does not keep an object alive and may return None later. Call a weak reference once, hold the result in a local strong name while using it, and always handle None. Use with or explicit close for files and locks; do not wait for garbage collection to release important resources.",
+  "mentalModel": "Strong references are ownership paths from active roots. A cycle is two balloons tied together with no person holding either. A weak reference is a note about a balloon, not another string holding it.",
+  "outcomes": ["Distinguish aliasing and rebinding from copying or destruction.", "Draw an unreachable reference cycle.", "Use a weak reference as non-owning observation while handling a miss.", "Separate collection behavior from deterministic resource cleanup."],
+  "realWorldExample": {"scenario": "A dashboard keeps optional preview objects and a temporary file handle while preparing a report.", "riskWithoutSetup": "A strong global preview cache can retain obsolete previews; relying on __del__ to close the file can delay release or fail at shutdown.", "professionalApproach": "State which component owns each preview, use a weak registry only where non-owning behavior is intended, and use with for the file."},
+  "workedExample": {
+    "filename": "reachability_demo.py",
+    "code": "import gc\nimport weakref\n\nclass Node:\n    pass\n\nfirst = Node()\nalias = first\nref = weakref.ref(first)\ndel first\nprint(ref() is alias)  # Deleting one name did not destroy the object.\n\nsecond = Node()\nalias.peer = second\nsecond.peer = alias  # A cycle: each node strongly references the other.\ndel alias, second\ngc.collect()  # Explicit collection for this CPython classroom demonstration.\nprint(ref() is None)\n",
+    "explanation": ["alias and first initially name the same Node, so deleting first leaves a strong reference through alias.", "The peer links form a strong-reference cycle. After deleting both outside names, no application root is meant to own the pair.", "gc.collect() explicitly asks the bundled CPython collector to find unreachable cycles; this local example prints True after collection. Do not write application logic that requires collection at a particular moment.", "The weak ref does not own the Node. In a real program, call ref() once and handle None before using the result."],
+    "expectedOutput": "True\nTrue",
+    "safeExperiment": "Keep a third strong name to one node before deleting alias and second. After gc.collect(), predict why ref() still resolves; delete the extra name before repeating."
+  },
+  "procedure": ["Map strong ownership paths from active variables, containers and objects.", "Distinguish removing one name from removing every strong path.", "Draw any mutual-reference cycle and determine whether an outside root still reaches it.", "Use weakref.ref only for optional observation; call it once and check the returned value.", "Release files and locks explicitly with context managers regardless of collector behavior."],
+  "commonMistakes": [
+    {"mistake": "Assuming del name instantly destroys the object.", "why": "Other names or containers may still hold strong references; collection timing also differs.", "avoid": "Reason about reachability and ownership, not one variable name."},
+    {"mistake": "Checking ref() twice and assuming it stays alive between checks.", "why": "The object may disappear between independent weak-reference reads.", "avoid": "Store one result in a local variable, check it for None, then use that strong local reference."},
+    {"mistake": "Using finalizers as the only file or lock cleanup path.", "why": "Collection and shutdown timing are not a reliable resource-release contract.", "avoid": "Use with or an explicit close/release operation."}
+  ],
+  "lab": {
+    "title": "Trace aliases and a two-node cycle",
+    "safety": "Small in-memory objects only; gc.collect is used for a local teaching observation, not as an application cleanup strategy.",
+    "starterCode": "import gc\nimport weakref\n\nclass Node:\n    pass\n\nfirst = Node()\nalias = first\nref = weakref.ref(first)\n# Delete first, show alias still owns it, create a two-node cycle, remove outside names, collect.\n",
+    "guidedSteps": ["Delete first but keep alias; print whether ref() is alias.", "Create second and link alias.peer to second and second.peer to alias.", "Delete both outside strong names.", "Call gc.collect() for this bundled-CPython experiment and print whether the weak reference is now empty.", "Explain why a production resource still needs explicit cleanup."],
+    "checks": ["Bundled CPython prints True then True after explicit collection.", "The first True is caused by the surviving alias, not by weakref ownership.", "The cycle is unreachable after both external names are removed.", "The lesson does not promise identical collection timing on all Python implementations."],
+    "hints": ["print(ref() is alias) after del first.", "alias.peer = second; second.peer = alias.", "Delete both strong names, then call gc.collect()."],
+    "solution": "import gc\nimport weakref\n\nclass Node:\n    pass\n\nfirst = Node()\nalias = first\nref = weakref.ref(first)\ndel first\nprint(ref() is alias)\nsecond = Node()\nalias.peer = second\nsecond.peer = alias\ndel alias, second\ngc.collect()\nprint(ref() is None)\n",
+    "solutionExplanation": "One alias keeps the Node alive after the first deletion. Once both outside names are gone, the cycle is unreachable; explicit collection in the bundled CPython runtime clears it.",
+    "challenges": ["Predict what happens if a list retains alias before the deletions.", "Find the ownership bug in a normal dictionary cache of optional previews.", "Experiment: store one weakref() result in a local before checking and using it."]
+  },
+  "projectConnection": {"project": "Cross-track dashboard preview cache", "milestone": "Document which component owns previews and replace accidental long-lived ownership with an optional weak registry where appropriate.", "definitionOfDone": "Tests cover retained and missing preview paths, and files/locks are still released explicitly rather than by garbage collection."},
+  "assessment": [
+    {"question": "What does del first do when alias still names the same object?", "answer": "It removes the first binding; alias still strongly reaches the object.", "explanation": "Deleting a name is not an object-destruction command."},
+    {"question": "Can a weak reference keep its target alive by itself?", "answer": "No.", "explanation": "It is non-owning and may later return None."},
+    {"question": "Should a file rely on gc.collect for safe closure?", "answer": "No.", "explanation": "Use with or explicit close for deterministic resource management."}
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "id": "taskgroup-failure-and-sibling-cleanup",
+  "title": "Know what happens to sibling async tasks when one fails",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: asyncio coroutines and tasks, TaskGroup, gather, cancellation and ExceptionGroup; reviewed 2026-10-03"],
+  "masterChecklist": ["asyncio: coroutines, async/await, tasks, gather, timeouts, cancellation, async context managers"],
+  "whyItMatters": "A dashboard may start several related requests. If one fails, the others should not continue unnoticed after the caller has already shown an error.",
+  "simpleExplanation": "asyncio.gather and asyncio.TaskGroup both arrange concurrent waits, but they have different failure policies. With gather's usual settings, one child exception reaches the caller without automatically cancelling every other submitted awaitable. If you created a sibling Task, you still own its cleanup. TaskGroup groups child lifetimes: when one child fails with a non-cancellation exception, it cancels the remaining children, waits for them to finish cleanup, and raises an ExceptionGroup. A child should clean up in finally and normally not swallow CancelledError. Use an Event when a test needs to prove a sibling started before causing failure; sleep-based scheduling guesses are not reliable contracts.",
+  "mentalModel": "gather is a list of assignments you asked to await together; TaskGroup is a team room with an exit rule that gathers everyone when a member fails.",
+  "outcomes": ["Distinguish gather propagation from TaskGroup sibling cancellation.", "Use try/finally to prove cleanup ran.", "Catch the expected ExceptionGroup with except* ValueError.", "Choose a failure policy for related work rather than abandoning a background Task."],
+  "realWorldExample": {"scenario": "A report page requests course progress and permission state together.", "riskWithoutSetup": "Permission lookup fails, but an unrelated progress Task continues and later writes stale UI state.", "professionalApproach": "Group work with shared lifetime when both results are needed together, clean up cancelled children and surface a clear partial-failure policy."},
+  "workedExample": {
+    "filename": "taskgroup_failure.py",
+    "code": "import asyncio\n\nasync def main():\n    started = asyncio.Event()\n    trace = []\n\n    async def waiting():\n        trace.append('waiting started')\n        started.set()\n        try:\n            await asyncio.Event().wait()\n        finally:\n            trace.append('waiting cleaned up')\n\n    async def failing():\n        await started.wait()\n        raise ValueError('invalid report')\n\n    try:\n        async with asyncio.TaskGroup() as group:\n            group.create_task(waiting())\n            group.create_task(failing())\n    except* ValueError:\n        trace.append('failure observed')\n    print(trace)\n\nasyncio.run(main())\n",
+    "explanation": ["The Event ensures waiting has started before failing raises; no timing guess is needed.", "waiting suspends at an unset Event. Its finally block records cleanup when the group cancels it.", "TaskGroup waits for sibling cleanup before leaving the async with block and raises a grouped failure.", "except* ValueError handles the expected subgroup after cleanup. This does not mean every possible failure should be suppressed."],
+    "expectedOutput": "['waiting started', 'waiting cleaned up', 'failure observed']",
+    "safeExperiment": "Change the failing task to return normally and provide a way for waiting to complete. Do not leave a task awaiting an unset Event forever."
+  },
+  "procedure": ["Decide whether sibling tasks are one all-or-nothing operation or independent work.", "For one related lifetime, use TaskGroup and keep child cleanup in finally.", "Catch expected grouped errors at a meaningful boundary with except*.", "If using gather, explicitly track and clean up siblings after an early error.", "Test failure paths with synchronization signals, not assumed scheduler order."],
+  "commonMistakes": [
+    {"mistake": "Assuming gather always cancels other submitted work when one child raises.", "why": "Its default propagation does not impose TaskGroup's sibling-cancellation policy.", "avoid": "Use TaskGroup for related work or explicitly cancel and await retained sibling Tasks."},
+    {"mistake": "Swallowing CancelledError inside a child.", "why": "Structured concurrency and timeouts rely on cancellation completing.", "avoid": "Clean up in finally and normally let cancellation propagate."},
+    {"mistake": "Using sleep(0) as proof a sibling reached a required state.", "why": "Scheduling order is not the state invariant.", "avoid": "Signal the milestone with an Event."}
+  ],
+  "lab": {
+    "title": "Watch a TaskGroup cancel and clean up a sibling",
+    "safety": "Local asyncio events only; no network or external service. The current site editor is guided practice, not a Python executor.",
+    "simulation": {"prompt": "One TaskGroup child raises ValueError while another waits. What happens before the group exits?", "choices": ["The waiting child is cancelled and its finally cleanup can run", "The waiting child silently continues forever", "The event loop starts a new OS process"], "correctIndex": 0, "explanation": "TaskGroup cancels remaining children after a non-cancellation failure and waits for their cleanup before raising grouped errors."},
+    "starterCode": "import asyncio\n\nasync def main():\n    started = asyncio.Event()\n    trace = []\n    # Create one waiting child with finally cleanup and one child that fails after started.\n    # Use TaskGroup and catch the expected grouped ValueError.\n\nasyncio.run(main())\n",
+    "guidedSteps": ["Make a child append 'start', set started and await an unset Event inside try/finally.", "Make a second child await started then raise ValueError.", "Create both under asyncio.TaskGroup.", "Use except* ValueError to record the observed failure.", "Print the trace and verify cleanup precedes the failure-observed line."],
+    "checks": ["Event establishes child startup before failure.", "Waiting child's finally records cleanup.", "Both tasks belong to one TaskGroup.", "Output order is ['start', 'cleanup', 'error observed']."],
+    "hints": ["async with asyncio.TaskGroup() as group:", "group.create_task(waiting())", "Use except* ValueError outside the async with block."],
+    "solution": "import asyncio\n\nasync def main():\n    started = asyncio.Event()\n    trace = []\n\n    async def waiting():\n        trace.append('start')\n        started.set()\n        try:\n            await asyncio.Event().wait()\n        finally:\n            trace.append('cleanup')\n\n    async def failing():\n        await started.wait()\n        raise ValueError('invalid report')\n\n    try:\n        async with asyncio.TaskGroup() as group:\n            group.create_task(waiting())\n            group.create_task(failing())\n    except* ValueError:\n        trace.append('error observed')\n    print(trace)\n\nasyncio.run(main())\n",
+    "solutionExplanation": "The failing child triggers group-managed sibling cancellation. The waiting child executes finally before the grouped ValueError is observed by the parent.",
+    "challenges": ["Predict why the test uses Event instead of a guessed sleep delay.", "Find the cleanup bug if finally is removed.", "Compare with gather in a local script, retaining a handle to the waiting Task so you can cancel and await it after the error."]
+  },
+  "projectConnection": {"project": "Cross-track progress dashboard", "milestone": "Group mutually required refresh tasks and verify failure cleanup before updating shared UI state.", "definitionOfDone": "A failing child cancels and cleans related siblings, the parent reports the failure, and no abandoned Task remains."},
+  "assessment": [
+    {"question": "Does default gather impose TaskGroup's sibling-cancellation rule?", "answer": "No.", "explanation": "An early exception can reach the caller while other submitted work continues."},
+    {"question": "What does TaskGroup do after one child raises ValueError?", "answer": "It cancels remaining children, waits for them and raises grouped errors.", "explanation": "The group owns the children's lifetime."},
+    {"question": "Where should a waiting child release resources during cancellation?", "answer": "In finally or an appropriate async context manager.", "explanation": "Cleanup should not depend on normal return."}
+  ]
+}

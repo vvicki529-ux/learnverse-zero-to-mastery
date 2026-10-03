@@ -1,0 +1,50 @@
+{
+  "id": "temporary-directory-test-isolation",
+  "title": "Test file output without touching real user files",
+  "track": "python",
+  "level": "production",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: tempfile.TemporaryDirectory", "Python 3.14 Standard Library: pathlib.Path file operations"],
+  "masterChecklist": ["Unit, integration, end-to-end, regression, property-based, and contract-test concepts", "pytest: test discovery, assertions, fixtures, parametrization, mocks, temporary files, coverage"],
+  "whyItMatters": "A file-writing test should verify real disk behavior without overwriting a learner's documents or leaving test artifacts behind. A temporary directory gives each test a fresh, disposable workspace.",
+  "simpleExplanation": "A temporary directory is a new folder made for short-lived work. With tempfile.TemporaryDirectory() as folder creates one and asks Python to clean it up when the with block ends, even if a normal exception occurs inside. Give your function a destination Path rather than hard-coding a file in the current directory. Then the test can write a real file, read it back, and check its contents. The test still uses real filesystem I/O; it is an integration-style boundary check, not a mock.",
+  "mentalModel": "Use a washable whiteboard for a rehearsal, not the customer's permanent record book.",
+  "outcomes": ["Pass a destination path into a file-writing function.", "Use TemporaryDirectory as a context manager.", "Assert content and cleanup without naming or deleting a user file.", "Distinguish a real temporary file test from a mocked file call."],
+  "realWorldExample": {
+    "scenario": "A study-progress exporter writes a small UTF-8 summary file.",
+    "riskWithoutSetup": "A test always writes progress.txt beside the app, overwrites a real export, and passes because an old file already existed.",
+    "professionalApproach": "Inject the output path, create a fresh temporary directory for the test, assert the exact bytes/text written, and let the context manager handle cleanup."
+  },
+  "workedExample": {
+    "filename": "test_export.py",
+    "code": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\n\ndef write_summary(destination: Path, text: str) -> None:\n    destination.write_text(text, encoding='utf-8')\n\nwith TemporaryDirectory() as folder:\n    output = Path(folder) / 'summary.txt'\n    write_summary(output, 'lessons=2\\n')\n    print(output.read_text(encoding='utf-8').strip())\n    assert output.read_text(encoding='utf-8') == 'lessons=2\\n'\n",
+    "explanation": ["The application function accepts a destination path, so it does not decide where tests or users must write.", "The with block owns a fresh temporary folder and its summary file.", "The test reads the actual file and checks the expected newline and UTF-8 text.", "The folder path itself is not printed because it is random and platform-dependent."],
+    "expectedOutput": "lessons=2",
+    "safeExperiment": "Change the expected text to lessons=3 and observe the assertion failure, then restore it."
+  },
+  "procedure": ["Define the file contract: path, encoding and exact content.", "Accept a destination Path as a function argument.", "Create a TemporaryDirectory inside the test.", "Write a file beneath that directory and read it back.", "Assert the content while the directory is open; do not rely on its random name.", "Allow context cleanup to run and do not disable cleanup merely to make a test pass."],
+  "commonMistakes": [
+    {"mistake": "Using a hard-coded file in the repository or documents folder.", "why": "The test can overwrite user data and leak artifacts between runs.", "avoid": "Pass a path under TemporaryDirectory."},
+    {"mistake": "Checking only that a file exists.", "why": "An old or empty file can satisfy that weak assertion.", "avoid": "Check exact output content and relevant encoding/newline behavior."},
+    {"mistake": "Assuming cleanup can never fail.", "why": "Open handles or permissions can prevent removal on some systems.", "avoid": "Close files promptly and let cleanup errors reveal a resource problem rather than silently ignoring them."}
+  ],
+  "lab": {
+    "title": "Write and test a tiny progress export",
+    "safety": "The code writes only beneath a newly created temporary directory; no existing user files are targeted. The static site guides practice but does not yet execute Python in-browser.",
+    "starterCode": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\n\ndef export_count(destination: Path, count: int) -> None:\n    # Write count and a newline as UTF-8.\n    pass\n\n# Test count=0 and count=3 in fresh temporary folders.\n",
+    "guidedSteps": ["Implement export_count using destination.write_text with encoding='utf-8'.", "Open a TemporaryDirectory with a with statement.", "Create an output path below that directory.", "Write count=0, then read and assert the exact content.", "Repeat with count=3 in another temporary directory."],
+    "checks": ["Uses an injected destination path.", "Never names a real user file.", "Checks exact UTF-8 text for zero and three.", "Uses context-managed cleanup."],
+    "hints": ["destination.write_text(f'count={count}\\n', encoding='utf-8')", "output = Path(folder) / 'count.txt'", "assert output.read_text(encoding='utf-8') == 'count=0\\n'"],
+    "solution": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\n\ndef export_count(destination: Path, count: int) -> None:\n    destination.write_text(f'count={count}\\n', encoding='utf-8')\n\nfor count in (0, 3):\n    with TemporaryDirectory() as folder:\n        output = Path(folder) / 'count.txt'\n        export_count(output, count)\n        assert output.read_text(encoding='utf-8') == f'count={count}\\n'\nprint('temporary export tests passed')\n",
+    "solutionExplanation": "Each case gets a fresh folder, the function writes to a path supplied by the caller, and the test verifies real disk output without touching permanent files. The context manager attempts cleanup on exit.",
+    "challenges": ["Predict whether a file from the first case is reused by the second.", "Find the bug: write to Path('count.txt') inside export_count instead of destination.", "Experiment with a non-ASCII label and confirm UTF-8 round-trip."],
+    "simulation": {"prompt": "What does this test exercise that a mock of write_text would not?", "choices": ["Real file creation and reading in an isolated temporary folder", "Only whether a mocked function was called"], "correctIndex": 0, "explanation": "The test crosses a real filesystem boundary while keeping the target disposable."}
+  },
+  "projectConnection": {"project": "Study-progress export service", "milestone": "Add an isolated disk test for the UTF-8 export contract.", "definitionOfDone": "The test checks exact content for boundary values, uses a fresh temporary directory and leaves no hard-coded repository or user-file path."},
+  "assessment": [
+    {"question": "Why pass the destination path into the export function?", "answer": "So callers and tests choose a safe output location.", "explanation": "It separates export behavior from environment-specific file placement."},
+    {"question": "Is a TemporaryDirectory test a mocked filesystem test?", "answer": "No.", "explanation": "It uses real filesystem operations in an isolated temporary location."},
+    {"question": "What should the test assert beyond file existence?", "answer": "The exact content and relevant encoding/newline contract.", "explanation": "Existence alone can pass for incorrect or stale output."}
+  ]
+}

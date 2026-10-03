@@ -1,0 +1,127 @@
+{
+  "id": "read-sbom-dependency-relationships-honestly",
+  "title": "Read an SBOM dependency map without hiding unknowns",
+  "track": "python",
+  "level": "production",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "OWASP CycloneDX Authoritative Guide to SBOM, Third Edition (2025), Dependencies and Composition Completeness sections; reviewed 2026-10-03"
+  ],
+  "masterChecklist": [
+    "Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy"
+  ],
+  "whyItMatters": "When a newly reported issue affects a transitive component, a flat package list does not tell a team which application depends on it. A relationship map can help, but missing relationship data must stay visibly unknown.",
+  "simpleExplanation": "An SBOM is a structured record of software components and their relationships. A dependency graph says which component relies on which other component; this can include direct and transitive dependencies. The CycloneDX model can distinguish a component explicitly listed with no dependencies from a component omitted from the dependency graph, whose relationships may be unknown. Never infer 'dependency-free' from missing graph data. The short Python exercise below models only this reasoning with fictional dictionaries; it is not a complete CycloneDX generator or validator.",
+  "mentalModel": "A family tree can show a person with no children, or omit that person's branch entirely. An omitted branch does not prove there are no descendants.",
+  "outcomes": [
+    "Explain the difference between a component inventory and relationship graph.",
+    "Trace a transitive dependency through a small fictional map.",
+    "Keep omitted relationship data distinct from an explicit empty dependency list.",
+    "State why SBOM completeness and release trust require separate review."
+  ],
+  "realWorldExample": {
+    "scenario": "A study-service release contains a Python package that depends on another distribution with a new advisory.",
+    "riskWithoutSetup": "A reviewer checks only the direct requirement and misses the transitive component, or treats an incomplete dependency map as proof that no other packages exist.",
+    "professionalApproach": "Use a generated and reviewed release SBOM or equivalent map to trace relationships, record where coverage is incomplete, then inspect the exact resolved set and current advisory evidence before deciding remediation."
+  },
+  "workedExample": {
+    "filename": "dependency_map.py",
+    "code": "graph = {\n    'study-app': ['report-lib'],\n    'report-lib': ['format-lib'],\n    'format-lib': [],  # Explicitly known to have no listed dependencies.\n}\n\ndef children(name):\n    if name not in graph:\n        return None  # Missing data: unknown, not an empty list.\n    return graph[name]\n\nprint(children('format-lib'))\nprint(children('unmapped-lib'))\nprint('transitive path:', 'format-lib' in children('report-lib'))\n",
+    "explanation": [
+      "The keys represent components with known relationship records; values name direct dependencies.",
+      "An explicit empty list for format-lib means the fictional map records no dependencies for that component.",
+      "An absent key returns None, preserving the distinction between missing information and a known empty relationship list.",
+      "The report-lib relationship shows how a component can be reached indirectly from study-app. This toy map is not a standards-compliant SBOM.",
+      "The example does not inspect installed packages, prove graph completeness, or check current vulnerabilities."
+    ],
+    "expectedOutput": "[]\nNone\ntransitive path: True",
+    "safeExperiment": "Remove the format-lib key and predict how its status changes from known empty to unknown."
+  },
+  "procedure": [
+    "Generate or obtain a release-specific component inventory and dependency relationships from an approved process.",
+    "Identify the application component and follow direct links to transitive components.",
+    "Distinguish explicit empty relationships from missing component relationship entries.",
+    "Record the declared completeness or known-unknown status and investigate gaps before relying on the map for impact analysis.",
+    "Compare the map with the exact resolved set and artifacts intended for the target environment.",
+    "Use current approved advisory, license and provenance reviews separately; an SBOM by itself is not a security verdict."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Treating an omitted graph node as a dependency-free component.",
+      "why": "The relationship data may simply be unknown or incomplete.",
+      "avoid": "Represent missing data explicitly and investigate it."
+    },
+    {
+      "mistake": "Calling a flat `pip freeze` list a complete SBOM.",
+      "why": "It may omit relationships, provenance and completeness information.",
+      "avoid": "Use a deliberate BOM generation/review workflow and state its coverage."
+    },
+    {
+      "mistake": "Assuming an SBOM proves a dependency is safe.",
+      "why": "It describes components and relationships, not a guarantee about behavior.",
+      "avoid": "Perform separate integrity, advisory, license and test checks."
+    }
+  ],
+  "lab": {
+    "title": "Preserve unknowns in a fictional dependency map",
+    "safety": "Uses only an in-memory fictional graph. No package install, network request or real SBOM generation. The current static site guides this lab but does not yet run Python in-browser.",
+    "starterCode": "graph = {'app': ['a-demo'], 'a-demo': []}\n\ndef relationship_status(name):\n    # Return 'unknown', 'known-empty', or 'known-linked'.\n    pass\n\n# Check app, a-demo, and a missing component.\n",
+    "guidedSteps": [
+      "Check whether the name is present before reading its value.",
+      "Return unknown for absent names.",
+      "Return known-empty for a present empty list.",
+      "Return known-linked for a present nonempty list.",
+      "Test all three cases and explain why unknown must not be displayed as empty."
+    ],
+    "checks": [
+      "Absent component returns unknown.",
+      "Present empty list returns known-empty.",
+      "Present nonempty list returns known-linked.",
+      "No claim of generating a CycloneDX-valid file."
+    ],
+    "hints": [
+      "Use `if name not in graph` first.",
+      "An empty list is falsey, but it is still a present record.",
+      "Keep the three outcomes distinct."
+    ],
+    "solution": "graph = {'app': ['a-demo'], 'a-demo': []}\n\ndef relationship_status(name):\n    if name not in graph:\n        return 'unknown'\n    if not graph[name]:\n        return 'known-empty'\n    return 'known-linked'\n\nassert relationship_status('app') == 'known-linked'\nassert relationship_status('a-demo') == 'known-empty'\nassert relationship_status('missing-demo') == 'unknown'\nprint('relationship states checked')\n",
+    "solutionExplanation": "The status function separates absent records from explicitly empty dependency lists, preventing a false claim of completeness.",
+    "challenges": [
+      "Predict the status after deleting the a-demo key.",
+      "Find the bug: `graph.get(name, [])` makes missing and empty look identical.",
+      "Experiment: add a second direct dependency to app and confirm its status remains known-linked."
+    ],
+    "simulation": {
+      "prompt": "An SBOM lists a component but has no dependency-graph entry for it. What should you conclude?",
+      "choices": [
+        "Its relationships may be unknown; investigate completeness",
+        "It definitely has no dependencies"
+      ],
+      "correctIndex": 0,
+      "explanation": "Missing relationship data is not the same as an explicit empty relationship record."
+    }
+  },
+  "projectConnection": {
+    "project": "Maintained study-progress service",
+    "milestone": "Document a small dependency-relationship map for the release and explicitly label unknown relationship coverage.",
+    "definitionOfDone": "Direct and transitive relationships are traceable, an omitted node is reported as unknown, and the team does not call the toy map a complete SBOM."
+  },
+  "assessment": [
+    {
+      "question": "What does an SBOM relationship map add beyond a flat package list?",
+      "answer": "It can show which components depend on which others, including transitive paths.",
+      "explanation": "That helps impact analysis for a specific release."
+    },
+    {
+      "question": "Is an omitted dependency-graph entry the same as an explicit empty dependency list?",
+      "answer": "No.",
+      "explanation": "Omission may mean the relationships are unknown or incomplete."
+    },
+    {
+      "question": "Does an SBOM alone prove a package is safe?",
+      "answer": "No.",
+      "explanation": "Component records do not replace source, integrity, advisory, license and behavior review."
+    }
+  ]
+}

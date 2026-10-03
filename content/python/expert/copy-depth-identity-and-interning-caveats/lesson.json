@@ -1,0 +1,45 @@
+{
+  "id": "copy-depth-identity-and-interning-caveats",
+  "title": "Choose binding, shallow copy, or deep copy deliberately",
+  "track": "python",
+  "level": "expert",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: copy module and sys.intern(); Python 3.14 Language Reference: data model identity and mutability; reviewed 2026-10-03"],
+  "masterChecklist": ["Mutability, interning/caching caveats, copy semantics, memory profiling"],
+  "whyItMatters": "A learner-progress snapshot can look independent while still sharing nested lists with the original. Choosing the right copy depth protects data without copying an entire object graph unnecessarily.",
+  "simpleExplanation": "Assignment binds another name to the same object; it does not copy. copy.copy makes a new outer compound object but usually reuses references to nested values. copy.deepcopy recursively copies nested objects and tracks objects already copied to handle cycles, but it may duplicate data intended to stay shared and can cost memory/time. A purpose-built copy of only the fields you need can be clearer. Use is for identity questions, == for value questions. Some immutable strings or numbers may be reused by an interpreter, and sys.intern can explicitly canonicalize strings, but do not infer value equality from is or rely on observed object caching across Python versions or implementations.",
+  "mentalModel": "Assignment puts a second label on one box. A shallow copy makes a new outer box holding the same inner boxes. A deep copy attempts new inner boxes too. Interning is an optional storage shortcut, not an equality rule.",
+  "outcomes": ["Predict alias and shallow/deep copy behavior for nested data.", "Use == for values and is for identity/singletons.", "Recognize why blanket deepcopy can be wasteful or incorrect for shared resources.", "Treat string/number interning as an implementation optimization, not business logic."],
+  "realWorldExample": {"scenario": "A dashboard prepares an editable draft from a nested progress record and must not change the saved original.", "riskWithoutSetup": "Using dict.copy() protects the outer mapping but still shares the inner completed list, so editing the draft changes the saved record.", "professionalApproach": "Copy only the nested mutable fields needed for the draft or use deepcopy for a fully owned pure-data tree, then test that the source remains unchanged."},
+  "workedExample": {
+    "filename": "copy_progress.py",
+    "code": "import copy\n\noriginal = {'name': 'Mina', 'completed': ['loops']}\nalias = original\nshallow = copy.copy(original)\ndeep = copy.deepcopy(original)\nshallow['completed'].append('classes')\nprint(alias is original)\nprint(original['completed'])\nprint(deep['completed'])\nprint(shallow is original, shallow['completed'] is original['completed'])\nprint(original['name'] == 'Mina')\n",
+    "explanation": ["alias is the same dictionary object as original, so the first identity check is True.", "shallow is a new dictionary but contains the same nested completed list; appending through shallow changes original's list.", "deep has a separately copied nested list and still shows only loops.", "The final value comparison uses ==. Do not replace it with is even if a local interpreter happens to reuse the string object."],
+    "expectedOutput": "True\n['loops', 'classes']\n['loops']\nFalse True\nTrue",
+    "safeExperiment": "Create a purpose-built draft with {'name': original['name'], 'completed': list(original['completed'])}; compare whether its inner list shares identity with original."
+  },
+  "procedure": ["Map which nested values are mutable and who should own them.", "Use plain assignment only when shared mutation is intended.", "Use shallow copy when a new outer container with shared inner objects is intended.", "Use deepcopy only for a copyable pure-data graph that truly needs independent nested state.", "Test source-state preservation after editing the copy; use == for value comparisons regardless of interning behavior."],
+  "commonMistakes": [
+    {"mistake": "Assuming dict.copy() duplicates nested lists.", "why": "It copies only the outer mapping and shares inner references.", "avoid": "Copy each mutable field you plan to edit, or use a justified deep copy."},
+    {"mistake": "Deep-copying files, locks, database handles, or every large graph by default.", "why": "Some objects cannot be copied and others should remain shared; cost can be high.", "avoid": "Design explicit ownership and copy only pure data that needs independence."},
+    {"mistake": "Using is to compare strings or numbers because a test happened to pass.", "why": "Interning and caching observations are implementation-dependent.", "avoid": "Use == for value equality; reserve is for identity and singleton tests such as is None."}
+  ],
+  "lab": {
+    "title": "Prepare an independent editable progress draft",
+    "safety": "Only fictional in-memory records; no files or user accounts.",
+    "starterCode": "import copy\n\noriginal = {'name': 'Mina', 'completed': ['loops']}\n# Make a shallow and deep copy, mutate shallow's nested list, and compare results.\n",
+    "guidedSteps": ["Bind an alias to original and create copy.copy and copy.deepcopy versions.", "Append classes to the shallow copy's completed list.", "Print whether alias is original, then both original and deep completed lists.", "Print whether outer shallow and inner shallow list share identity with original.", "Use == to compare the name to Mina."],
+    "checks": ["Output shows alias True, original ['loops', 'classes'], deep ['loops'], outer False and inner True, value equality True.", "No is comparison is used as a substitute for string value equality.", "The lesson does not imply deepcopy works for arbitrary resources.", "The source mutation through shallow is explained as an intentional demonstration, not a desired draft design."],
+    "hints": ["shallow = copy.copy(original)", "deep = copy.deepcopy(original)", "shallow['completed'].append('classes')"],
+    "solution": "import copy\n\noriginal = {'name': 'Mina', 'completed': ['loops']}\nalias = original\nshallow = copy.copy(original)\ndeep = copy.deepcopy(original)\nshallow['completed'].append('classes')\nprint(alias is original)\nprint(original['completed'])\nprint(deep['completed'])\nprint(shallow is original, shallow['completed'] is original['completed'])\nprint(original['name'] == 'Mina')\n",
+    "solutionExplanation": "The shallow copy shares the nested list, while the deep copy has its own nested pure-data list. The identity and value comparisons ask different questions.",
+    "challenges": ["Predict the effect of changing only shallow['name'].", "Find the bug in an editable draft built with original.copy() when it edits completed.", "Experiment: build an explicit draft copying only completed and test that original stays unchanged."]
+  },
+  "projectConnection": {"project": "Cross-track study-progress editor", "milestone": "Create an editable draft that copies only the mutable progress fields it owns and leaves persisted state untouched until save.", "definitionOfDone": "Tests edit the draft and prove the saved original does not change; identity tests are limited to aliasing, not value equality."},
+  "assessment": [
+    {"question": "Does assignment make a new list or dictionary?", "answer": "No; it binds another name to the same object.", "explanation": "Shared mutation remains visible through both names."},
+    {"question": "What does a shallow copy of a nested dictionary usually share?", "answer": "The inner objects referenced by the new outer dictionary.", "explanation": "Only the outer container is copied."},
+    {"question": "Should code compare two equal strings with is?", "answer": "No; use == for value equality.", "explanation": "Identity may reflect caching or interning and is not the value contract."}
+  ]
+}

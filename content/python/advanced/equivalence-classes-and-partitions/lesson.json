@@ -1,0 +1,129 @@
+{
+  "id": "equivalence-classes-and-partitions",
+  "title": "Group values by an equivalence rule",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "MIT OpenCourseWare 6.042J Mathematics for Computer Science: equivalence relations and partitions",
+    "Python 3.14 Language Reference: binary arithmetic operations and modulo",
+    "Python 3.14 Standard Library: built-in dict concepts"
+  ],
+  "masterChecklist": [
+    "Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic"
+  ],
+  "whyItMatters": "Grouping records is more than putting them in a dictionary. A precise 'same group' rule prevents one record from belonging to overlapping groups and makes downstream reports predictable.",
+  "simpleExplanation": "An equivalence relation says when two values count as the same for one purpose. It must be reflexive (each value matches itself), symmetric (if a matches b, b matches a), and transitive (if a matches b and b matches c, a matches c). The matching values form equivalence classes: non-overlapping groups whose union is the whole chosen domain. A practical way to build such groups is to compute a stable key for each value; values with equal keys share a group. For example, integers with the same remainder after division by 3 form three classes. This is not the same as saying the integers themselves are equal.",
+  "mentalModel": "Imagine sorting cards into three labeled boxes by the remainder on the card. Every card goes into exactly one box, and two cards are in the same box precisely when their labels match.",
+  "outcomes": [
+    "State reflexive, symmetric, and transitive in plain language.",
+    "Explain why equal grouping keys create non-overlapping classes.",
+    "Build groups with a dictionary of lists.",
+    "Check that each input occurs in exactly one output group."
+  ],
+  "realWorldExample": {
+    "scenario": "A study scheduler puts learner IDs into three rotating review lanes.",
+    "riskWithoutSetup": "An ad hoc pairwise rule says 1 matches 2 and 2 matches 3 but 1 does not match 3; the resulting 'groups' overlap inconsistently.",
+    "professionalApproach": "Define one stable lane key for each ID, group by key, and test that every input is assigned to exactly one lane. Keep the scheduling policy separate from claims about fairness or security."
+  },
+  "workedExample": {
+    "filename": "review_lanes.py",
+    "code": "def group_by_remainder(values, lanes):\n    if type(lanes) is not int or lanes <= 0:\n        raise ValueError('lanes must be a positive integer')\n    groups = {}\n    for value in values:\n        if type(value) is not int:\n            raise ValueError('values must be integers')\n        key = value % lanes\n        groups.setdefault(key, []).append(value)\n    return groups\n\nprint(group_by_remainder([0, 1, 2, 3, 4, 5], 3))\nprint(1 % 3 == 4 % 3)\n",
+    "explanation": [
+      "Modulo assigns each integer one remainder key from 0 through lanes-1 when lanes is positive.",
+      "setdefault creates a list for a key the first time it is seen, then append retains input order inside that group.",
+      "The dictionary represents classes within the input sequence; it does not claim to enumerate all integers in each mathematical class.",
+      "The exact-type checks deliberately reject Boolean values, which are int subclasses in Python.",
+      "Equal remainder keys make the same-lane relation reflexive, symmetric, and transitive because equality of keys has those properties."
+    ],
+    "expectedOutput": "{0: [0, 3], 1: [1, 4], 2: [2, 5]}\nTrue",
+    "safeExperiment": "Add -1 to the input and predict its remainder when lanes is 3 before running."
+  },
+  "procedure": [
+    "Write the domain and the meaning of 'same group'.",
+    "Choose a deterministic key function defined for every valid input.",
+    "Check key equality rather than chaining loose pairwise matches.",
+    "Assign each item to the group for its key.",
+    "Confirm no input is lost or assigned twice, and test negative and boundary values.",
+    "State that the grouping is for this particular purpose; it does not make distinct records identical."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Calling any pairwise similarity an equivalence relation.",
+      "why": "Similarity may fail transitivity or even symmetry.",
+      "avoid": "Check reflexive, symmetric, and transitive properties or derive the rule from equality of a stable key."
+    },
+    {
+      "mistake": "Assuming each group contains all possible integers with that remainder.",
+      "why": "The program groups only values supplied in its input.",
+      "avoid": "State the input domain and distinguish a finite sample group from an infinite mathematical class."
+    },
+    {
+      "mistake": "Assuming modulo with a positive divisor always gives the same sign behavior in every language.",
+      "why": "Other languages can define remainder differently for negative dividends.",
+      "avoid": "Use Python's documented modulo behavior and test negative inputs when portability matters."
+    }
+  ],
+  "lab": {
+    "title": "Partition task IDs into review lanes",
+    "safety": "Uses a short local list of integer IDs only. The static site guides practice but does not yet execute Python in the browser.",
+    "starterCode": "def review_lanes(task_ids, lane_count):\n    # Validate lane_count and each ID.\n    # Group IDs by ID % lane_count.\n    pass\n\n# Check IDs 0..5 with three lanes and -1 with three lanes.\n",
+    "guidedSteps": [
+      "Reject lane_count unless it is an exact positive integer.",
+      "Create an empty dictionary of groups.",
+      "For each exact integer ID, calculate ID % lane_count and append it to that lane.",
+      "Check that the flattened groups contain each input ID once.",
+      "Explain why equal lane keys are a transitive relation."
+    ],
+    "checks": [
+      "Three lanes group 0 with 3, 1 with 4, and 2 with 5.",
+      "A negative ID is assigned according to Python's positive-divisor modulo rule.",
+      "Invalid lane counts and Boolean IDs are rejected.",
+      "Every input is assigned to exactly one list."
+    ],
+    "hints": [
+      "Use type(lane_count) is int and lane_count > 0.",
+      "Use groups.setdefault(task_id % lane_count, []).append(task_id).",
+      "For positive divisor 3, Python computes -1 % 3 as 2."
+    ],
+    "solution": "def review_lanes(task_ids, lane_count):\n    if type(lane_count) is not int or lane_count <= 0:\n        raise ValueError('positive integer lane count required')\n    groups = {}\n    for task_id in task_ids:\n        if type(task_id) is not int:\n            raise ValueError('integer task ID required')\n        groups.setdefault(task_id % lane_count, []).append(task_id)\n    return groups\n\nassert review_lanes(list(range(6)), 3) == {0: [0, 3], 1: [1, 4], 2: [2, 5]}\nassert review_lanes([-1], 3) == {2: [-1]}\nfor bad in (0, -2, True):\n    try:\n        review_lanes([1], bad)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('invalid lane count accepted')\nprint('lane partition checked')\n",
+    "solutionExplanation": "A valid ID has exactly one remainder for a positive lane count, so the key rule puts each supplied ID into one group. The tests cover a full six-item sample, a negative ID, and invalid lane counts; the reflexive/symmetric/transitive reasoning comes from equality of remainder keys.",
+    "challenges": [
+      "Predict which group receives -1 when lane_count is 3.",
+      "Find the bug: append the same ID to two lanes after calculating its key.",
+      "Experiment with lane_count 4 and check every ID appears exactly once."
+    ],
+    "simulation": {
+      "prompt": "Which property fails if A matches B and B matches C, but A does not match C?",
+      "choices": [
+        "Transitivity",
+        "Symmetry"
+      ],
+      "correctIndex": 0,
+      "explanation": "Transitivity requires the A-to-C match whenever the two earlier matches hold."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress review scheduler",
+    "milestone": "Partition a small batch of task IDs into deterministic review lanes and document the same-lane rule.",
+    "definitionOfDone": "Every input ID appears in one lane, negative IDs follow documented Python modulo behavior, invalid lane counts are rejected, and the team distinguishes grouping from actual learner identity."
+  },
+  "assessment": [
+    {
+      "question": "What three properties define an equivalence relation?",
+      "answer": "Reflexive, symmetric, and transitive.",
+      "explanation": "Together they make the related values form non-overlapping classes."
+    },
+    {
+      "question": "Why do equal remainder keys give a transitive same-lane rule?",
+      "answer": "If key(a) equals key(b) and key(b) equals key(c), then key(a) equals key(c).",
+      "explanation": "The transitivity of equality carries through the key function."
+    },
+    {
+      "question": "Does a returned group contain every integer in its mathematical remainder class?",
+      "answer": "No, only integers supplied to the function.",
+      "explanation": "The program partitions a finite input sequence, not the entire integer domain."
+    }
+  ]
+}

@@ -97,7 +97,8 @@
       "Path(__file__).resolve().parents[1] is useful when the script is inside a src folder.",
       "sys.argv[0] is the script name; user-provided arguments begin at index 1."
     ],
-    "solution": "from pathlib import Path\nimport sys\n\nproject_root = Path(__file__).resolve().parents[1]\ninput_file = project_root / 'data' / 'orders.csv'\n\nprint(f'Python version: {sys.version_info.major}.{sys.version_info.minor}')\nprint(f'Input file: {input_file}')\nprint(f'Arguments: {sys.argv[1:]}')\n"
+    "solution": "from pathlib import Path\nimport sys\n\nproject_root = Path(__file__).resolve().parents[1]\ninput_file = project_root / 'data' / 'orders.csv'\n\nprint(f'Python version: {sys.version_info.major}.{sys.version_info.minor}')\nprint(f'Input file: {input_file}')\nprint(f'Arguments: {sys.argv[1:]}')\n",
+    "solutionExplanation": "The script builds its data path from its own location instead of a personal machine path. It prints only safe diagnostics—the interpreter version, calculated path, and supplied arguments—so setup differences can be investigated without exposing configuration."
   },
   "projectConnection": {
     "project": "CLI habit tracker",

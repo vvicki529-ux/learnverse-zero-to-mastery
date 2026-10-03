@@ -1,0 +1,129 @@
+{
+  "id": "inventory-installed-distributions-offline",
+  "title": "Inventory installed Python distributions offline",
+  "track": "python",
+  "level": "production",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python 3.14.8 Standard Library: importlib.metadata — Accessing package metadata",
+    "Python Packaging User Guide: Core metadata specifications (reviewed 2026-10-03)"
+  ],
+  "masterChecklist": [
+    "Secure dependency lifecycle: provenance, pinning, advisories, SBOM concepts, license review, upgrade strategy",
+    "Dependency management: pip, virtual environments, requirements, lockfiles, editable installs"
+  ],
+  "whyItMatters": "A team cannot review or reproduce dependencies it has not identified. An environment inventory is the first evidence for a release record and a later advisory or license review.",
+  "simpleExplanation": "The import name used in source code is not always the installed distribution name. `importlib.metadata.distributions()` walks distribution metadata visible to the current Python interpreter. Each distribution exposes fields such as `Name` and `Version`. Collect those fields into a small record and sort it so a reviewer can compare environments. This is a snapshot of what is installed now, not a lockfile, a dependency graph, an SBOM, or proof that a package is safe. The standard library does not fetch current vulnerability advisories while offline.",
+  "mentalModel": "The source import is the name on a tool button; a distribution is the boxed product installed in the workshop. An inventory lists boxes and versions, but does not tell you who packed them or whether they have known defects.",
+  "outcomes": [
+    "Distinguish import names from distribution names.",
+    "Read installed distribution metadata without importing package code.",
+    "Create a deterministic sorted name/version snapshot for the current interpreter.",
+    "Explain what an inventory cannot establish about licenses, advisories and provenance."
+  ],
+  "realWorldExample": {
+    "scenario": "A study-service release is being prepared on a clean build machine.",
+    "riskWithoutSetup": "A hidden package from a shared interpreter makes the tool pass locally but fail in production; responders later cannot identify affected versions.",
+    "professionalApproach": "Run the inventory in the project-specific environment, compare it with the tested resolved set, record differences, and separately review advisories, license policy, sources and test evidence before release."
+  },
+  "workedExample": {
+    "filename": "installed_inventory.py",
+    "code": "from importlib.metadata import distributions\n\nrows = []\nfor dist in distributions():\n    name = dist.metadata.get('Name')\n    version = dist.version\n    if name and version:\n        rows.append((name, version))\nrows.sort(key=lambda row: row[0].casefold())\nassert all(name and version for name, version in rows)\nprint('inventory ready')\n",
+    "explanation": [
+      "The call examines distribution metadata discoverable by this interpreter; it does not install or import every package.",
+      "A distribution may have a different name from the module your code imports, so read its metadata rather than guessing from an import statement.",
+      "The filter skips malformed or incomplete name/version records instead of treating them as trustworthy inventory entries.",
+      "Sorting produces a stable review order. The sample prints a fixed status because package lists differ by machine; inspect `rows` locally if appropriate.",
+      "This snapshot is not a complete release artifact: review the resolved set, dependency relationships, source, license and current advisories separately."
+    ],
+    "expectedOutput": "inventory ready",
+    "safeExperiment": "Print the first three rows in your own isolated environment. Do not treat different counts across machines as a Python failure."
+  },
+  "procedure": [
+    "Select the exact project interpreter or virtual environment before recording metadata.",
+    "Call importlib.metadata.distributions() and extract each distribution's Name and version.",
+    "Sort and store the inventory in the project's approved release record; avoid publishing internal package names accidentally.",
+    "Compare the snapshot with the project's tested resolved dependency set and investigate unexpected packages or missing entries.",
+    "Use approved, current advisory and license review processes when connected; an offline inventory alone cannot perform those checks.",
+    "Retest after changes and keep the old release record for a deliberate rollback."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Assuming `import requests` implies the distribution is also named requests in every case.",
+      "why": "Import and distribution names are not guaranteed to match one-to-one.",
+      "avoid": "Read installed distribution metadata or use an approved mapping process."
+    },
+    {
+      "mistake": "Calling the inventory a lockfile.",
+      "why": "It records the current environment but not necessarily how it was resolved or the integrity of future artifacts.",
+      "avoid": "Maintain a separately tested resolved set and artifact checks."
+    },
+    {
+      "mistake": "Calling a package safe because no advisory is displayed offline.",
+      "why": "No live advisory check occurred.",
+      "avoid": "Record that advisory review is pending until current approved data is available."
+    }
+  ],
+  "lab": {
+    "title": "Make a reviewable distribution snapshot",
+    "safety": "Uses only the local interpreter's installed metadata; it does not import distribution code, download, install, upgrade or remove packages. The current static site guides the lab but does not yet run Python in-browser.",
+    "starterCode": "from importlib.metadata import distributions\n\ndef snapshot(items):\n    # Return sorted (name, version) pairs from distribution objects.\n    pass\n\n# Build from distributions() and check every pair has both fields.\n",
+    "guidedSteps": [
+      "For each distribution object, use dist.metadata.get('Name') and dist.version.",
+      "Skip any entry missing a usable name or version.",
+      "Sort pairs by case-insensitive name.",
+      "Call snapshot(distributions()) and assert every returned pair is complete.",
+      "Write one sentence saying what must still be checked before release."
+    ],
+    "checks": [
+      "Rows contain nonempty distribution names and versions.",
+      "Rows are sorted case-insensitively.",
+      "The code does not import or install any third-party package.",
+      "The learner does not claim the snapshot is a lockfile or advisory scan."
+    ],
+    "hints": [
+      "Append `(name, version)` only if both values are present.",
+      "Use `key=lambda row: row[0].casefold()` when sorting.",
+      "The current environment may contain zero or many distributions; avoid asserting an exact count."
+    ],
+    "solution": "from importlib.metadata import distributions\n\ndef snapshot(items):\n    rows = []\n    for dist in items:\n        name = dist.metadata.get('Name')\n        version = dist.version\n        if name and version:\n            rows.append((name, version))\n    return sorted(rows, key=lambda row: row[0].casefold())\n\nrows = snapshot(distributions())\nassert all(name and version for name, version in rows)\nassert rows == sorted(rows, key=lambda row: row[0].casefold())\nprint('distribution snapshot checked')\n",
+    "solutionExplanation": "This reads metadata for the current interpreter and creates a deterministic review order. It does not establish installation provenance, artifact integrity, complete dependency relationships or current advisory status.",
+    "challenges": [
+      "Predict why a clean virtual environment and a shared global interpreter may produce different inventories.",
+      "Find the bug: record the import module's __name__ as if it were always the distribution name.",
+      "Experiment: compare snapshots before and after an approved local environment change."
+    ],
+    "simulation": {
+      "prompt": "Your offline distribution snapshot shows a package version. Does that prove there are no current advisories?",
+      "choices": [
+        "No; a separate current advisory review is needed",
+        "Yes; installed metadata includes all advisories"
+      ],
+      "correctIndex": 0,
+      "explanation": "Installed metadata describes the environment, not a live vulnerability feed."
+    }
+  },
+  "projectConnection": {
+    "project": "Maintained study-progress service",
+    "milestone": "Attach a distribution name/version snapshot from the exact test environment to the release record and compare it with the tested dependency set.",
+    "definitionOfDone": "The inventory is reproducibly sorted, unexpected entries are investigated, and advisory/license/provenance reviews remain explicit separate gates."
+  },
+  "assessment": [
+    {
+      "question": "Does the top-level import name always equal the installed distribution name?",
+      "answer": "No.",
+      "explanation": "Python documentation explicitly distinguishes import packages from distribution packages."
+    },
+    {
+      "question": "What does importlib.metadata.distributions() inspect?",
+      "answer": "Distribution metadata visible to the current Python interpreter.",
+      "explanation": "It does not install packages or fetch advisories."
+    },
+    {
+      "question": "Is an installed-package inventory the same thing as a tested lockfile?",
+      "answer": "No.",
+      "explanation": "A snapshot reports current state; a resolved release record and artifact integrity process answer other questions."
+    }
+  ]
+}

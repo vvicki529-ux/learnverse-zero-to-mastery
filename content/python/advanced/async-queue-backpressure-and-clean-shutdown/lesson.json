@@ -1,0 +1,45 @@
+{
+  "id": "async-queue-backpressure-and-clean-shutdown",
+  "title": "Bound an async work queue and finish jobs cleanly",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: asyncio queues (Queue maxsize, put, get, task_done, join) and coroutines/tasks (cancellation); reviewed 2026-10-03"],
+  "masterChecklist": ["Async internals, event-loop concepts, cooperative scheduling, cancellation, backpressure"],
+  "whyItMatters": "An async producer can create jobs faster than a consumer handles them. Unlimited queued work consumes memory and makes waiting invisible; a bounded queue makes the producer slow down.",
+  "simpleExplanation": "An event loop switches among ready tasks when a coroutine awaits; it is not a separate worker for every job. asyncio.Queue(maxsize=2) has room for only two waiting items. If it is full, await queue.put(item) pauses the producer until a consumer takes an item. The consumer calls task_done() once for each retrieved item after its work is finished; queue.join() waits for all enqueued jobs to be acknowledged. Cancellation can interrupt an await, so task_done belongs in a finally block after a successful get. A queue is a coordination tool inside one async program, not durable storage or a thread-safe cross-thread queue.",
+  "mentalModel": "A two-slot handoff shelf forces the delivery person to wait when the shelf is full. Taking a parcel frees a slot; marking it complete tells the supervisor the actual job is finished.",
+  "outcomes": ["Explain cooperative scheduling at await points.", "Use a positive maxsize to bound waiting work.", "Pair each successful get with exactly one task_done and wait for join.", "Cancel an idle worker only after queued work is complete."],
+  "realWorldExample": {"scenario": "A dashboard exports learner reports while requests arrive in bursts.", "riskWithoutSetup": "Unlimited in-memory jobs cause growing memory use and long hidden delays.", "professionalApproach": "Apply a documented capacity/timeout policy, acknowledge processed jobs, expose queue metrics, and use durable storage if jobs must survive a process restart."},
+  "workedExample": {
+    "filename": "bounded_reports.py",
+    "code": "import asyncio\n\nasync def main():\n    queue = asyncio.Queue(maxsize=1)\n    finished = []\n\n    async def worker():\n        while True:\n            job = await queue.get()\n            try:\n                await asyncio.sleep(0)  # Model nonblocking work.\n                finished.append(job)\n            finally:\n                queue.task_done()\n\n    task = asyncio.create_task(worker())\n    try:\n        for job in ('report-A', 'report-B'):\n            await queue.put(job)\n        await queue.join()\n    finally:\n        task.cancel()\n        try:\n            await task\n        except asyncio.CancelledError:\n            pass  # Expected cancellation of the idle worker.\n    print(finished)\n\nasyncio.run(main())\n",
+    "explanation": ["The queue has one waiting slot; put can suspend the producer when it fills.", "The worker awaits get and then awaits a simulated nonblocking operation, yielding control to the event loop.", "task_done is paired with each successful get, even if processing raises. A real failure also needs a recorded retry/dead-letter policy before acknowledgement.", "join waits for both jobs, then the idle worker is cancelled and awaited. Only this deliberate shutdown cancellation is suppressed."],
+    "expectedOutput": "['report-A', 'report-B']",
+    "safeExperiment": "Increase maxsize to 2 and inspect queue.qsize() at different await points; do not treat qsize as durable storage."
+  },
+  "procedure": ["Choose a finite capacity from expected memory and latency limits.", "Create consumer tasks and await producer put operations.", "After each successful get, process inside try/finally and call task_done exactly once.", "Await join before ending a successful batch.", "Cancel and await idle workers during shutdown; define an explicit failure/retry policy for production."],
+  "commonMistakes": [
+    {"mistake": "Using the default maxsize=0 and assuming the queue is bounded.", "why": "Zero means unlimited capacity for asyncio.Queue.", "avoid": "Set a positive maxsize and choose a full-queue policy."},
+    {"mistake": "Calling task_done before work is finished or forgetting it.", "why": "join can finish too early or wait forever.", "avoid": "Call task_done once in finally after each successful get."},
+    {"mistake": "Cancelling a worker before queued jobs finish and treating join as guaranteed.", "why": "Unprocessed jobs may remain and join can stall.", "avoid": "Drain or persist work first, then cancel idle workers and await them."}
+  ],
+  "lab": {
+    "title": "Process a bounded set of lesson-export jobs",
+    "safety": "Only fictional in-memory jobs; no network, files or external services.",
+    "starterCode": "import asyncio\n\nasync def main():\n    queue = asyncio.Queue(maxsize=1)\n    done = []\n    # Create a worker that gets, processes, and acknowledges each job.\n    # Put 'P-1' and 'P-2', wait for join, then cancel and await the worker.\n\nasyncio.run(main())\n",
+    "guidedSteps": ["Create a worker loop that awaits queue.get().", "Append the job to done after await asyncio.sleep(0), then call task_done in finally.", "Schedule the worker and await put for two IDs.", "Await queue.join(), cancel the now-idle worker, and await its cancellation.", "Print done and explain how maxsize=1 slows the producer."],
+    "checks": ["Queue has positive maxsize and both put calls are awaited.", "Each successful get has one task_done in finally.", "join completes before worker cancellation.", "The final output is ['P-1', 'P-2']."],
+    "hints": ["worker_task = asyncio.create_task(worker())", "Use try/finally after get, not before it.", "Catch asyncio.CancelledError only around awaiting the worker during deliberate shutdown."],
+    "solution": "import asyncio\n\nasync def main():\n    queue = asyncio.Queue(maxsize=1)\n    done = []\n\n    async def worker():\n        while True:\n            job = await queue.get()\n            try:\n                await asyncio.sleep(0)\n                done.append(job)\n            finally:\n                queue.task_done()\n\n    worker_task = asyncio.create_task(worker())\n    try:\n        for job in ('P-1', 'P-2'):\n            await queue.put(job)\n        await queue.join()\n    finally:\n        worker_task.cancel()\n        try:\n            await worker_task\n        except asyncio.CancelledError:\n            pass\n    print(done)\n\nasyncio.run(main())\n",
+    "solutionExplanation": "The bounded queue makes the producer wait for capacity, join waits for acknowledgement, and the idle worker is cancelled only after both jobs finish.",
+    "challenges": ["Predict what happens to join if task_done is removed.", "Find the bug if task_done is called before append.", "Experiment with three jobs and explain why the queue never stores more than one waiting item."]
+  },
+  "projectConnection": {"project": "Cross-track report-export pipeline", "milestone": "Add an in-process bounded async handoff for a local prototype and document the production durability/failure boundary.", "definitionOfDone": "Two jobs complete, bounded capacity is explicit, join terminates, worker shutdown is awaited, and a real retry/persistence policy is documented separately."},
+  "assessment": [
+    {"question": "What does asyncio.Queue(maxsize=0) mean?", "answer": "No queue-size bound.", "explanation": "Use a positive maxsize to apply backpressure."},
+    {"question": "What is the difference between get and task_done?", "answer": "get removes a waiting item; task_done acknowledges completed processing.", "explanation": "join waits for acknowledgements, not just an empty queue."},
+    {"question": "When should an idle worker be cancelled in this batch?", "answer": "After queue.join confirms all submitted jobs are acknowledged.", "explanation": "Then cancel and await the worker so shutdown is observed."}
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "class-decorators-init-subclass-and-metaclass-boundaries",
+  "title": "Choose a class decorator, subclass hook, or metaclass",
+  "track": "python",
+  "level": "expert",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Language Reference: data model, customizing class creation and metaclasses; Python 3.14 Descriptor HOWTO; reviewed 2026-10-03"],
+  "masterChecklist": ["Descriptors, decorators, metaclasses, class creation hooks — advanced/internals"],
+  "whyItMatters": "Frameworks often attach metadata or validate subclasses as classes are created. Knowing the simpler hooks first helps you read those frameworks without adding invisible complexity to an ordinary application.",
+  "simpleExplanation": "A class decorator is a function that receives a completed class and returns a class (possibly the same one); it is useful for explicit one-class customization. __init_subclass__ runs when a subclass is created and is useful for a base class's small subclass policy. A metaclass controls class-object creation more broadly; the default is type. Use a custom metaclass only when simpler tools cannot express the rule, because metaclass conflicts and hidden creation behavior can complicate inheritance. A descriptor is different: an object stored on the class that manages attribute access via __get__, __set__ or __delete__; __set_name__ can learn its assigned field name during class creation. A simple property is usually clearer for one field on one class.",
+  "mentalModel": "A decorator stamps one finished class; a subclass hook runs a base-class checklist for each new child; a metaclass builds the class itself. A descriptor manages a doorway on the finished class.",
+  "outcomes": ["Apply a class decorator that adds safe metadata without replacing the class.", "Use __init_subclass__ for a narrow registration policy.", "Identify type as the usual metaclass and know when custom metaclasses are disproportionate.", "Distinguish class-creation hooks from descriptor-based attribute access."],
+  "realWorldExample": {"scenario": "A learning app has a few report types and wants a human-readable label for each.", "riskWithoutSetup": "A metaclass written solely to add one label can obscure how classes are created and interfere with other frameworks.", "professionalApproach": "Use a decorator for isolated explicit labels, or a small base-class hook if every subclass must register. Escalate to a metaclass only for a genuinely class-construction-level need."},
+  "workedExample": {
+    "filename": "report_registration.py",
+    "code": "registry = {}\n\ndef labelled(label):\n    def decorate(cls):\n        cls.display_label = label\n        return cls\n    return decorate\n\nclass Report:\n    def __init_subclass__(cls, **kwargs):\n        super().__init_subclass__(**kwargs)\n        registry[cls.__name__] = cls\n\n@labelled('Study summary')\nclass StudyReport(Report):\n    pass\n\nprint(StudyReport.display_label)\nprint(sorted(registry))\nprint(type(StudyReport).__name__)\n",
+    "explanation": ["@labelled receives the completed StudyReport class, sets a deliberately simple display label, and returns that same class.", "Report.__init_subclass__ runs when StudyReport is defined and registers it; its cooperative super call leaves room for other class-creation behavior.", "type(StudyReport) is the default metaclass type. No custom metaclass is needed for this simple metadata task.", "A registry used in a real app needs careful duplicate handling and trusted class sources; this in-memory example keeps scope narrow."],
+    "expectedOutput": "Study summary\n['StudyReport']\ntype",
+    "safeExperiment": "Add a second Report subclass and predict whether the registry gains it. Do not use subclass registration to execute untrusted plugins."
+  },
+  "procedure": ["Decide whether the behavior concerns one explicit class, every subclass of a base, or class-object construction itself.", "Use an ordinary class decorator for the first case and return the class.", "Use __init_subclass__ for a small inherited rule and call super cooperatively.", "Consider a custom metaclass only after the simpler mechanisms fail to express a real requirement.", "Keep the registry in memory for learning and test duplicate or untrusted inputs before production use."],
+  "commonMistakes": [
+    {"mistake": "Writing a metaclass merely to attach one label.", "why": "It adds invisible class-creation behavior and may conflict with other bases.", "avoid": "Use a class decorator or explicit class attribute."},
+    {"mistake": "Forgetting to return cls from a class decorator.", "why": "The decorated class name may be replaced with None or another unintended value.", "avoid": "Return the class unless replacing it is a deliberate contract."},
+    {"mistake": "Treating subclass registration as safe automatic plugin loading.", "why": "Imported code has already executed and may be untrusted; registry contents need governance.", "avoid": "Keep plugin discovery and trust decisions explicit and separate."}
+  ],
+  "lab": {
+    "title": "Label and register fictional report classes",
+    "safety": "Only in-memory classes and strings; no imports from unknown plugins, files or network.",
+    "starterCode": "registry = {}\n\ndef labelled(label):\n    # Return a decorator that sets display_label and returns the class.\n    pass\n\nclass Report:\n    def __init_subclass__(cls, **kwargs):\n        # Cooperatively register the new subclass by name.\n        pass\n\n@labelled('Study summary')\nclass StudyReport(Report):\n    pass\n",
+    "guidedSteps": ["Make labelled return a nested decorator that sets cls.display_label and returns cls.", "In Report.__init_subclass__, call super().__init_subclass__(**kwargs).", "Add the new subclass to registry under its class name.", "Print the label, sorted registry keys and the name of the default metaclass.", "Add a second subclass and observe it register without an explicit decorator."],
+    "checks": ["Outputs Study summary, ['StudyReport'], type before the optional second subclass.", "The decorator returns cls.", "The subclass hook calls super cooperatively.", "No custom metaclass or external plugin import is used."],
+    "hints": ["def decorate(cls): cls.display_label = label; return cls", "registry[cls.__name__] = cls", "type(StudyReport).__name__"],
+    "solution": "registry = {}\n\ndef labelled(label):\n    def decorate(cls):\n        cls.display_label = label\n        return cls\n    return decorate\n\nclass Report:\n    def __init_subclass__(cls, **kwargs):\n        super().__init_subclass__(**kwargs)\n        registry[cls.__name__] = cls\n\n@labelled('Study summary')\nclass StudyReport(Report):\n    pass\n\nprint(StudyReport.display_label)\nprint(sorted(registry))\nprint(type(StudyReport).__name__)\n",
+    "solutionExplanation": "The explicit decorator labels one class, and the inherited hook registers the subclass at definition time; the default metaclass remains type.",
+    "challenges": ["Predict registry after defining another Report subclass.", "Find the bug if decorate sets the label but forgets return cls.", "Experiment: duplicate class names in different scopes and decide what a production registry would need to avoid overwriting."]
+  },
+  "projectConnection": {"project": "Cross-track report catalog", "milestone": "Add explicit safe labels and a narrowly scoped report-type registry without a custom metaclass.", "definitionOfDone": "Tests verify labelled classes remain usable, subclasses register once, and duplicate naming is handled before any production registry is adopted."},
+  "assessment": [
+    {"question": "When does __init_subclass__ run?", "answer": "When a subclass of the defining base is created.", "explanation": "It is a class-creation hook, not an instance initializer."},
+    {"question": "What is the usual metaclass of an ordinary Python class?", "answer": "type.", "explanation": "A custom metaclass is not needed for simple labeling or registration."},
+    {"question": "What must a class decorator return here?", "answer": "The decorated class.", "explanation": "Otherwise the class name would be rebound to an unintended return value."}
+  ]
+}

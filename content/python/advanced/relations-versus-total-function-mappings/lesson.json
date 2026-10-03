@@ -1,0 +1,128 @@
+{
+  "id": "relations-versus-total-function-mappings",
+  "title": "Tell a many-to-many relation from a one-value function",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "MIT OpenCourseWare 6.1200J Mathematics for Computer Science, Lecture 15: Relations and Counting (Spring 2024)",
+    "Python 3.14.8 Built-in Types: set and dict concepts"
+  ],
+  "masterChecklist": [
+    "Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic"
+  ],
+  "whyItMatters": "A data model can accidentally discard valid records if a many-to-many relationship is stored in a one-value dictionary. Conversely, a feature that requires exactly one current value per learner needs explicit validation.",
+  "simpleExplanation": "A relation between learners and lessons is a set of ordered pairs. One learner may appear with several lessons. A function from learners to current lessons permits at most one current lesson for each learner; a total function also assigns one to every learner in its declared domain. In Python, a set of `(learner, lesson)` tuples can represent the relation, while a dictionary can represent a single-value mapping. Repeated dictionary assignment to the same key replaces the old value, so validate whether multiple values are allowed before choosing the structure.",
+  "mentalModel": "A library checkout log can show one reader borrowing several books. A 'current desk number' map gives each present reader one desk. Forcing the checkout log into a one-desk map loses books.",
+  "outcomes": [
+    "Describe a relation as ordered pairs.",
+    "Distinguish one-to-many data from a total single-value mapping.",
+    "Reject conflicting values when a one-value contract is required.",
+    "Check domain coverage rather than assuming a dictionary is total."
+  ],
+  "realWorldExample": {
+    "scenario": "A study app stores every learner-to-completed-lesson pair, plus exactly one current lesson per active learner.",
+    "riskWithoutSetup": "Code writes completed pairs to a dict keyed only by learner and silently keeps just the last completion. A separate current-lesson dict may omit an active learner without detection.",
+    "professionalApproach": "Keep completions as a relation, represented by pairs or a relational table; validate the active-learner current mapping for no conflicts and full domain coverage."
+  },
+  "workedExample": {
+    "filename": "relation_or_function.py",
+    "code": "active = {'Ada', 'Bo'}\ncurrent_pairs = [('Ada', 'Loops'), ('Bo', 'Files')]\ncompleted = {('Ada', 'Input'), ('Ada', 'Loops'), ('Bo', 'Input')}\n\ndef current_map(domain, pairs):\n    result = {}\n    for learner, lesson in pairs:\n        if learner not in domain:\n            raise ValueError('unknown learner')\n        if learner in result and result[learner] != lesson:\n            raise ValueError('conflicting current lesson')\n        result[learner] = lesson\n    if set(result) != set(domain):\n        raise ValueError('missing current lesson')\n    return result\n\nprint(current_map(active, current_pairs))\nprint(len(completed))\n",
+    "explanation": [
+      "completed is a relation: Ada appears in two distinct learner/lesson pairs without losing either.",
+      "current_pairs is intended to become a total function over the active domain.",
+      "A conflicting second value for one learner is rejected before dictionary assignment could silently replace the first.",
+      "The final set comparison checks that every active learner has a current lesson; a dict alone would not guarantee coverage.",
+      "The example permits a duplicate identical pair, which does not change the single-value mapping. A production model may choose to reject duplicate records separately."
+    ],
+    "expectedOutput": "{'Ada': 'Loops', 'Bo': 'Files'}\n3",
+    "safeExperiment": "Add ('Ada', 'Files') to current_pairs and predict the error. Then remove Bo's pair and predict the other error."
+  },
+  "procedure": [
+    "Write down the domain and codomain of the feature.",
+    "Ask whether one input can legitimately relate to more than one output.",
+    "Use a relation of pairs for many-to-many data; do not flatten it into a single-value dict.",
+    "For a one-value mapping, reject conflicting outputs for the same input.",
+    "If the function must be total, check that every domain member is mapped.",
+    "Test one-to-many, conflicting, missing and unknown-domain cases."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Writing `mapping[learner] = lesson` for every completion row.",
+      "why": "Later lessons replace earlier values for the same learner.",
+      "avoid": "Keep completion pairs in a relation or group them into collections."
+    },
+    {
+      "mistake": "Calling any dictionary a total function over all learners.",
+      "why": "Some declared learners may be absent.",
+      "avoid": "Compare its keys with the required domain."
+    },
+    {
+      "mistake": "Treating pair direction as interchangeable.",
+      "why": "(learner, lesson) and (lesson, learner) model different relationships.",
+      "avoid": "Name the domain and codomain and use consistent tuple positions."
+    }
+  ],
+  "lab": {
+    "title": "Validate one current lesson per active learner",
+    "safety": "Uses only fictional in-memory strings. The static site guides practice but does not yet execute Python in-browser.",
+    "starterCode": "def current_map(domain, pairs):\n    # Reject unknown learners, conflicting lessons, and missing learners.\n    pass\n\n# Test valid, conflict, missing and unknown cases.\n",
+    "guidedSteps": [
+      "Create an empty result dict.",
+      "Reject a pair whose learner is not in domain.",
+      "Reject a different lesson for a learner already present.",
+      "After all pairs, compare result keys with the full domain.",
+      "Test a valid map and each of the three invalid cases."
+    ],
+    "checks": [
+      "Valid mapping contains one value for every domain member.",
+      "Conflicting value is rejected, not silently overwritten.",
+      "Missing domain member is rejected.",
+      "Unknown learner is rejected."
+    ],
+    "hints": [
+      "Use `if learner not in domain`.",
+      "Check `learner in result and result[learner] != lesson` before assignment.",
+      "Use `set(result) != set(domain)` after the loop."
+    ],
+    "solution": "def current_map(domain, pairs):\n    result = {}\n    for learner, lesson in pairs:\n        if learner not in domain:\n            raise ValueError('unknown learner')\n        if learner in result and result[learner] != lesson:\n            raise ValueError('conflict')\n        result[learner] = lesson\n    if set(result) != set(domain):\n        raise ValueError('missing learner')\n    return result\n\nassert current_map({'Ada', 'Bo'}, [('Ada', 'Loops'), ('Bo', 'Files')]) == {\n    'Ada': 'Loops', 'Bo': 'Files'}\nfor bad in ([('Ada', 'Loops'), ('Ada', 'Files'), ('Bo', 'Files')],\n            [('Ada', 'Loops')],\n            [('Ada', 'Loops'), ('Bo', 'Files'), ('Cy', 'Input')]):\n    try:\n        current_map({'Ada', 'Bo'}, bad)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('invalid mapping accepted')\nprint('mapping contract checked')\n",
+    "solutionExplanation": "The function enforces at-most-one output through the conflict check and exactly-one-for-every-domain-member through the final coverage check. Completions that allow several lessons should not use this structure.",
+    "challenges": [
+      "Predict whether two identical Ada/Loops pairs pass.",
+      "Find the bug: assign to the dict before checking a conflict.",
+      "Experiment: represent completed lessons with a set of pairs instead of this dict."
+    ],
+    "simulation": {
+      "prompt": "Ada completed Input and Loops. Is a dict mapping Ada to one lesson a lossless representation of both completions?",
+      "choices": [
+        "No; a set of pairs or grouped collection is needed",
+        "Yes; dict keys can repeat"
+      ],
+      "correctIndex": 0,
+      "explanation": "A dictionary has one value per key, so a later assignment replaces the earlier one."
+    }
+  },
+  "projectConnection": {
+    "project": "Study-progress data model",
+    "milestone": "Store completed learner/lesson pairs without loss, and separately validate the one-current-lesson mapping for active learners.",
+    "definitionOfDone": "One-to-many completions survive, conflicting current lessons fail, and every active learner has a current lesson."
+  },
+  "assessment": [
+    {
+      "question": "Can a relation contain both (Ada, Input) and (Ada, Loops)?",
+      "answer": "Yes.",
+      "explanation": "A relation can have several ordered pairs with the same first component."
+    },
+    {
+      "question": "What makes a mapping total over a declared domain?",
+      "answer": "Every domain member has exactly one output.",
+      "explanation": "At-most-one alone allows missing inputs."
+    },
+    {
+      "question": "Why can a dictionary lose completion history?",
+      "answer": "Assigning a new value to an existing learner key replaces the old value.",
+      "explanation": "Use a relation or a collection of values when several outputs are valid."
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "id": "modular-arithmetic-for-cyclic-indexing",
+  "title": "Use modulo to wrap a position around a cycle",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": [
+    "Python 3.14.8 Language Reference: binary arithmetic operations, floor division and modulo"
+  ],
+  "masterChecklist": [
+    "Discrete-math essentials: logic, sets, relations, functions, induction, counting, probability, modular arithmetic"
+  ],
+  "whyItMatters": "Round-robin schedules, circular menus and rotating review queues need a safe way to move past the last item and return to the first.",
+  "simpleExplanation": "For a positive cycle length n, `position % n` gives a valid position from 0 through n-1. The `%` operator returns the remainder paired with floor division: `a == (a // n) * n + (a % n)`. In Python, a negative position with positive n also wraps into this nonnegative index range: `-1 % 4` is 3. Validate that the cycle is nonempty before taking modulo, because modulo by zero raises ZeroDivisionError. This is index arithmetic, not randomness or load balancing by itself.",
+  "mentalModel": "A clock face has a fixed number of slots. Advancing past the last slot lands back at the first; stepping backward from the first lands at the last.",
+  "outcomes": [
+    "Calculate a wrapped index with a positive modulus.",
+    "Predict the result of a negative step in Python.",
+    "Explain the floor-division identity.",
+    "Reject an empty cycle before modulo."
+  ],
+  "realWorldExample": {
+    "scenario": "An offline study app rotates through four practice topics after each completed task.",
+    "riskWithoutSetup": "Incrementing an index without wrapping eventually causes IndexError; using an empty topic list causes a zero-divisor error.",
+    "professionalApproach": "Check that topics are nonempty, apply `(current + step) % len(topics)`, and keep ordering policy explicit. Use a separate scheduling rule if topic priority or fairness matters."
+  },
+  "workedExample": {
+    "filename": "rotate_topics.py",
+    "code": "topics = ['syntax', 'files', 'tests', 'packages']\n\ndef next_topic(items, current, step):\n    if not items:\n        raise ValueError('need at least one topic')\n    return (current + step) % len(items)\n\nprint(next_topic(topics, 3, 1))\nprint(topics[next_topic(topics, 0, -1)])\nprint(divmod(-1, 4))\n",
+    "explanation": [
+      "The nonempty check prevents modulo by zero and gives an actionable error.",
+      "At index 3, stepping forward one in a four-item list gives `(3+1)%4 == 0`.",
+      "At index 0, stepping back one gives `-1%4 == 3`, so packages is selected.",
+      "`divmod(-1, 4)` returns the floor quotient and remainder together: (-1, 3), satisfying -1 == (-1)*4 + 3.",
+      "The function assumes current and step are integer positions; a production boundary should validate externally supplied values."
+    ],
+    "expectedOutput": "0\npackages\n(-1, 3)",
+    "safeExperiment": "Try step=6 from index 0 and predict the resulting index before running."
+  },
+  "procedure": [
+    "Decide whether the data is truly cyclic; modulo is wrong for a process that must stop at the end.",
+    "Validate that the item collection is nonempty.",
+    "Use the positive collection length as the modulus.",
+    "Compute the next index with `(current + step) % n` and only then index the collection.",
+    "Test forward wrap, backward wrap, large steps and a one-item cycle.",
+    "Validate integer input at an external boundary if users control current or step."
+  ],
+  "commonMistakes": [
+    {
+      "mistake": "Applying `% len(items)` to an empty list.",
+      "why": "The divisor is zero.",
+      "avoid": "Raise a clear ValueError before computing the remainder."
+    },
+    {
+      "mistake": "Assuming `-1 % 4` is -1 in Python.",
+      "why": "Python's positive divisor produces a nonnegative remainder.",
+      "avoid": "Use the documented floor-division identity and test backward steps."
+    },
+    {
+      "mistake": "Using modulo when the sequence should stop.",
+      "why": "Wrapping can silently repeat work that should have ended.",
+      "avoid": "Choose a stop condition or bounded index for non-cyclic workflows."
+    }
+  ],
+  "lab": {
+    "title": "Rotate a fictional review queue",
+    "safety": "Uses only in-memory topic names. The static site guides the lab but does not yet run Python in-browser.",
+    "starterCode": "def move(items, current, step):\n    # Reject an empty list, then return the wrapped index.\n    pass\n\n# Test forward, backward, large-step and empty cases.\n",
+    "guidedSteps": [
+      "Reject an empty items list with ValueError.",
+      "Let n be len(items).",
+      "Return `(current + step) % n`.",
+      "Assert that moving forward from the last of four topics returns 0.",
+      "Assert that moving back from 0 returns 3 and moving forward six returns 2."
+    ],
+    "checks": [
+      "Empty list is rejected before modulo.",
+      "Forward and backward wrap are correct.",
+      "Large steps wrap correctly.",
+      "The learner can explain why a positive modulus yields valid list indices."
+    ],
+    "hints": [
+      "Use `if not items: raise ValueError(...)`.",
+      "Use `len(items)` as the positive modulus.",
+      "`-1 % 4` is 3 in Python."
+    ],
+    "solution": "def move(items, current, step):\n    if not items:\n        raise ValueError('need at least one item')\n    return (current + step) % len(items)\n\nitems = ['a', 'b', 'c', 'd']\nassert move(items, 3, 1) == 0\nassert move(items, 0, -1) == 3\nassert move(items, 0, 6) == 2\ntry:\n    move([], 0, 1)\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('empty cycle accepted')\nprint('cyclic indices checked')\n",
+    "solutionExplanation": "With n>0, `% n` keeps the result within the valid index range. The explicit empty check prevents a zero-divisor error and the tests cover both directions.",
+    "challenges": [
+      "Predict move(items, 2, -6).",
+      "Find the bug: use `% (len(items)-1)` for a four-item list.",
+      "Experiment with a one-item cycle and explain why its only index is always 0."
+    ],
+    "simulation": {
+      "prompt": "What is `-1 % 4` in Python?",
+      "choices": [
+        "3",
+        "-1"
+      ],
+      "correctIndex": 0,
+      "explanation": "For positive 4, the remainder is in 0..3 and -1 == (-1)*4 + 3."
+    }
+  },
+  "projectConnection": {
+    "project": "Offline study-topic scheduler",
+    "milestone": "Rotate the review queue forward and backward while rejecting an empty curriculum.",
+    "definitionOfDone": "Tests cover both wrap directions, a large step, one item and empty input; scheduling policy is documented separately."
+  },
+  "assessment": [
+    {
+      "question": "Why does `(current + step) % n` produce a valid index when n>0?",
+      "answer": "The integer remainder is between 0 and n-1.",
+      "explanation": "Those are precisely the indices of an n-item list."
+    },
+    {
+      "question": "What happens if n is zero?",
+      "answer": "Modulo raises ZeroDivisionError.",
+      "explanation": "Validate a nonempty cycle and raise a useful domain error first."
+    },
+    {
+      "question": "Does modulo make topic selection random or fair?",
+      "answer": "No.",
+      "explanation": "It only wraps an integer position; fairness requires a separate scheduling policy."
+    }
+  ]
+}

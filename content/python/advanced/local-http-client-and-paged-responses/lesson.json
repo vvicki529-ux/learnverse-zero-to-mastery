@@ -1,0 +1,46 @@
+{
+  "id": "local-http-client-and-paged-responses",
+  "title": "Read a real HTTP response and collect every page safely",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: urllib.request.urlopen/Request, http.server, json and urllib.parse; RFC 9110 HTTP semantics; reviewed 2026-10-03"],
+  "masterChecklist": ["Sockets, HTTP concepts, REST APIs, requests, retries, idempotency, pagination, rate limits, error handling"],
+  "whyItMatters": "An HTTP response can be incomplete, malformed, unexpectedly large or only one page of many. A client needs explicit boundaries before trusting the data.",
+  "simpleExplanation": "An HTTP request asks a server for a resource; the response has a status, headers and body. A GET for course records may return only one page plus a next cursor. Set a timeout so waiting has a limit, check the response's content type, cap bytes before JSON parsing, validate the JSON shape and follow only allowed next-page values. Stop after a known maximum number of pages to prevent loops. A status error or invalid body should become a clear failure, not silently look like an empty course list. The companion script runs a tiny HTTP server on 127.0.0.1 and calls it with urllib.request, so it tests a real request without any third-party site. The current browser lesson editor does not run Python or open a local server; its guided data-shape lab is an in-site exercise with a local-script follow-up.",
+  "mentalModel": "A page is one box in a shipment. Check the label and box size, unpack its items, and follow only a valid next-box number; never assume the first box is the whole shipment.",
+  "outcomes": ["Distinguish response metadata from JSON body data.", "Set timeout and maximum body/page limits.", "Validate item and next-cursor shapes.", "Use an offline loopback fixture for HTTP integration without external learning links."],
+  "realWorldExample": {"scenario": "An internal LearnVerse catalog importer fetches paginated course names.", "riskWithoutSetup": "It imports only page one, loops forever on a bad cursor or accepts an HTML error page as JSON.", "professionalApproach": "Pin a trusted service origin, enforce response limits, validate each page, log safe errors, and test the client against local success/error fixtures before any real deployment."},
+  "workedExample": {
+    "filename": "page_shape.py",
+    "code": "def collect_pages(pages):\n    names = []\n    page = 1\n    for _ in range(3):\n        response = pages.get(page)\n        if not isinstance(response, dict) or not isinstance(response.get('items'), list):\n            raise ValueError('invalid page')\n        names.extend(response['items'])\n        next_page = response.get('next')\n        if next_page is None:\n            return names\n        if next_page not in (1, 2) or next_page == page:\n            raise ValueError('invalid next page')\n        page = next_page\n    raise RuntimeError('page limit reached')\n\npages = {1: {'items': ['Python'], 'next': 2}, 2: {'items': ['SQL'], 'next': None}}\nprint(collect_pages(pages))\n",
+    "explanation": ["This pure function isolates pagination logic from network I/O, so the learner can reason about the shape in the site's guided editor.", "Every page must be a mapping with a list of items; a missing or malformed page raises a clear error.", "Only known next-page values are accepted, and a three-page cap prevents an unbounded loop.", "The companion local_http_demo.py file supplies a real loopback HTTP server and urllib client with timeout, content-type and byte-size checks; the pure example does not pretend to be an HTTP request."],
+    "expectedOutput": "['Python', 'SQL']",
+    "safeExperiment": "Set the first page's next value to 99 or remove page two and predict which validation error appears. For the actual HTTP boundary, run the saved companion script locally."
+  },
+  "procedure": ["Define the trusted origin, endpoint, page/cursor schema and success/error contract.", "Set explicit connection/read timeout and a maximum response size at the HTTP boundary.", "Check status/content type, decode JSON and validate expected fields.", "Follow only validated next cursors with a maximum page count.", "Test success, malformed body, invalid cursor, timeout and status errors against local fixtures; do not silently convert failures to empty results."],
+  "commonMistakes": [
+    {"mistake": "Assuming one response contains every record.", "why": "The server may split a collection into pages.", "avoid": "Follow a documented next cursor until completion with a maximum page count."},
+    {"mistake": "Calling json.loads on unlimited bytes or an HTML error body.", "why": "The body may be large or not the expected format.", "avoid": "Check metadata and cap bytes before decoding and validating."},
+    {"mistake": "Following any next URL from untrusted JSON.", "why": "A malicious or broken response could send the client to an unexpected host or loop.", "avoid": "Pin the origin and validate cursor format and bounds."}
+  ],
+  "lab": {
+    "title": "Collect two local pages without losing or looping",
+    "safety": "The in-site exercise uses only provided dictionaries. The optional companion script serves 127.0.0.1 only and makes no external request; the site editor itself is not a Python executor.",
+    "simulation": {"prompt": "Page one says next=2, but page two is missing. What should the importer do?", "choices": ["Return page-one items as if complete", "Raise a clear missing/invalid page error", "Keep requesting pages without a limit"], "correctIndex": 1, "explanation": "An absent required page is a failure, not successful completion; silently returning partial data is misleading."},
+    "starterCode": "def collect_pages(pages):\n    names = []\n    page = 1\n    # Validate each page, collect items, follow next and cap the number of pages.\n    return names\n\npages = {1: {'items': ['Python'], 'next': 2}, 2: {'items': ['SQL'], 'next': None}}\n",
+    "guidedSteps": ["Iterate at most three pages, starting at page one.", "Reject a missing page or an items field that is not a list.", "Append items and return when next is None.", "Reject an invalid or self-repeating next page.", "Assert the two-page result and test one missing-page failure."],
+    "checks": ["Returns both pages in order.", "Rejects missing/malformed pages rather than returning partial success.", "Has a finite page bound.", "Does not follow arbitrary external URLs."],
+    "hints": ["response = pages.get(page)", "if not isinstance(response.get('items'), list): raise ValueError(...)", "Use a bounded for loop and return only when next is None."],
+    "solution": "def collect_pages(pages):\n    names = []\n    page = 1\n    for _ in range(3):\n        response = pages.get(page)\n        if not isinstance(response, dict) or not isinstance(response.get('items'), list):\n            raise ValueError('invalid page')\n        names.extend(response['items'])\n        next_page = response.get('next')\n        if next_page is None:\n            return names\n        if next_page not in (1, 2) or next_page == page:\n            raise ValueError('invalid next page')\n        page = next_page\n    raise RuntimeError('page limit reached')\n\npages = {1: {'items': ['Python'], 'next': 2}, 2: {'items': ['SQL'], 'next': None}}\nassert collect_pages(pages) == ['Python', 'SQL']\ntry:\n    collect_pages({1: {'items': ['Python'], 'next': 2}})\nexcept ValueError as error:\n    assert str(error) == 'invalid page'\nprint(collect_pages(pages))\n",
+    "solutionExplanation": "The pure pagination logic returns only after an explicit terminal page and surfaces missing data. The saved local HTTP fixture exercises the actual urllib timeout/header/body boundary separately.",
+    "challenges": ["Predict the failure when next points back to the current page.", "Find the bug if a missing page is treated as an empty terminal page.", "Experiment locally with the companion loopback server and explain why Content-Type and byte caps are checked before parsing."]
+  },
+  "projectConnection": {"project": "Cross-track catalog importer", "milestone": "Collect the complete local course catalog through a validated paginated client boundary.", "definitionOfDone": "Success includes every page; malformed/oversized/unexpected responses are visible failures; the HTTP integration test needs no third-party site."},
+  "assessment": [
+    {"question": "Why set a maximum number of pages?", "answer": "To stop a broken or malicious cursor from causing an unbounded loop.", "explanation": "Completion still requires an explicit terminal page."},
+    {"question": "Can the client treat missing page two as complete?", "answer": "No.", "explanation": "That would silently lose records."},
+    {"question": "Why check Content-Type and body size before JSON parsing?", "answer": "The response might be an error page or unexpectedly large.", "explanation": "Validate the boundary before trusting a body."}
+  ]
+}

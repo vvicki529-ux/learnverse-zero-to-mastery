@@ -98,7 +98,8 @@
       "Use report_inventory['tea']['reserved'] = 1 after creating the independent copy.",
       "Print the two values separately so you can compare them."
     ],
-    "solution": "from copy import deepcopy\n\ninventory = {\n    'tea': {'available': 4, 'reserved': 0},\n    'mug': {'available': 2, 'reserved': 0},\n}\n\nreport_inventory = deepcopy(inventory)\nreport_inventory['tea']['reserved'] = 1\n\nprint(f\"report: {report_inventory['tea']['reserved']}\")\nprint(f\"original: {inventory['tea']['reserved']}\")\n"
+    "solution": "from copy import deepcopy\n\ninventory = {\n    'tea': {'available': 4, 'reserved': 0},\n    'mug': {'available': 2, 'reserved': 0},\n}\n\nreport_inventory = deepcopy(inventory)\nreport_inventory['tea']['reserved'] = 1\n\nprint(f\"report: {report_inventory['tea']['reserved']}\")\nprint(f\"original: {inventory['tea']['reserved']}\")\n",
+    "solutionExplanation": "deepcopy creates independent nested dictionaries. Changing the report reservation therefore does not change the original inventory, and the two printed values make accidental aliasing visible."
   },
   "projectConnection": {
     "project": "CSV expense organizer",

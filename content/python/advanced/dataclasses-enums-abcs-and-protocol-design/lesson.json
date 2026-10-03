@@ -1,0 +1,45 @@
+{
+  "id": "dataclasses-enums-abcs-and-protocol-design",
+  "title": "Dataclasses, enums, abstract base classes, and protocols",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: dataclasses, enum, abc, and typing.Protocol; reviewed 2026-10-03"],
+  "masterChecklist": ["dataclass, enums, abstract base classes, protocols, design trade-offs"],
+  "whyItMatters": "As an application grows, plain dictionaries make valid states unclear. These tools let code name its data and capabilities without forcing unrelated objects into a rigid inheritance tree.",
+  "simpleExplanation": "A dataclass generates routine data-container methods from annotated fields, but annotations are not automatic runtime validators. An enum names allowed states; a model field annotated with that enum still needs validation if callers could pass raw text. An abstract base class can require implemented methods before a subclass is instantiated. A protocol describes a required capability for static type checking without forcing common ancestry; it does not automatically check input at runtime.",
+  "mentalModel": "A dataclass is a labelled form, an enum is a controlled dropdown, an abstract base class is an inherited job requirement, and a protocol is a capability checklist used by a type checker. Someone still has to validate submitted form values.",
+  "outcomes": ["Model stable records with dataclass.", "Use Enum for a finite business state and validate external input.", "Explain when an ABC provides runtime abstract-method enforcement.", "Choose a protocol when capability matters more than ancestry."],
+  "realWorldExample": {"scenario": "A learning service records a submission status and sends notifications through different channels.", "riskWithoutSetup": "Free-form strings accept typos such as 'submited'; a plain dataclass annotation alone does not reject a raw status string, and integrations may be forced into an unnatural class hierarchy.", "professionalApproach": "Convert external text to an enum member, validate the record in __post_init__, and use a focused notification protocol with an injected provider."},
+  "workedExample": {
+    "filename": "models.py",
+    "code": "from dataclasses import dataclass\nfrom enum import Enum\nfrom typing import Protocol\n\nclass Status(Enum):\n    DRAFT = 'draft'\n    SUBMITTED = 'submitted'\n\n@dataclass\nclass Submission:\n    learner: str\n    status: Status = Status.DRAFT\n\n    def __post_init__(self):\n        if not isinstance(self.status, Status):\n            raise TypeError('status must be a Status member')\n\nclass Notifier(Protocol):\n    def send(self, message: str) -> None: ...\n\nsubmission = Submission('Ava', Status('submitted'))\nprint(submission.status.value)\ntry:\n    Submission('Bo', 'submitted')\nexcept TypeError:\n    print('raw string rejected')\n",
+    "explanation": ["The dataclass generates an initializer and readable representation from annotated fields, but __post_init__ enforces the runtime Status contract.", "Status('submitted') converts validated external text to a named member; unknown text raises ValueError.", "Notifier is a structural type-checking contract. A plain annotation does not inspect objects at runtime."],
+    "expectedOutput": "submitted\nraw string rejected",
+    "safeExperiment": "Try Status('submited') and catch its ValueError. Compare enum members with Status.SUBMITTED, not a raw string."
+  },
+  "procedure": ["Identify related data that belongs in one record.", "Use a dataclass for simple record boilerplate, then validate business rules in __post_init__ or at a boundary.", "Use Enum for a finite vocabulary and convert external text explicitly.", "Use an ABC when an inherited runtime abstract-method guard is useful; prefer a focused Protocol for a structural capability.", "Test direct invalid construction, not just the happy path."],
+  "commonMistakes": [
+    {"mistake": "Treating dataclass annotations as runtime type enforcement.", "why": "The generated initializer normally stores values without type checks.", "avoid": "Validate in __post_init__ and convert external input first."},
+    {"mistake": "Comparing an enum member to its plain string value.", "why": "Status.SUBMITTED and 'submitted' are different objects.", "avoid": "Compare members; use .value only at a text boundary."},
+    {"mistake": "Creating deep inheritance for one required method.", "why": "It couples unrelated providers and complicates substitution.", "avoid": "Use a focused protocol and composition if a capability is all that is required."}
+  ],
+  "lab": {
+    "title": "Model project states safely",
+    "safety": "The lab uses only local classes and fictional task data.",
+    "starterCode": "from dataclasses import dataclass\nfrom enum import Enum\n\nclass Stage(Enum):\n    TODO = 'todo'\n    DONE = 'done'\n\n@dataclass\nclass Task:\n    title: str\n    stage: Stage = Stage.TODO\n\n    # Add __post_init__ to reject a raw string stage.\n\ndef is_complete(task):\n    # Return True only for a DONE task.\n    pass\n",
+    "guidedSteps": ["In __post_init__, reject stage values that are not Stage members.", "Make is_complete compare task.stage to Stage.DONE.", "Create a TODO task and a DONE task using the enum member.", "Attempt direct construction with the raw string 'done' and catch TypeError.", "Try converting an unknown external string with Stage(...)."],
+    "checks": ["A new task is TODO and reports False.", "A DONE task reports True.", "A raw string stage is rejected by the model.", "An unknown external string is rejected by Enum conversion."],
+    "hints": ["Use isinstance(self.stage, Stage).", "Compare task.stage is Stage.DONE.", "Use Stage(text) when reading external data."],
+    "solution": "from dataclasses import dataclass\nfrom enum import Enum\n\nclass Stage(Enum):\n    TODO = 'todo'\n    DONE = 'done'\n\n@dataclass\nclass Task:\n    title: str\n    stage: Stage = Stage.TODO\n\n    def __post_init__(self):\n        if not isinstance(self.stage, Stage):\n            raise TypeError('stage must be a Stage member')\n\ndef is_complete(task):\n    return task.stage is Stage.DONE\n\nprint(is_complete(Task('Read')))\nprint(is_complete(Task('Ship', Stage.DONE)))\ntry:\n    Task('Wrong type', 'done')\nexcept TypeError:\n    print('raw string rejected')\n",
+    "solutionExplanation": "The model's post-init check rejects a direct raw string, while enum-member comparisons make the status check explicit. External text should be converted using Stage(text) before construction.",
+    "challenges": ["Add a BLOCKED stage.", "Write a __post_init__ rule rejecting blank titles.", "Predict the error from Stage('unknown')."]
+  },
+  "projectConnection": {"project": "Study-progress service", "milestone": "Replace free-form progress strings with a validated Stage enum and a Task dataclass.", "definitionOfDone": "Tests cover each stage, invalid direct construction, and conversion of external text before it becomes a Stage."},
+  "assessment": [
+    {"question": "What does @dataclass commonly generate?", "answer": "An initializer and useful representation/equality behavior from fields.", "explanation": "It reduces routine record boilerplate but does not enforce every annotated type."},
+    {"question": "Why use Enum for status?", "answer": "It names a finite set of intended states, provided inputs are converted or validated.", "explanation": "An enum-annotated field can still hold a raw string if code does not check it."},
+    {"question": "When is Protocol useful?", "answer": "When code needs a capability rather than a shared ancestor.", "explanation": "It supports structural, focused interfaces for static checking, not automatic runtime enforcement."}
+  ]
+}

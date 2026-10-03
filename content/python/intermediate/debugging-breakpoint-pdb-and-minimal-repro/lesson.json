@@ -1,0 +1,45 @@
+{
+  "id": "debugging-breakpoint-pdb-and-minimal-repro",
+  "title": "Debug with a small reproduction, traceback, and breakpoint",
+  "track": "python",
+  "level": "intermediate",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 documentation: pdb — The Python Debugger; traceback — Print or retrieve a stack traceback; built-in breakpoint(); reviewed 2026-10-03"],
+  "masterChecklist": ["Debugging: breakpoints, pdb, tracebacks, minimal reproducible examples"],
+  "whyItMatters": "A production error report can contain thousands of unrelated details. Reducing it to one failing input helps you find the wrong assumption and write a regression check.",
+  "simpleExplanation": "Start with the last line of a traceback: it names the exception. Read the frames above it to find your own function and line. A minimal reproduction keeps only the input and code needed to trigger the same failure. A breakpoint pauses a script at a chosen line so you can inspect variables before the mistake occurs. In a local terminal, breakpoint() normally opens Python's interactive pdb debugger; commands include p name to inspect a value, n for the next line without stepping into a call, s to step into a call, c to continue, and q to quit. Do not call an interactive breakpoint in this site's guided code or an unattended job: it waits for terminal input. The example here uses traceback data without pausing, and leaves the breakpoint as a comment for local terminal use.",
+  "mentalModel": "Treat debugging like replaying a short security-camera clip: reproduce the failure, identify the frame where the bad assumption appears, inspect state, fix that assumption, and replay both failing and normal inputs.",
+  "outcomes": ["Read an exception type and failing function from a traceback.", "Reduce a failing case to a small fictional input.", "Place and use a local breakpoint without stalling an automated run.", "Turn the reproduction into a regression check."],
+  "realWorldExample": {"scenario": "A learning-progress report crashes only for a new learner whose completed-lesson list is empty.", "riskWithoutSetup": "A broad exception handler might hide the error and silently omit that learner's report.", "professionalApproach": "Reproduce with one fictional empty record, inspect the failing frame, define the expected empty-result behavior, and keep both empty and non-empty cases as checks."},
+  "workedExample": {
+    "filename": "inspect_empty_progress.py",
+    "code": "import traceback\n\ndef first_completed(record):\n    completed = record['completed']\n    # In a local terminal only, uncomment breakpoint() here and try: p completed, n, c.\n    return completed[0]\n\nsmall_repro = {'completed': []}\ntry:\n    first_completed(small_repro)\nexcept IndexError as error:\n    frames = traceback.extract_tb(error.__traceback__)\n    print(type(error).__name__)\n    print(frames[-1].name)\n\ndef safe_first_completed(record):\n    completed = record['completed']\n    return completed[0] if completed else None\n\nprint(safe_first_completed(small_repro))\nprint(safe_first_completed({'completed': ['loops']}))\n",
+    "explanation": ["The one-record small_repro is enough to expose the mistaken assumption that every list contains an item.", "The except clause catches this expected IndexError solely to inspect its traceback; extract_tb returns frames and the final frame names the function where indexing failed.", "The commented breakpoint is a local-terminal experiment, not code to execute on this site. At a pdb prompt, inspect completed before the indexing line.", "The repair explicitly returns None for an empty list, while keeping the ordinary non-empty result."],
+    "expectedOutput": "IndexError\nfirst_completed\nNone\nloops",
+    "safeExperiment": "Change small_repro to contain one fictional lesson ID. The failure disappears; leave the breakpoint commented while using an unattended runner."
+  },
+  "procedure": ["Capture the exception type and the smallest safe input that still fails.", "Read the traceback's last exception line, then the last frame in your code.", "State the assumption that line makes about its inputs.", "For a local terminal session, put breakpoint() before that line and inspect the relevant variable with p name; use n, s, c, or q deliberately.", "Repair the assumption and check both the previously failing and normal cases."],
+  "commonMistakes": [
+    {"mistake": "Pasting a full private production record into a bug report.", "why": "It exposes unrelated data and makes the actual failure harder to see.", "avoid": "Build a fictional minimal reproduction with the same shape and edge case."},
+    {"mistake": "Leaving breakpoint() in an automated or in-site snippet.", "why": "The debugger is interactive and can wait indefinitely for input.", "avoid": "Use it only in a local terminal session; remove or comment it before automated execution."},
+    {"mistake": "Catching Exception and returning an empty value for every failure.", "why": "This can disguise other defects and make incorrect results look successful.", "avoid": "Handle the documented empty-list case explicitly; let unrelated errors remain visible."}
+  ],
+  "lab": {
+    "title": "Shrink, inspect, and fix a learner-progress crash",
+    "safety": "Uses fictional in-memory records; no files, accounts, network or interactive breakpoint.",
+    "starterCode": "import traceback\n\ndef first_completed(record):\n    completed = record['completed']\n    return completed[0]\n\nsmall_repro = {'completed': []}\n# 1. Catch the expected IndexError and print its type and failing function.\n# 2. Change first_completed so empty lists return None.\n# 3. Print results for empty and one-item records.\n",
+    "guidedSteps": ["Run the small reproduction inside try/except IndexError, using traceback.extract_tb(error.__traceback__) to inspect the last frame.", "Print the exception type and final frame name before fixing the function.", "Add an explicit empty-list check and return None for that case.", "Run empty and one-item records as regression checks.", "On your own local terminal, optionally test a temporary breakpoint before the failing index, then remove it."],
+    "checks": ["Diagnostic lines are IndexError and first_completed.", "After the fix, empty input prints None and one-item input prints loops.", "No broad except Exception hides unrelated failures.", "No live breakpoint is left in the solution."],
+    "hints": ["Use frames = traceback.extract_tb(error.__traceback__) and frames[-1].name.", "Keep the original failing function long enough to inspect the traceback, then define a safe version.", "An empty list is false in a condition: if not completed: return None."],
+    "solution": "import traceback\n\ndef failing_first_completed(record):\n    return record['completed'][0]\n\nsmall_repro = {'completed': []}\ntry:\n    failing_first_completed(small_repro)\nexcept IndexError as error:\n    frames = traceback.extract_tb(error.__traceback__)\n    print(type(error).__name__)\n    print(frames[-1].name)\n\ndef first_completed(record):\n    completed = record['completed']\n    if not completed:\n        return None\n    return completed[0]\n\nprint(first_completed(small_repro))\nprint(first_completed({'completed': ['loops']}))\n",
+    "solutionExplanation": "The failing version creates a small, inspectable traceback. The repaired version handles the known empty case directly; the two final calls guard against the bug returning.",
+    "challenges": ["Predict which exception a missing completed key would raise; should the function validate that separately?", "Find the bug in a proposed fix that indexes before the empty-list check.", "Experiment locally with a temporary breakpoint before indexing; inspect completed, then remove the breakpoint."]
+  },
+  "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Add a regression check for a learner with no completed lessons and a normal one-lesson record.", "definitionOfDone": "The empty case displays an intentional no-progress state, the non-empty case displays the first lesson, and no breakpoint remains in the submitted code."},
+  "assessment": [
+    {"question": "What is a minimal reproduction?", "answer": "The smallest safe code and input that still cause the same failure.", "explanation": "Removing unrelated details makes the false assumption easier to spot and avoids exposing private data."},
+    {"question": "Why is a live breakpoint unsafe in an unattended site lab?", "answer": "It opens an interactive debugger and waits for commands.", "explanation": "Use it in a local terminal and remove it before automated execution."},
+    {"question": "Which pdb command prints the current value of completed?", "answer": "p completed", "explanation": "p evaluates and prints an expression in the selected frame."}
+  ]
+}

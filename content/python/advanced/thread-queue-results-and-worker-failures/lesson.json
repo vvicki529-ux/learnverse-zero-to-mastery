@@ -1,0 +1,45 @@
+{
+  "id": "thread-queue-results-and-worker-failures",
+  "title": "Hand off thread work and collect failures safely",
+  "track": "python",
+  "level": "advanced",
+  "status": "complete",
+  "lastReviewed": "2026-10-03",
+  "sources": ["Python 3.14 Standard Library: queue.Queue, task_done/join, threading.Thread; concurrent.futures Future.result; reviewed 2026-10-03"],
+  "masterChecklist": ["Threads, locks, queues, races, deadlocks, thread-safe design, I/O-bound work"],
+  "whyItMatters": "A background thread can fail while the main screen looks successful. A synchronized handoff and explicit result channel make each job's outcome visible.",
+  "simpleExplanation": "queue.Queue lets threads exchange items without protecting a shared list manually. A positive maxsize limits jobs waiting in the queue; put waits if it fills. A worker calls get, processes one item, and calls task_done exactly once. queue.join waits for every queued item to be acknowledged, not for a thread to terminate. Send a sentinel value after real jobs to ask the worker to stop, then join the thread. Catch an expected job error and send it as a result; do not silently lose it. A Future from ThreadPoolExecutor is another common pattern: calling result() returns the value or re-raises a worker exception. Neither a queue nor a thread makes persistent or cross-process work durable.",
+  "mentalModel": "The job queue is a shared inbox, the result queue is an outgoing tray, and a sentinel is a closing notice. Emptying the inbox is different from confirming all jobs are finished and the worker went home.",
+  "outcomes": ["Use a bounded synchronized Queue for thread handoff.", "Pair get with task_done and join the queue.", "Stop a worker with a sentinel and join its thread.", "Surface per-job failures instead of treating a silent thread as success."],
+  "realWorldExample": {"scenario": "A local study app formats imported course labels while the interface waits for an external file read.", "riskWithoutSetup": "A malformed label crashes the worker, queue.join may hang, and the main screen never knows which item failed.", "professionalApproach": "Bound work, report an outcome for each job, acknowledge even failed items, and close/join workers. Use an executor/Future for simple independent jobs or a durable system for restart-safe production jobs."},
+  "workedExample": {
+    "filename": "thread_handoff.py",
+    "code": "from queue import Queue\nfrom threading import Thread\n\njobs = Queue(maxsize=2)\noutcomes = Queue()\nstop = object()\n\ndef worker():\n    while True:\n        item = jobs.get()\n        try:\n            if item is stop:\n                return\n            if not item:\n                raise ValueError('empty label')\n            outcomes.put(('ok', item.upper()))\n        except ValueError as exc:\n            outcomes.put(('error', str(exc)))\n        finally:\n            jobs.task_done()\n\nthread = Thread(target=worker)\nthread.start()\nfor label in ('python', '', 'sql'):\n    jobs.put(label)\njobs.put(stop)\njobs.join()\nthread.join()\nprint([outcomes.get_nowait() for _ in range(3)])\n",
+    "explanation": ["Queue(maxsize=2) bounds waiting jobs; one worker makes result ordering predictable for this example.", "The worker distinguishes the unique sentinel by identity, validates each label, and reports either a success or expected error.", "finally acknowledges every retrieved item, including the sentinel and an invalid label, so join can finish.", "The main thread waits for queue completion and worker termination before collecting exactly three job results. In larger systems, failure policy must cover unexpected exceptions too."],
+    "expectedOutput": "[('ok', 'PYTHON'), ('error', 'empty label'), ('ok', 'SQL')]",
+    "safeExperiment": "Set maxsize=1 or add another label; check that every non-sentinel job gets exactly one outcome."
+  },
+  "procedure": ["Define a finite queue capacity and a job/result shape.", "Start the worker and put real jobs, then one stop signal per worker.", "In the worker, report expected per-job failures and call task_done in finally after every successful get.", "Call queue.join and thread.join before claiming all work finished.", "Check every returned result; use Future.result or explicit error reporting so failures are not hidden."],
+  "commonMistakes": [
+    {"mistake": "Assuming queue.join stops worker threads.", "why": "It waits for task_done counts, not thread termination.", "avoid": "Send a stop signal and call Thread.join separately."},
+    {"mistake": "Letting an error skip task_done.", "why": "The main thread can wait forever in join.", "avoid": "Put task_done in finally after each successful get."},
+    {"mistake": "Never reading worker results or exceptions.", "why": "The UI can report success even though a job failed.", "avoid": "Collect an outcome per job or call Future.result()."}
+  ],
+  "lab": {
+    "title": "Build a bounded label-processing worker",
+    "safety": "Fictional in-memory labels only; no network, files or external services.",
+    "starterCode": "from queue import Queue\nfrom threading import Thread\n\njobs, outcomes = Queue(maxsize=2), Queue()\nstop = object()\n# Write one worker. Submit 'py', '', 'db'; then stop, join, and print outcomes.\n",
+    "guidedSteps": ["Write a worker loop around jobs.get().", "Treat the unique stop object as a return request; uppercase nonempty strings and send an ok outcome.", "Catch ValueError for an empty string and send an error outcome.", "Call jobs.task_done in finally for every retrieved item.", "Submit three jobs and the sentinel, call jobs.join and thread.join, then print three outcomes."],
+    "checks": ["Queue has finite capacity.", "Every successful get has one task_done, including sentinel/error paths.", "The thread is joined after jobs are acknowledged.", "Three results include two successes and one visible error."],
+    "hints": ["Use if item is stop: return, not item == stop.", "Put task_done in finally around the processing block.", "Collect outcomes.get_nowait() three times only after joining."],
+    "solution": "from queue import Queue\nfrom threading import Thread\n\njobs, outcomes = Queue(maxsize=2), Queue()\nstop = object()\n\ndef worker():\n    while True:\n        item = jobs.get()\n        try:\n            if item is stop:\n                return\n            if not item:\n                raise ValueError('empty label')\n            outcomes.put(('ok', item.upper()))\n        except ValueError as exc:\n            outcomes.put(('error', str(exc)))\n        finally:\n            jobs.task_done()\n\nthread = Thread(target=worker)\nthread.start()\nfor item in ('py', '', 'db'):\n    jobs.put(item)\njobs.put(stop)\njobs.join()\nthread.join()\nresults = [outcomes.get_nowait() for _ in range(3)]\nassert results == [('ok', 'PY'), ('error', 'empty label'), ('ok', 'DB')]\nprint(results)\n",
+    "solutionExplanation": "A bounded synchronized queue carries jobs, a second queue carries outcomes, every retrieved item is acknowledged, and the worker is explicitly stopped and joined.",
+    "challenges": ["Predict why queue.join alone does not prove the thread has exited.", "Find the bug if task_done is placed only after successful uppercase conversion.", "Experiment with two workers: send two sentinels and avoid asserting result order, because scheduling is not fixed."]
+  },
+  "projectConnection": {"project": "Cross-track local import assistant", "milestone": "Move waiting-heavy label normalization behind a bounded worker queue and show per-item errors in the UI.", "definitionOfDone": "Every submitted item gets an outcome, all jobs are acknowledged, all workers are joined, and the app does not claim in-memory jobs survive a restart."},
+  "assessment": [
+    {"question": "Does queue.join terminate a worker thread?", "answer": "No; it waits for queued items to be acknowledged.", "explanation": "The worker needs a stop policy and Thread.join."},
+    {"question": "Why call task_done in finally after get?", "answer": "To acknowledge an item even when processing fails or it is the sentinel.", "explanation": "Otherwise join can wait forever."},
+    {"question": "How can the caller learn that a worker job failed?", "answer": "Collect an explicit error result or retrieve a Future with result().", "explanation": "A background exception must not be silently interpreted as success."}
+  ]
+}
