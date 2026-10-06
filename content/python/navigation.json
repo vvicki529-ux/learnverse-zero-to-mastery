@@ -10,12 +10,16 @@
           "title": "Environment, interpreter, scripts, and project setup"
         },
         {
-          "id": "identify-python-runtime-and-version",
-          "title": "Know which Python implementation and version runs your code"
-        },
-        {
           "id": "browser-python-versus-installed-python",
           "title": "Know when Python runs in your browser or on your computer"
+        },
+        {
+          "id": "install-python-and-verify-selected-runtime",
+          "title": "Install Python, then verify the version you actually run"
+        },
+        {
+          "id": "identify-python-runtime-and-version",
+          "title": "Know which Python implementation and version runs your code"
         },
         {
           "id": "first-program-comments-names-and-operators",
@@ -136,10 +140,6 @@
         {
           "id": "git-workflow-for-python-projects",
           "title": "Save and review a Python project with Git"
-        },
-        {
-          "id": "install-python-and-verify-selected-runtime",
-          "title": "Install Python, then verify the version you actually run"
         }
       ]
     },
@@ -1222,6 +1222,18 @@
       "title": "Real-world projects",
       "lessons": [
         {
+          "id": "specializations-and-progressive-projects",
+          "title": "Python specializations and progressive real-world projects"
+        },
+        {
+          "id": "reading-codebases-and-planning-safe-changes",
+          "title": "Reading codebases and planning safe changes"
+        },
+        {
+          "id": "project-architecture-requirements-and-change-review",
+          "title": "Project architecture, requirements, and change review"
+        },
+        {
           "id": "project-one-study-summary-cli",
           "title": "Project 1: build a small study-summary command"
         },
@@ -1230,16 +1242,12 @@
           "title": "Collaboration, code review, and safe change management"
         },
         {
-          "id": "batch-data-pipelines-validation-and-recovery",
-          "title": "Batch data pipelines: validation, recovery, and trustworthy reports"
-        },
-        {
           "id": "project-two-validated-study-csv",
           "title": "Project 2: import validated study sessions from CSV"
         },
         {
-          "id": "qa-automation-test-reports-and-flaky-tests",
-          "title": "QA automation, useful test reports, and flaky-test control"
+          "id": "batch-data-pipelines-validation-and-recovery",
+          "title": "Batch data pipelines: validation, recovery, and trustworthy reports"
         },
         {
           "id": "project-three-local-api-client-boundary",
@@ -1248,6 +1256,14 @@
         {
           "id": "contract-testing-and-compatible-change-design",
           "title": "Contract testing and compatible change design"
+        },
+        {
+          "id": "qa-automation-test-reports-and-flaky-tests",
+          "title": "QA automation, useful test reports, and flaky-test control"
+        },
+        {
+          "id": "project-four-tested-progress-service",
+          "title": "Project 4: give progress a tested service contract"
         },
         {
           "id": "accessible-private-and-user-safe-application-design",
@@ -1262,18 +1278,6 @@
           "title": "Automation, scheduling, and idempotent jobs"
         },
         {
-          "id": "specializations-and-progressive-projects",
-          "title": "Python specializations and progressive real-world projects"
-        },
-        {
-          "id": "project-four-tested-progress-service",
-          "title": "Project 4: give progress a tested service contract"
-        },
-        {
-          "id": "project-five-study-progress-capstone",
-          "title": "Project 5: assemble and release the study-progress capstone"
-        },
-        {
           "id": "gui-and-event-driven-apps",
           "title": "Desktop GUI and event-driven Python"
         },
@@ -1282,12 +1286,8 @@
           "title": "Embedded Python: sensor events and resource limits"
         },
         {
-          "id": "project-architecture-requirements-and-change-review",
-          "title": "Project architecture, requirements, and change review"
-        },
-        {
-          "id": "reading-codebases-and-planning-safe-changes",
-          "title": "Reading codebases and planning safe changes"
+          "id": "project-five-study-progress-capstone",
+          "title": "Project 5: assemble and release the study-progress capstone"
         },
         {
           "id": "capstone-release-and-operational-readiness",

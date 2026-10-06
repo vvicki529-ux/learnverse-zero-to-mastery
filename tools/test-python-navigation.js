@@ -5,6 +5,32 @@ const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
 const nav = JSON.parse(fs.readFileSync(path.join(root, 'content/python/navigation.json'), 'utf8'));
+const manifest = JSON.parse(fs.readFileSync(path.join(root, 'content/python/manifest.json'), 'utf8'));
+const lessonIds = nav.groups.flatMap(group => group.lessons.map(lesson => lesson.id));
+assert.equal(lessonIds.length, manifest.modules.length);
+assert.equal(new Set(lessonIds).size, lessonIds.length);
+assert.deepEqual(new Set(lessonIds), new Set(manifest.modules.map(module => module.id)));
+const foundations = nav.groups.find(group => group.level === 'foundations').lessons.map(lesson => lesson.id);
+assert.deepEqual(foundations.slice(0, 4), [
+  'environment-execution-project-setup',
+  'browser-python-versus-installed-python',
+  'install-python-and-verify-selected-runtime',
+  'identify-python-runtime-and-version',
+]);
+const realWorld = nav.groups.find(group => group.level === 'real-world').lessons.map(lesson => lesson.id);
+assert.deepEqual(realWorld.filter(id => /^project-(one|two|three|four|five)-/.test(id)), [
+  'project-one-study-summary-cli',
+  'project-two-validated-study-csv',
+  'project-three-local-api-client-boundary',
+  'project-four-tested-progress-service',
+  'project-five-study-progress-capstone',
+]);
+assert.equal(realWorld.at(-1), 'capstone-release-evidence-and-handover');
+const catalog = JSON.parse(fs.readFileSync(path.join(root, 'content/catalog.json'), 'utf8'));
+for (const track of catalog.tracks) {
+  assert.deepEqual(track.levels.map(level => level.id),
+    ['foundations', 'core', 'intermediate', 'advanced', 'expert-internals', 'real-world']);
+}
 const holder = {dataset: {track: 'python'}, innerHTML: ''};
 const context = {
   location: {hash: '#python-module/variables-assignment-and-identity'},

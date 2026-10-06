@@ -7,7 +7,7 @@ function renderPythonCourseOutline(holder, trackName) {
   holder.innerHTML = `<div class="outline-title">${esc(trackName)} course</div><p class="outline-intro">Loading the complete lesson list…</p>`;
   const load = pythonNavigationData
     ? Promise.resolve(pythonNavigationData)
-    : (pythonNavigationLoading ||= fetch('content/python/navigation.json?v=pythonnav01')
+    : (pythonNavigationLoading ||= fetch('content/python/navigation.json?v=pythonnav02')
         .then(response => { if (!response.ok) throw new Error('Python lesson index unavailable'); return response.json(); })
         .then(data => (pythonNavigationData = data)));
   load.then(data => {

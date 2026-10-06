@@ -15,8 +15,9 @@ const levelNames = {
   'real-world': 'Real-world projects', certification: 'Certification preparation',
 };
 const foundationOrder = [
-  'environment-execution-project-setup', 'identify-python-runtime-and-version',
-  'browser-python-versus-installed-python', 'first-program-comments-names-and-operators',
+  'environment-execution-project-setup', 'browser-python-versus-installed-python',
+  'install-python-and-verify-selected-runtime', 'identify-python-runtime-and-version',
+  'first-program-comments-names-and-operators',
   'statements-expressions-and-keywords', 'variables-assignment-and-identity',
   'names-bindings-identity-and-equality', 'input-output-conversion-and-fstrings',
   'data-types-and-type-conversion', 'text-bytes-complex-and-missing-values',
@@ -33,6 +34,27 @@ const foundationOrder = [
   'syntax-style-and-behavior-checks', 'read-traceback-and-reproduce-bug',
   'git-workflow-for-python-projects',
 ];
+const realWorldOrder = [
+  'specializations-and-progressive-projects',
+  'reading-codebases-and-planning-safe-changes',
+  'project-architecture-requirements-and-change-review',
+  'project-one-study-summary-cli',
+  'collaboration-code-review-and-change-management',
+  'project-two-validated-study-csv',
+  'batch-data-pipelines-validation-and-recovery',
+  'project-three-local-api-client-boundary',
+  'contract-testing-and-compatible-change-design',
+  'qa-automation-test-reports-and-flaky-tests',
+  'project-four-tested-progress-service',
+  'accessible-private-and-user-safe-application-design',
+  'accessible-error-contracts-and-recovery',
+  'automation-scheduling-and-idempotent-jobs',
+  'gui-and-event-driven-apps',
+  'embedded-events-sensors-and-resource-limits',
+  'project-five-study-progress-capstone',
+  'capstone-release-and-operational-readiness',
+  'capstone-release-evidence-and-handover',
+];
 const groups = Object.entries(levelNames).map(([level, title]) => ({level, title, lessons: []}));
 const seen = new Set();
 for (const [index, entry] of manifest.modules.entries()) {
@@ -46,9 +68,18 @@ for (const [index, entry] of manifest.modules.entries()) {
   group.lessons.push({id: entry.id, title: lesson.title, topicOrder: firstTopic, manifestOrder: index});
 }
 for (const group of groups) {
+  const explicitOrder = group.level === 'foundations' ? foundationOrder : group.level === 'real-world' ? realWorldOrder : null;
+  if (explicitOrder) {
+    const actual = new Set(group.lessons.map(lesson => lesson.id));
+    const ordered = new Set(explicitOrder);
+    if (actual.size !== ordered.size || explicitOrder.length !== ordered.size ||
+        [...actual].some(id => !ordered.has(id)) || [...ordered].some(id => !actual.has(id))) {
+      throw new Error(`Review the ${group.level} lesson order: it must include every lesson exactly once.`);
+    }
+  }
   group.lessons.sort((a, b) => {
-    if (group.level === 'foundations') {
-      const aOrder = foundationOrder.indexOf(a.id), bOrder = foundationOrder.indexOf(b.id);
+    if (explicitOrder) {
+      const aOrder = explicitOrder.indexOf(a.id), bOrder = explicitOrder.indexOf(b.id);
       if (aOrder >= 0 || bOrder >= 0) return (aOrder < 0 ? Number.MAX_SAFE_INTEGER : aOrder) - (bOrder < 0 ? Number.MAX_SAFE_INTEGER : bOrder);
     }
     return a.topicOrder - b.topicOrder || a.manifestOrder - b.manifestOrder;
