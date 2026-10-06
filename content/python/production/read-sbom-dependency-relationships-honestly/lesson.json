@@ -63,45 +63,7 @@
       "avoid": "Perform separate integrity, advisory, license and test checks."
     }
   ],
-  "lab": {
-    "title": "Preserve unknowns in a fictional dependency map",
-    "safety": "Uses only an in-memory fictional graph. No package install, network request or real SBOM generation. The current static site guides this lab but does not yet run Python in-browser.",
-    "starterCode": "graph = {'app': ['a-demo'], 'a-demo': []}\n\ndef relationship_status(name):\n    # Return 'unknown', 'known-empty', or 'known-linked'.\n    pass\n\n# Check app, a-demo, and a missing component.\n",
-    "guidedSteps": [
-      "Check whether the name is present before reading its value.",
-      "Return unknown for absent names.",
-      "Return known-empty for a present empty list.",
-      "Return known-linked for a present nonempty list.",
-      "Test all three cases and explain why unknown must not be displayed as empty."
-    ],
-    "checks": [
-      "Absent component returns unknown.",
-      "Present empty list returns known-empty.",
-      "Present nonempty list returns known-linked.",
-      "No claim of generating a CycloneDX-valid file."
-    ],
-    "hints": [
-      "Use `if name not in graph` first.",
-      "An empty list is falsey, but it is still a present record.",
-      "Keep the three outcomes distinct."
-    ],
-    "solution": "graph = {'app': ['a-demo'], 'a-demo': []}\n\ndef relationship_status(name):\n    if name not in graph:\n        return 'unknown'\n    if not graph[name]:\n        return 'known-empty'\n    return 'known-linked'\n\nassert relationship_status('app') == 'known-linked'\nassert relationship_status('a-demo') == 'known-empty'\nassert relationship_status('missing-demo') == 'unknown'\nprint('relationship states checked')\n",
-    "solutionExplanation": "The status function separates absent records from explicitly empty dependency lists, preventing a false claim of completeness.",
-    "challenges": [
-      "Predict the status after deleting the a-demo key.",
-      "Find the bug: `graph.get(name, [])` makes missing and empty look identical.",
-      "Experiment: add a second direct dependency to app and confirm its status remains known-linked."
-    ],
-    "simulation": {
-      "prompt": "An SBOM lists a component but has no dependency-graph entry for it. What should you conclude?",
-      "choices": [
-        "Its relationships may be unknown; investigate completeness",
-        "It definitely has no dependencies"
-      ],
-      "correctIndex": 0,
-      "explanation": "Missing relationship data is not the same as an explicit empty relationship record."
-    }
-  },
+  "lab": {"title":"Preserve unknowns in a fictional dependency map","safety":"Uses only an in-memory fictional graph. No package install, network request or real SBOM generation. The in-site Run Python button executes this lab in a fresh browser worker; this particular exercise uses neither local computer files nor external services.","starterCode":"graph = {'app': ['a-demo'], 'a-demo': []}\n\ndef relationship_status(name):\n    # Return 'unknown', 'known-empty', or 'known-linked'.\n    pass\n\n# Check app, a-demo, and a missing component.\n","guidedSteps":["Check whether the name is present before reading its value.","Return unknown for absent names.","Return known-empty for a present empty list.","Return known-linked for a present nonempty list.","Test all three cases and explain why unknown must not be displayed as empty."],"checks":["Absent component returns unknown.","Present empty list returns known-empty.","Present nonempty list returns known-linked.","No claim of generating a CycloneDX-valid file."],"hints":["Use `if name not in graph` first.","An empty list is falsey, but it is still a present record.","Keep the three outcomes distinct."],"solution":"graph = {'app': ['a-demo'], 'a-demo': []}\n\ndef relationship_status(name):\n    if name not in graph:\n        return 'unknown'\n    if not graph[name]:\n        return 'known-empty'\n    return 'known-linked'\n\nassert relationship_status('app') == 'known-linked'\nassert relationship_status('a-demo') == 'known-empty'\nassert relationship_status('missing-demo') == 'unknown'\nprint('relationship states checked')\n","solutionExplanation":"The status function separates absent records from explicitly empty dependency lists, preventing a false claim of completeness.","challenges":["Predict the status after deleting the a-demo key.","Find the bug: `graph.get(name, [])` makes missing and empty look identical.","Experiment: add a second direct dependency to app and confirm its status remains known-linked."],"simulation":{"prompt":"An SBOM lists a component but has no dependency-graph entry for it. What should you conclude?","choices":["Its relationships may be unknown; investigate completeness","It definitely has no dependencies"],"correctIndex":0,"explanation":"Missing relationship data is not the same as an explicit empty relationship record."},"testCode":"assert relationship_status('app')=='known-linked'\nassert relationship_status('a-demo')=='known-empty'\nassert relationship_status('missing-demo')=='unknown'\nprint('PASS: known versus unknown relationships')"},
   "projectConnection": {
     "project": "Maintained study-progress service",
     "milestone": "Document a small dependency-relationship map for the release and explicitly label unknown relationship coverage.",

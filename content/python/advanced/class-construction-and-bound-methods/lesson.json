@@ -34,7 +34,8 @@
     "hints": ["self.completed = []", "self.completed.append(lesson)", "saved_action = mina.complete"],
     "solution": "class Learner:\n    def __init__(self, name):\n        self.name = name\n        self.completed = []\n\n    def complete(self, lesson):\n        self.completed.append(lesson)\n\nmina = Learner('Mina')\nleo = Learner('Leo')\nsaved_action = mina.complete\nsaved_action('loops')\nprint(mina.completed)\nprint(leo.completed)\nprint(saved_action.__self__ is mina)\n",
     "solutionExplanation": "The saved method carries its receiver, so it changes Mina even when called later. The two lists were separately created by __init__.",
-    "challenges": ["Predict the result of Learner.complete(leo, 'lists').", "Find the bug in a class-level completed = [] declaration.", "Experiment: save leo.complete and call it after saving Mina's method."]
+    "challenges": ["Predict the result of Learner.complete(leo, 'lists').", "Find the bug in a class-level completed = [] declaration.", "Experiment: save leo.complete and call it after saving Mina's method."],
+    "testCode": "a,b=Learner('Mina'),Learner('Leo')\nsaved=a.complete\nsaved('loops')\nassert saved.__self__ is a\nassert a.completed==['loops'] and b.completed==[]\nprint('PASS: bound method')"
   },
   "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Create per-learner progress objects with independent completed lists and a clear completion method.", "definitionOfDone": "Two fictional learners can complete different lessons without data leaking between instances; empty names are rejected."},
   "assessment": [

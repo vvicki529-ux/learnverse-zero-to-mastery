@@ -11,13 +11,20 @@ function attachPythonRunButton(module, editor, controls) {
   stop.className = 'secondary';
   stop.textContent = 'Stop';
   stop.disabled = true;
+  const tests = typeof module.lab?.testCode === 'string' && module.lab.testCode.trim()
+    ? document.createElement('button') : null;
+  if (tests) {
+    tests.type = 'button';
+    tests.className = 'secondary';
+    tests.textContent = 'Run Tests';
+  }
   const input = document.createElement('textarea');
   input.className = 'python-stdin';
   input.rows = 2;
   input.maxLength = 10000;
   input.placeholder = 'Optional input: one line per input() call';
   input.setAttribute('aria-label', 'Input for Python program');
-  controls.prepend(run, ' ', stop, document.createElement('br'), input);
+  controls.prepend(run, ' ', ...(tests ? [tests, ' '] : []), stop, document.createElement('br'), input);
   let worker = null;
   let timer = null;
   const finish = () => {
@@ -26,15 +33,18 @@ function attachPythonRunButton(module, editor, controls) {
     if (worker) worker.terminate();
     worker = null;
     run.disabled = false;
+    if (tests) tests.disabled = false;
     stop.disabled = true;
   };
   stop.addEventListener('click', () => {
     finish();
     output.textContent = 'Run stopped. No result was saved.';
   });
-  run.addEventListener('click', () => {
+  const execute = (withTests) => {
     if (worker) return;
-    if (editor.value.length > 100000) {
+    const usingSampleInput = withTests && !input.value && Boolean(module.lab.testStdin);
+    const code = withTests ? `${editor.value}\n\n${module.lab.testCode}` : editor.value;
+    if (code.length > 100000) {
       output.textContent = 'This draft is too long to run (100,000 character limit).';
       return;
     }
@@ -43,8 +53,9 @@ function attachPythonRunButton(module, editor, controls) {
       return;
     }
     run.disabled = true;
+    if (tests) tests.disabled = true;
     stop.disabled = false;
-    output.textContent = 'Loading the local Python runtime…';
+    output.textContent = withTests ? `Loading Python to run lesson tests…${usingSampleInput ? ' This lesson supplies sample input.' : ''}` : 'Loading the local Python runtime…';
     try {
       worker = new Worker('python-runner-worker.mjs', {type: 'module'});
     } catch (error) {
@@ -71,13 +82,17 @@ function attachPythonRunButton(module, editor, controls) {
           finish();
           output.textContent = 'Stopped after 8 seconds. Check for an infinite loop or slow operation.';
         }, 8000);
-        worker.postMessage({type: 'run', code: editor.value, stdin: input.value});
+        const stdin = withTests && !input.value ? (module.lab.testStdin || '') : input.value;
+        worker.postMessage({type: 'run', code, stdin});
       } else if (data?.type === 'result') {
         finish();
         const stdout = data.stdout || '(no output)';
-        output.textContent = `Exit code: ${data.exitCode}\nOutput:\n${stdout}${data.stderr ? `\nErrors:\n${data.stderr}` : ''}`;
+        const heading = withTests ? `${data.exitCode === 0 ? 'Lesson tests passed' : 'Lesson tests failed'}${usingSampleInput ? ' (sample input supplied)' : ''}` : `Exit code: ${data.exitCode}`;
+        output.textContent = `${heading}\nOutput:\n${stdout}${data.stderr ? `\nErrors:\n${data.stderr}` : ''}`;
       }
     };
-  });
+  };
+  run.addEventListener('click', () => execute(false));
+  if (tests) tests.addEventListener('click', () => execute(true));
   return finish;
 }

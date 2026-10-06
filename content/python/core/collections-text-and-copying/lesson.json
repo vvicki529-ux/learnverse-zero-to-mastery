@@ -76,31 +76,7 @@
       "avoid": "Validate required keys explicitly or use a unique sentinel/default with a clear error path."
     }
   ],
-  "lab": {
-    "title": "Create a non-mutating inventory report",
-    "safety": "This exercise uses fictional inventory data. Do not load or store real customer data.",
-    "starterCode": "inventory = {\n    'tea': {'available': 4, 'reserved': 0},\n    'mug': {'available': 2, 'reserved': 0},\n}\n\n# TODO: create an independent report copy\n# TODO: reserve 1 tea in the report only\n# TODO: print both the report and original tea reservations\n",
-    "guidedSteps": [
-      "Import deepcopy from copy.",
-      "Create report_inventory as an independent copy of inventory.",
-      "Set only report_inventory['tea']['reserved'] to 1.",
-      "Print the report and original reservation values.",
-      "Explain why inventory['tea']['reserved'] should still be 0."
-    ],
-    "checks": [
-      "Keeps the original nested inventory unchanged.",
-      "Uses a clear dictionary key for the report value.",
-      "Explains whether the copy is shallow or deep.",
-      "Does not rely on dictionary iteration order for correctness."
-    ],
-    "hints": [
-      "A nested dictionary needs more than inventory.copy() if you will mutate one of its nested dictionaries.",
-      "Use report_inventory['tea']['reserved'] = 1 after creating the independent copy.",
-      "Print the two values separately so you can compare them."
-    ],
-    "solution": "from copy import deepcopy\n\ninventory = {\n    'tea': {'available': 4, 'reserved': 0},\n    'mug': {'available': 2, 'reserved': 0},\n}\n\nreport_inventory = deepcopy(inventory)\nreport_inventory['tea']['reserved'] = 1\n\nprint(f\"report: {report_inventory['tea']['reserved']}\")\nprint(f\"original: {inventory['tea']['reserved']}\")\n",
-    "solutionExplanation": "deepcopy creates independent nested dictionaries. Changing the report reservation therefore does not change the original inventory, and the two printed values make accidental aliasing visible."
-  },
+  "lab": {"title":"Create a non-mutating inventory report","safety":"This exercise uses fictional inventory data. Do not load or store real customer data.","starterCode":"inventory = {\n    'tea': {'available': 4, 'reserved': 0},\n    'mug': {'available': 2, 'reserved': 0},\n}\n\n# TODO: create an independent report copy\n# TODO: reserve 1 tea in the report only\n# TODO: print both the report and original tea reservations\n","guidedSteps":["Import deepcopy from copy.","Create report_inventory as an independent copy of inventory.","Set only report_inventory['tea']['reserved'] to 1.","Print the report and original reservation values.","Explain why inventory['tea']['reserved'] should still be 0."],"checks":["Keeps the original nested inventory unchanged.","Uses a clear dictionary key for the report value.","Explains whether the copy is shallow or deep.","Does not rely on dictionary iteration order for correctness."],"hints":["A nested dictionary needs more than inventory.copy() if you will mutate one of its nested dictionaries.","Use report_inventory['tea']['reserved'] = 1 after creating the independent copy.","Print the two values separately so you can compare them."],"solution":"from copy import deepcopy\n\ninventory = {\n    'tea': {'available': 4, 'reserved': 0},\n    'mug': {'available': 2, 'reserved': 0},\n}\n\nreport_inventory = deepcopy(inventory)\nreport_inventory['tea']['reserved'] = 1\n\nprint(f\"report: {report_inventory['tea']['reserved']}\")\nprint(f\"original: {inventory['tea']['reserved']}\")\n","solutionExplanation":"deepcopy creates independent nested dictionaries. Changing the report reservation therefore does not change the original inventory, and the two printed values make accidental aliasing visible.","testCode":"assert report_inventory['tea']['reserved'] == 1\nassert inventory['tea']['reserved'] == 0\nassert report_inventory is not inventory\nassert report_inventory['tea'] is not inventory['tea']\nprint('PASS: nested copy is independent')"},
   "projectConnection": {
     "project": "CSV expense organizer",
     "milestone": "Represent parsed expenses as dictionaries, group them without changing the original imported rows, and write tests that prove the input rows remain intact.",

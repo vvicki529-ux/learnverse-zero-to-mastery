@@ -62,6 +62,8 @@ for (const entry of manifest.modules) {
     legacyQualityWarnings++;
   }
   if (!lesson.lab.starterCode || !lesson.lab.guidedSteps?.length || !lesson.lab.checks?.length || !lesson.lab.hints?.length || !lesson.lab.solution) { console.error(`${entry.id}: lab is incomplete`); failures++; }
+  if (lesson.lab.testCode !== undefined && !hasText(lesson.lab.testCode)) { console.error(`${entry.id}: optional lab.testCode must contain executable checks`); failures++; }
+  if (lesson.lab.testStdin !== undefined && (!hasText(lesson.lab.testStdin) || !hasText(lesson.lab.testCode))) { console.error(`${entry.id}: lab.testStdin requires executable testCode and nonempty sample input`); failures++; }
   if (lesson.lab.simulation) {
     const simulation = lesson.lab.simulation;
     if (!hasText(simulation.prompt) || !hasText(simulation.explanation) || !Array.isArray(simulation.choices) || simulation.choices.length < 2 || !simulation.choices.every(hasText) || !Number.isInteger(simulation.correctIndex) || simulation.correctIndex < 0 || simulation.correctIndex >= simulation.choices.length) {

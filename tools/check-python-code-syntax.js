@@ -25,6 +25,9 @@ for (const entry of manifest.modules) {
   if (typeof solution === 'string' && solution.trim() && !filename.endsWith('.toml')) {
     snippets.push({ label: entry.id + ' lab solution', code: solution });
   }
+  if (typeof lesson.lab?.testCode === 'string' && lesson.lab.testCode.trim()) {
+    snippets.push({ label: entry.id + ' lab tests', code: lesson.lab.testCode });
+  }
 }
 
 const parser = [

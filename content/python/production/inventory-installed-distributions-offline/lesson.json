@@ -65,45 +65,7 @@
       "avoid": "Record that advisory review is pending until current approved data is available."
     }
   ],
-  "lab": {
-    "title": "Make a reviewable distribution snapshot",
-    "safety": "Uses only the local interpreter's installed metadata; it does not import distribution code, download, install, upgrade or remove packages. The current static site guides the lab but does not yet run Python in-browser.",
-    "starterCode": "from importlib.metadata import distributions\n\ndef snapshot(items):\n    # Return sorted (name, version) pairs from distribution objects.\n    pass\n\n# Build from distributions() and check every pair has both fields.\n",
-    "guidedSteps": [
-      "For each distribution object, use dist.metadata.get('Name') and dist.version.",
-      "Skip any entry missing a usable name or version.",
-      "Sort pairs by case-insensitive name.",
-      "Call snapshot(distributions()) and assert every returned pair is complete.",
-      "Write one sentence saying what must still be checked before release."
-    ],
-    "checks": [
-      "Rows contain nonempty distribution names and versions.",
-      "Rows are sorted case-insensitively.",
-      "The code does not import or install any third-party package.",
-      "The learner does not claim the snapshot is a lockfile or advisory scan."
-    ],
-    "hints": [
-      "Append `(name, version)` only if both values are present.",
-      "Use `key=lambda row: row[0].casefold()` when sorting.",
-      "The current environment may contain zero or many distributions; avoid asserting an exact count."
-    ],
-    "solution": "from importlib.metadata import distributions\n\ndef snapshot(items):\n    rows = []\n    for dist in items:\n        name = dist.metadata.get('Name')\n        version = dist.version\n        if name and version:\n            rows.append((name, version))\n    return sorted(rows, key=lambda row: row[0].casefold())\n\nrows = snapshot(distributions())\nassert all(name and version for name, version in rows)\nassert rows == sorted(rows, key=lambda row: row[0].casefold())\nprint('distribution snapshot checked')\n",
-    "solutionExplanation": "This reads metadata for the current interpreter and creates a deterministic review order. It does not establish installation provenance, artifact integrity, complete dependency relationships or current advisory status.",
-    "challenges": [
-      "Predict why a clean virtual environment and a shared global interpreter may produce different inventories.",
-      "Find the bug: record the import module's __name__ as if it were always the distribution name.",
-      "Experiment: compare snapshots before and after an approved local environment change."
-    ],
-    "simulation": {
-      "prompt": "Your offline distribution snapshot shows a package version. Does that prove there are no current advisories?",
-      "choices": [
-        "No; a separate current advisory review is needed",
-        "Yes; installed metadata includes all advisories"
-      ],
-      "correctIndex": 0,
-      "explanation": "Installed metadata describes the environment, not a live vulnerability feed."
-    }
-  },
+  "lab": {"title":"Make a reviewable distribution snapshot","safety":"The lab runs in the browser worker and reads that worker's installed package metadata, not packages installed on your computer. It does not download, install, upgrade, or remove packages. Repeat locally to inspect your own environment.","starterCode":"from importlib.metadata import distributions\n\ndef snapshot(items):\n    # Return sorted (name, version) pairs from distribution objects.\n    pass\n\n# Build from distributions() and check every pair has both fields.\n","guidedSteps":["For each distribution object, use dist.metadata.get('Name') and dist.version.","Skip any entry missing a usable name or version.","Sort pairs by case-insensitive name.","Call snapshot(distributions()) and assert every returned pair is complete.","Write one sentence saying what must still be checked before release."],"checks":["Rows contain nonempty distribution names and versions.","Rows are sorted case-insensitively.","The code does not import or install any third-party package.","The learner does not claim the snapshot is a lockfile or advisory scan."],"hints":["Append `(name, version)` only if both values are present.","Use `key=lambda row: row[0].casefold()` when sorting.","The current environment may contain zero or many distributions; avoid asserting an exact count."],"solution":"from importlib.metadata import distributions\n\ndef snapshot(items):\n    rows = []\n    for dist in items:\n        name = dist.metadata.get('Name')\n        version = dist.version\n        if name and version:\n            rows.append((name, version))\n    return sorted(rows, key=lambda row: row[0].casefold())\n\nrows = snapshot(distributions())\nassert all(name and version for name, version in rows)\nassert rows == sorted(rows, key=lambda row: row[0].casefold())\nprint('distribution snapshot checked')\n","solutionExplanation":"This reads metadata for the current interpreter and creates a deterministic review order. It does not establish installation provenance, artifact integrity, complete dependency relationships or current advisory status.","challenges":["Predict why a clean virtual environment and a shared global interpreter may produce different inventories.","Find the bug: record the import module's __name__ as if it were always the distribution name.","Experiment: compare snapshots before and after an approved local environment change."],"simulation":{"prompt":"Your offline distribution snapshot shows a package version. Does that prove there are no current advisories?","choices":["No; a separate current advisory review is needed","Yes; installed metadata includes all advisories"],"correctIndex":0,"explanation":"Installed metadata describes the environment, not a live vulnerability feed."},"testCode":"from types import SimpleNamespace\nitems=[SimpleNamespace(metadata={'Name':'zeta'},version='1.0'),SimpleNamespace(metadata={'Name':'Alpha'},version='2.0')]\nassert snapshot(items)==[('Alpha','2.0'),('zeta','1.0')]\nprint('PASS: sorted distribution inventory')"},
   "projectConnection": {
     "project": "Maintained study-progress service",
     "milestone": "Attach a distribution name/version snapshot from the exact test environment to the release record and compare it with the tested dependency set.",

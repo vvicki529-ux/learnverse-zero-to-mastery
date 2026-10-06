@@ -66,45 +66,7 @@
       "avoid": "Document or validate the accepted ID type at the boundary."
     }
   ],
-  "lab": {
-    "title": "Explain and test an invariant for a first-seen report",
-    "safety": "Uses only fictional in-memory IDs. The current static site guides practice but does not yet execute Python in-browser.",
-    "starterCode": "def first_seen(ids):\n    seen = set()\n    result = []\n    # Add each new ID once, preserving first-seen order.\n    return result\n\n# Test empty, repeated, and mixed IDs.\n",
-    "guidedSteps": [
-      "State the input precondition and output postcondition in words.",
-      "Initialize an empty seen set and result list.",
-      "For each ID, add it to both containers only when it is new.",
-      "After each iteration, check seen == set(result) and explain why result order also remains correct.",
-      "Test empty input, three copies of one ID, and a mixed sequence."
-    ],
-    "checks": [
-      "Returns [] for empty input.",
-      "Returns one value for all-repeated input.",
-      "Preserves first-seen order for mixed input.",
-      "Learner explains why both loop branches preserve the invariant."
-    ],
-    "hints": [
-      "A repeated ID changes neither container.",
-      "A new ID is appended exactly once and added to seen.",
-      "At termination the processed prefix is all of ids."
-    ],
-    "solution": "def first_seen(ids):\n    seen = set()\n    result = []\n    for event_id in ids:\n        if event_id not in seen:\n            seen.add(event_id)\n            result.append(event_id)\n        assert seen == set(result)\n    return result\n\nassert first_seen([]) == []\nassert first_seen(['x', 'x', 'x']) == ['x']\nassert first_seen(['b', 'a', 'b', 'c']) == ['b', 'a', 'c']\nprint('invariant examples checked')\n",
-    "solutionExplanation": "The tests exercise representative cases. The stronger reasoning is that before each iteration result contains first appearances from the processed prefix; a repeat changes nothing, while a new ID is appended once, keeping order. When the loop finishes, the prefix is the whole input.",
-    "challenges": [
-      "Predict the output for ['c', 'b', 'c', 'a', 'b'].",
-      "Find the bug: append before checking membership.",
-      "Experiment: pass an unhashable list ID and decide whether your production API should validate or propagate TypeError."
-    ],
-    "simulation": {
-      "prompt": "Which reasoning step is needed to argue a loop invariant holds for the whole loop?",
-      "choices": [
-        "Show it starts true and each iteration preserves it",
-        "Test only one sample input"
-      ],
-      "correctIndex": 0,
-      "explanation": "Initialization and preservation support the claim across every iteration; termination connects it to the final result."
-    }
-  },
+  "lab": {"title":"Explain and test an invariant for a first-seen report","safety":"Only fictional in-memory IDs are used. Run the exercise in the site's bundled Python worker.","starterCode":"def first_seen(ids):\n    seen = set()\n    result = []\n    # Add each new ID once, preserving first-seen order.\n    return result\n\n# Test empty, repeated, and mixed IDs.\n","guidedSteps":["State the input precondition and output postcondition in words.","Initialize an empty seen set and result list.","For each ID, add it to both containers only when it is new.","After each iteration, check seen == set(result) and explain why result order also remains correct.","Test empty input, three copies of one ID, and a mixed sequence."],"checks":["Returns [] for empty input.","Returns one value for all-repeated input.","Preserves first-seen order for mixed input.","Learner explains why both loop branches preserve the invariant."],"hints":["A repeated ID changes neither container.","A new ID is appended exactly once and added to seen.","At termination the processed prefix is all of ids."],"solution":"def first_seen(ids):\n    seen = set()\n    result = []\n    for event_id in ids:\n        if event_id not in seen:\n            seen.add(event_id)\n            result.append(event_id)\n        assert seen == set(result)\n    return result\n\nassert first_seen([]) == []\nassert first_seen(['x', 'x', 'x']) == ['x']\nassert first_seen(['b', 'a', 'b', 'c']) == ['b', 'a', 'c']\nprint('invariant examples checked')\n","solutionExplanation":"The tests exercise representative cases. The stronger reasoning is that before each iteration result contains first appearances from the processed prefix; a repeat changes nothing, while a new ID is appended once, keeping order. When the loop finishes, the prefix is the whole input.","challenges":["Predict the output for ['c', 'b', 'c', 'a', 'b'].","Find the bug: append before checking membership.","Experiment: pass an unhashable list ID and decide whether your production API should validate or propagate TypeError."],"simulation":{"prompt":"Which reasoning step is needed to argue a loop invariant holds for the whole loop?","choices":["Show it starts true and each iteration preserves it","Test only one sample input"],"correctIndex":0,"explanation":"Initialization and preservation support the claim across every iteration; termination connects it to the final result."},"testCode":"assert first_seen([])==[]\nassert first_seen(['x','x','x'])==['x']\nassert first_seen(['b','a','b','c'])==['b','a','c']\nprint('PASS: loop invariant examples')"},
   "projectConnection": {
     "project": "Study-progress event importer",
     "milestone": "Add a documented precondition/postcondition and invariant explanation to the deduplication step, alongside tests for empty, repeated and mixed events.",

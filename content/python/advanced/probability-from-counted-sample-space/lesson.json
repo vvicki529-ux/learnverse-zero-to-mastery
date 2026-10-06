@@ -66,45 +66,7 @@
       "avoid": "Validate counts and handle zero draws deliberately."
     }
   ],
-  "lab": {
-    "title": "Calculate the chance of at least one marked topic",
-    "safety": "Pure integer counting and exact fractions; no actual random draw or user data. The static site guides the lab but does not yet execute Python in-browser.",
-    "starterCode": "from fractions import Fraction\nfrom math import comb\n\ndef at_least_one(total, marked, draws):\n    # Validate counts and compute 1 - P(no marked topic).\n    pass\n\n# Test (5, 2, 2), no marked topics, and all marked topics.\n",
-    "guidedSteps": [
-      "Require nonnegative integers with marked <= total and draws <= total.",
-      "Compute all_samples = comb(total, draws).",
-      "Compute misses = comb(total-marked, draws).",
-      "Return Fraction(all_samples-misses, all_samples).",
-      "Test a 7/10 result and the boundary cases."
-    ],
-    "checks": [
-      "Returns Fraction(7, 10) for (5, 2, 2).",
-      "Returns zero when marked=0 or draws=0.",
-      "Returns one when every topic is marked and draws>0.",
-      "Rejects invalid counts rather than inventing a probability."
-    ],
-    "hints": [
-      "`comb(n, k)` returns 0 when k>n for nonnegative integers.",
-      "Use Fraction for exact division.",
-      "For zero draws, the only sample is empty and cannot contain a marked topic."
-    ],
-    "solution": "from fractions import Fraction\nfrom math import comb\n\ndef at_least_one(total, marked, draws):\n    if any(type(x) is not int for x in (total, marked, draws)):\n        raise ValueError('counts must be integers')\n    if total < 0 or not 0 <= marked <= total or not 0 <= draws <= total:\n        raise ValueError('invalid counts')\n    all_samples = comb(total, draws)\n    misses = comb(total - marked, draws)\n    return Fraction(all_samples - misses, all_samples)\n\nassert at_least_one(5, 2, 2) == Fraction(7, 10)\nassert at_least_one(5, 0, 2) == 0\nassert at_least_one(5, 5, 2) == 1\nassert at_least_one(5, 2, 0) == 0\nprint('sampling model checked')\n",
-    "solutionExplanation": "The code validates the model's counts, counts all equally likely unordered samples and subtracts those with no marked topic. The exact Fraction result is a property of this selection model, not a prediction of one draw.",
-    "challenges": [
-      "Predict the result for total=3, marked=1, draws=1.",
-      "Find the bug: use `marked / total` for two draws without replacement.",
-      "Experiment: describe how replacement would change the sample space even before writing new code."
-    ],
-    "simulation": {
-      "prompt": "Can the 7/10 result still be used unchanged if the app deliberately favors overdue topics?",
-      "choices": [
-        "No; weighting changes the model",
-        "Yes; the number of topics stayed five"
-      ],
-      "correctIndex": 0,
-      "explanation": "The calculation assumed equally likely unordered samples without replacement."
-    }
-  },
+  "lab": {"title":"Calculate the chance of at least one marked topic","safety":"This uses exact integer and fraction calculations, not real user data. Run it in the site's bundled Python worker.","starterCode":"from fractions import Fraction\nfrom math import comb\n\ndef at_least_one(total, marked, draws):\n    # Validate counts and compute 1 - P(no marked topic).\n    pass\n\n# Test (5, 2, 2), no marked topics, and all marked topics.\n","guidedSteps":["Require nonnegative integers with marked <= total and draws <= total.","Compute all_samples = comb(total, draws).","Compute misses = comb(total-marked, draws).","Return Fraction(all_samples-misses, all_samples).","Test a 7/10 result and the boundary cases."],"checks":["Returns Fraction(7, 10) for (5, 2, 2).","Returns zero when marked=0 or draws=0.","Returns one when every topic is marked and draws>0.","Rejects invalid counts rather than inventing a probability."],"hints":["`comb(n, k)` returns 0 when k>n for nonnegative integers.","Use Fraction for exact division.","For zero draws, the only sample is empty and cannot contain a marked topic."],"solution":"from fractions import Fraction\nfrom math import comb\n\ndef at_least_one(total, marked, draws):\n    if any(type(x) is not int for x in (total, marked, draws)):\n        raise ValueError('counts must be integers')\n    if total < 0 or not 0 <= marked <= total or not 0 <= draws <= total:\n        raise ValueError('invalid counts')\n    all_samples = comb(total, draws)\n    misses = comb(total - marked, draws)\n    return Fraction(all_samples - misses, all_samples)\n\nassert at_least_one(5, 2, 2) == Fraction(7, 10)\nassert at_least_one(5, 0, 2) == 0\nassert at_least_one(5, 5, 2) == 1\nassert at_least_one(5, 2, 0) == 0\nprint('sampling model checked')\n","solutionExplanation":"The code validates the model's counts, counts all equally likely unordered samples and subtracts those with no marked topic. The exact Fraction result is a property of this selection model, not a prediction of one draw.","challenges":["Predict the result for total=3, marked=1, draws=1.","Find the bug: use `marked / total` for two draws without replacement.","Experiment: describe how replacement would change the sample space even before writing new code."],"simulation":{"prompt":"Can the 7/10 result still be used unchanged if the app deliberately favors overdue topics?","choices":["No; weighting changes the model","Yes; the number of topics stayed five"],"correctIndex":0,"explanation":"The calculation assumed equally likely unordered samples without replacement."},"testCode":"assert at_least_one(5,2,2)==Fraction(7,10)\nassert at_least_one(5,0,2)==0 and at_least_one(5,5,2)==1\nfor bad in ((5,2,6),(5,True,2)):\n    try: at_least_one(*bad)\n    except ValueError: pass\n    else: raise AssertionError('invalid count accepted')\nprint('PASS: counted probability')"},
   "projectConnection": {
     "project": "Offline study-topic scheduler",
     "milestone": "Explain the probability of seeing a marked topic for the app's actual uniform no-replacement selection policy, with boundary tests.",

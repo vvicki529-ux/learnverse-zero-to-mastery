@@ -67,45 +67,7 @@
       "avoid": "Check index < len(values) and values[index] == target for membership."
     }
   ],
-  "lab": {
-    "title": "Find the first qualifying study score",
-    "safety": "Uses only small fictional sorted lists. The static site guides the lab but does not yet execute Python in-browser.",
-    "starterCode": "def left_boundary(values, target):\n    lo, hi = 0, len(values)\n    # Narrow [lo, hi) until the first value >= target is found.\n    return lo\n\n# Test [], duplicates, before-first and after-last targets.\n",
-    "guidedSteps": [
-      "Write the sorted-input precondition in a comment.",
-      "Loop while lo < hi and calculate mid.",
-      "Move lo to mid+1 if values[mid] < target; otherwise move hi to mid.",
-      "Return lo when both boundaries meet.",
-      "Test empty input, duplicates and targets outside the list."
-    ],
-    "checks": [
-      "Returns 0 for an empty list.",
-      "Returns the first duplicate position, not the last.",
-      "Returns 0 before the first value and len(values) after the last.",
-      "Each update shrinks the candidate interval."
-    ],
-    "hints": [
-      "Use `mid = (lo + hi) // 2`.",
-      "Keep mid when it may be the answer: `hi = mid`.",
-      "The answer can legally equal len(values)."
-    ],
-    "solution": "from bisect import bisect_left\n\ndef left_boundary(values, target):\n    lo, hi = 0, len(values)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if values[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n\ncases = [([], 5), ([2, 2, 5], 2), ([2, 5], 0), ([2, 5], 9)]\nfor values, target in cases:\n    assert left_boundary(values, target) == bisect_left(values, target)\nprint('lower-bound edges checked')\n",
-    "solutionExplanation": "The loop preserves the left-less-than-target/right-at-least-target partition and shrinks its unknown middle. The edge tests compare its result with bisect_left, but the invariant explains why the algorithm works beyond those examples.",
-    "challenges": [
-      "Predict the result for [2, 2, 5] and target 3.",
-      "Find the bug: change hi = mid to hi = mid - 1.",
-      "Experiment: use a membership check after computing the boundary, guarding against index == len(values)."
-    ],
-    "simulation": {
-      "prompt": "If values[mid] is at least target, why set hi = mid rather than mid - 1?",
-      "choices": [
-        "mid could be the first qualifying index",
-        "mid is known to be too small"
-      ],
-      "correctIndex": 0,
-      "explanation": "The lower-bound answer might be exactly mid, so it must remain in the candidate region."
-    }
-  },
+  "lab": {"title":"Find the first qualifying study score","safety":"Only small fictional sorted lists are used. Run the exercise in the site's bundled Python worker.","starterCode":"def left_boundary(values, target):\n    lo, hi = 0, len(values)\n    # Narrow [lo, hi) until the first value >= target is found.\n    return lo\n\n# Test [], duplicates, before-first and after-last targets.\n","guidedSteps":["Write the sorted-input precondition in a comment.","Loop while lo < hi and calculate mid.","Move lo to mid+1 if values[mid] < target; otherwise move hi to mid.","Return lo when both boundaries meet.","Test empty input, duplicates and targets outside the list."],"checks":["Returns 0 for an empty list.","Returns the first duplicate position, not the last.","Returns 0 before the first value and len(values) after the last.","Each update shrinks the candidate interval."],"hints":["Use `mid = (lo + hi) // 2`.","Keep mid when it may be the answer: `hi = mid`.","The answer can legally equal len(values)."],"solution":"from bisect import bisect_left\n\ndef left_boundary(values, target):\n    lo, hi = 0, len(values)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if values[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n\ncases = [([], 5), ([2, 2, 5], 2), ([2, 5], 0), ([2, 5], 9)]\nfor values, target in cases:\n    assert left_boundary(values, target) == bisect_left(values, target)\nprint('lower-bound edges checked')\n","solutionExplanation":"The loop preserves the left-less-than-target/right-at-least-target partition and shrinks its unknown middle. The edge tests compare its result with bisect_left, but the invariant explains why the algorithm works beyond those examples.","challenges":["Predict the result for [2, 2, 5] and target 3.","Find the bug: change hi = mid to hi = mid - 1.","Experiment: use a membership check after computing the boundary, guarding against index == len(values)."],"simulation":{"prompt":"If values[mid] is at least target, why set hi = mid rather than mid - 1?","choices":["mid could be the first qualifying index","mid is known to be too small"],"correctIndex":0,"explanation":"The lower-bound answer might be exactly mid, so it must remain in the candidate region."},"testCode":"from bisect import bisect_left\nfor values,target in [([],5),([2,2,5],2),([2,5],0),([2,5],9),([1,3,3,7],4)]:\n    assert left_boundary(values,target)==bisect_left(values,target)\nprint('PASS: lower-bound edges')"},
   "projectConnection": {
     "project": "Learning-activity timeline",
     "milestone": "Use bisect_left to find the first completion date on or after a requested date, with a short invariant explanation in the code review.",

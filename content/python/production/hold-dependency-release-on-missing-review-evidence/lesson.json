@@ -64,45 +64,7 @@
       "avoid": "Keep source/provenance and code-review controls separate."
     }
   ],
-  "lab": {
-    "title": "Build a fail-closed dependency review gate",
-    "safety": "All records are fictional in-memory dictionaries. No install, scan, network request or license judgment is performed. The current static site guides the lab but does not yet run Python in-browser.",
-    "starterCode": "def release_ready(record):\n    # Require a name, version, and four completed review booleans.\n    pass\n\n# Test: all complete, one missing, and one 'pending' string.\n",
-    "guidedSteps": [
-      "List the six required keys from the worked example.",
-      "Reject a missing name or version.",
-      "Require each review flag to be exactly True.",
-      "Test a complete record, one without license_reviewed, and one with advisories_reviewed='pending'.",
-      "Explain why this gate needs real external evidence before production use."
-    ],
-    "checks": [
-      "Complete fictional record returns True.",
-      "Missing license review returns False.",
-      "String 'pending' never counts as approved.",
-      "Code does not perform a scan or claim a legal decision."
-    ],
-    "hints": [
-      "Use `if any(key not in record for key in required): return False`.",
-      "Use `all(record[key] is True for key in required[2:])`.",
-      "A Boolean gate only checks supplied evidence states; it cannot create evidence."
-    ],
-    "solution": "def release_ready(record):\n    required = ('name', 'version', 'artifact_checked',\n                'license_reviewed', 'advisories_reviewed', 'tests_passed')\n    if any(key not in record for key in required):\n        return False\n    return bool(record['name'] and record['version'] and\n                all(record[key] is True for key in required[2:]))\n\ncomplete = dict(name='fictional-study-lib', version='1.0',\n                artifact_checked=True, license_reviewed=True,\n                advisories_reviewed=True, tests_passed=True)\nassert release_ready(complete)\nassert not release_ready({k: v for k, v in complete.items() if k != 'license_reviewed'})\nassert not release_ready({**complete, 'advisories_reviewed': 'pending'})\nprint('review gate checked')\n",
-    "solutionExplanation": "The gate fails closed for absent or incomplete evidence. It is useful only when real approved workflows populate the fields honestly.",
-    "challenges": [
-      "Predict what happens when the version is an empty string.",
-      "Find the bug: `bool(record['advisories_reviewed'])` accepts 'pending'.",
-      "Experiment: add a reviewer/date field to the fictional record without calling it a vulnerability scan."
-    ],
-    "simulation": {
-      "prompt": "Your offline machine has no current advisory data for a dependency. What release status is justified?",
-      "choices": [
-        "Pending current review; do not claim clean",
-        "Clean, because no alert appeared"
-      ],
-      "correctIndex": 0,
-      "explanation": "Unavailable evidence is not positive evidence."
-    }
-  },
+  "lab": {"title":"Build a fail-closed dependency review gate","safety":"All records are fictional in-memory dictionaries. No install, scan, network request or license judgment is performed. The in-site Run Python button executes this lab in a fresh browser worker; this particular exercise uses neither local computer files nor external services.","starterCode":"def release_ready(record):\n    # Require a name, version, and four completed review booleans.\n    pass\n\n# Test: all complete, one missing, and one 'pending' string.\n","guidedSteps":["List the six required keys from the worked example.","Reject a missing name or version.","Require each review flag to be exactly True.","Test a complete record, one without license_reviewed, and one with advisories_reviewed='pending'.","Explain why this gate needs real external evidence before production use."],"checks":["Complete fictional record returns True.","Missing license review returns False.","String 'pending' never counts as approved.","Code does not perform a scan or claim a legal decision."],"hints":["Use `if any(key not in record for key in required): return False`.","Use `all(record[key] is True for key in required[2:])`.","A Boolean gate only checks supplied evidence states; it cannot create evidence."],"solution":"def release_ready(record):\n    required = ('name', 'version', 'artifact_checked',\n                'license_reviewed', 'advisories_reviewed', 'tests_passed')\n    if any(key not in record for key in required):\n        return False\n    return bool(record['name'] and record['version'] and\n                all(record[key] is True for key in required[2:]))\n\ncomplete = dict(name='fictional-study-lib', version='1.0',\n                artifact_checked=True, license_reviewed=True,\n                advisories_reviewed=True, tests_passed=True)\nassert release_ready(complete)\nassert not release_ready({k: v for k, v in complete.items() if k != 'license_reviewed'})\nassert not release_ready({**complete, 'advisories_reviewed': 'pending'})\nprint('review gate checked')\n","solutionExplanation":"The gate fails closed for absent or incomplete evidence. It is useful only when real approved workflows populate the fields honestly.","challenges":["Predict what happens when the version is an empty string.","Find the bug: `bool(record['advisories_reviewed'])` accepts 'pending'.","Experiment: add a reviewer/date field to the fictional record without calling it a vulnerability scan."],"simulation":{"prompt":"Your offline machine has no current advisory data for a dependency. What release status is justified?","choices":["Pending current review; do not claim clean","Clean, because no alert appeared"],"correctIndex":0,"explanation":"Unavailable evidence is not positive evidence."},"testCode":"complete=dict(name='fictional-study-lib',version='1.0',artifact_checked=True,license_reviewed=True,advisories_reviewed=True,tests_passed=True)\nassert release_ready(complete) is True\nassert release_ready({k:v for k,v in complete.items() if k!='license_reviewed'}) is False\nassert release_ready({**complete,'advisories_reviewed':'pending'}) is False\nprint('PASS: dependency review gate')"},
   "projectConnection": {
     "project": "Maintained study-progress service",
     "milestone": "Attach a review gate to the release checklist and record separate artifact, license, advisory and test evidence.",

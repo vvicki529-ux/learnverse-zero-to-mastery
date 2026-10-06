@@ -65,45 +65,7 @@
       "avoid": "Keep approved hashes or equivalent artifact controls separately."
     }
   ],
-  "lab": {
-    "title": "Find missing, changed and extra fictional distributions",
-    "safety": "Pure in-memory dictionaries only. No pip command, download, install or file change. The current static website guides this exercise but does not yet execute Python in-browser.",
-    "starterCode": "def differences(expected, observed):\n    # Return sorted (name, expected_version, observed_version) tuples.\n    pass\n\n# Test one changed, one missing, and one extra package.\n",
-    "guidedSteps": [
-      "Take the union of expected and observed names.",
-      "Sort names to make reports stable.",
-      "Keep only names whose versions differ, including absent values.",
-      "Test a changed package, one missing from observed, and one extra in observed.",
-      "Explain why the report does not prove artifact integrity."
-    ],
-    "checks": [
-      "Changed version appears with both versions.",
-      "Missing package has observed None; extra package has expected None.",
-      "Matching packages do not appear.",
-      "No installation or advisory-scan claim is made."
-    ],
-    "hints": [
-      "Use `set(expected) | set(observed)`.",
-      "`dict.get` returns None when a name is absent.",
-      "Keep a tuple only when the two retrieved values differ."
-    ],
-    "solution": "def differences(expected, observed):\n    return [(name, expected.get(name), observed.get(name))\n            for name in sorted(set(expected) | set(observed))\n            if expected.get(name) != observed.get(name)]\n\nexpected = {'a-demo': '1', 'b-demo': '2'}\nobserved = {'a-demo': '3', 'c-demo': '1'}\nassert differences(expected, observed) == [\n    ('a-demo', '1', '3'), ('b-demo', '2', None), ('c-demo', None, '1')]\nprint('resolved-set differences checked')\n",
-    "solutionExplanation": "The comparison detects version drift and both kinds of membership difference. It is a release review input, not a package resolver or lockfile parser.",
-    "challenges": [
-      "Predict the result when both dictionaries are empty.",
-      "Find the bug: iterate only expected keys and miss extra packages.",
-      "Experiment: add a matching package and confirm it disappears from the report."
-    ],
-    "simulation": {
-      "prompt": "Two environments have matching direct requirements but different transitive versions. Can the test environment's result automatically stand for deployment?",
-      "choices": [
-        "No; compare the full resolved set and retest the target",
-        "Yes; direct requirements are enough"
-      ],
-      "correctIndex": 0,
-      "explanation": "Transitive version drift changes the actual environment."
-    }
-  },
+  "lab": {"title":"Find missing, changed and extra fictional distributions","safety":"Pure in-memory dictionaries only. No pip command, download, install or file change. The in-site Run Python button executes this lab in a fresh browser worker; this particular exercise uses neither local computer files nor external services.","starterCode":"def differences(expected, observed):\n    # Return sorted (name, expected_version, observed_version) tuples.\n    pass\n\n# Test one changed, one missing, and one extra package.\n","guidedSteps":["Take the union of expected and observed names.","Sort names to make reports stable.","Keep only names whose versions differ, including absent values.","Test a changed package, one missing from observed, and one extra in observed.","Explain why the report does not prove artifact integrity."],"checks":["Changed version appears with both versions.","Missing package has observed None; extra package has expected None.","Matching packages do not appear.","No installation or advisory-scan claim is made."],"hints":["Use `set(expected) | set(observed)`.","`dict.get` returns None when a name is absent.","Keep a tuple only when the two retrieved values differ."],"solution":"def differences(expected, observed):\n    return [(name, expected.get(name), observed.get(name))\n            for name in sorted(set(expected) | set(observed))\n            if expected.get(name) != observed.get(name)]\n\nexpected = {'a-demo': '1', 'b-demo': '2'}\nobserved = {'a-demo': '3', 'c-demo': '1'}\nassert differences(expected, observed) == [\n    ('a-demo', '1', '3'), ('b-demo', '2', None), ('c-demo', None, '1')]\nprint('resolved-set differences checked')\n","solutionExplanation":"The comparison detects version drift and both kinds of membership difference. It is a release review input, not a package resolver or lockfile parser.","challenges":["Predict the result when both dictionaries are empty.","Find the bug: iterate only expected keys and miss extra packages.","Experiment: add a matching package and confirm it disappears from the report."],"simulation":{"prompt":"Two environments have matching direct requirements but different transitive versions. Can the test environment's result automatically stand for deployment?","choices":["No; compare the full resolved set and retest the target","Yes; direct requirements are enough"],"correctIndex":0,"explanation":"Transitive version drift changes the actual environment."},"testCode":"assert differences({'a-demo':'1','b-demo':'2'},{'a-demo':'3','c-demo':'1'})==[('a-demo','1','3'),('b-demo','2',None),('c-demo',None,'1')]\nassert differences({},{} )==[]\nprint('PASS: resolved-set drift')"},
   "projectConnection": {
     "project": "Maintained study-progress service",
     "milestone": "Attach a tested resolved-set record and a deployment inventory comparison to the release checklist.",

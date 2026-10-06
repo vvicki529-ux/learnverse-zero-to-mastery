@@ -66,45 +66,7 @@
       "avoid": "State the model before applying the formula."
     }
   ],
-  "lab": {
-    "title": "Prove and test a candidate-pair budget",
-    "safety": "Uses only integer counts and tiny local test ranges; it does not create large pair lists. The static site guides practice but does not yet execute Python in-browser.",
-    "starterCode": "from math import comb\n\ndef pair_count(n):\n    # Reject invalid n, then return n*(n-1)//2.\n    pass\n\n# Compare values for n from 0 through 8 with comb(n, 2).\n",
-    "guidedSteps": [
-      "Write the nonnegative exact-integer precondition.",
-      "Return n*(n-1)//2.",
-      "Check n=0 and n=1.",
-      "Compare n=0..8 to math.comb(n, 2).",
-      "Write the inductive step in words: one added learner forms n new pairs."
-    ],
-    "checks": [
-      "Rejects negative n, non-integer n and Boolean n.",
-      "Returns 0 for n=0 and n=1.",
-      "Matches math.comb(n, 2) for tested small n.",
-      "Learner can explain base case and inductive step without relying only on tests."
-    ],
-    "hints": [
-      "Use `type(n) is int` to exclude bool.",
-      "`n*(n-1)//2` counts unordered distinct pairs.",
-      "P(n+1) = P(n) + n."
-    ],
-    "solution": "from math import comb\n\ndef pair_count(n):\n    if type(n) is not int or n < 0:\n        raise ValueError('n must be a nonnegative integer')\n    return n * (n - 1) // 2\n\nfor n in range(9):\n    assert pair_count(n) == comb(n, 2)\nfor invalid in (-1, 2.5, True):\n    try:\n        pair_count(invalid)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('invalid size accepted')\nprint('pair-count tests checked')\n",
-    "solutionExplanation": "The tests check the implementation on selected cases. The induction argument supplies the general mathematical reasoning: the base case holds, and each additional learner contributes exactly the number of existing learners in new pairs.",
-    "challenges": [
-      "Predict pair_count(6) and its difference from pair_count(5).",
-      "Find the bug: use `n*n//2`.",
-      "Experiment: derive the ordered-pair count when A-B differs from B-A."
-    ],
-    "simulation": {
-      "prompt": "What must an induction argument include beyond testing small n?",
-      "choices": [
-        "A base case and a step from n to n+1",
-        "Only a larger test range"
-      ],
-      "correctIndex": 0,
-      "explanation": "The base and step establish the pattern for every nonnegative integer in the stated domain."
-    }
-  },
+  "lab": {"title":"Prove and test a candidate-pair budget","safety":"Only small integer counts are used. Run the exercise in the site's bundled Python worker.","starterCode":"from math import comb\n\ndef pair_count(n):\n    # Reject invalid n, then return n*(n-1)//2.\n    pass\n\n# Compare values for n from 0 through 8 with comb(n, 2).\n","guidedSteps":["Write the nonnegative exact-integer precondition.","Return n*(n-1)//2.","Check n=0 and n=1.","Compare n=0..8 to math.comb(n, 2).","Write the inductive step in words: one added learner forms n new pairs."],"checks":["Rejects negative n, non-integer n and Boolean n.","Returns 0 for n=0 and n=1.","Matches math.comb(n, 2) for tested small n.","Learner can explain base case and inductive step without relying only on tests."],"hints":["Use `type(n) is int` to exclude bool.","`n*(n-1)//2` counts unordered distinct pairs.","P(n+1) = P(n) + n."],"solution":"from math import comb\n\ndef pair_count(n):\n    if type(n) is not int or n < 0:\n        raise ValueError('n must be a nonnegative integer')\n    return n * (n - 1) // 2\n\nfor n in range(9):\n    assert pair_count(n) == comb(n, 2)\nfor invalid in (-1, 2.5, True):\n    try:\n        pair_count(invalid)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('invalid size accepted')\nprint('pair-count tests checked')\n","solutionExplanation":"The tests check the implementation on selected cases. The induction argument supplies the general mathematical reasoning: the base case holds, and each additional learner contributes exactly the number of existing learners in new pairs.","challenges":["Predict pair_count(6) and its difference from pair_count(5).","Find the bug: use `n*n//2`.","Experiment: derive the ordered-pair count when A-B differs from B-A."],"simulation":{"prompt":"What must an induction argument include beyond testing small n?","choices":["A base case and a step from n to n+1","Only a larger test range"],"correctIndex":0,"explanation":"The base and step establish the pattern for every nonnegative integer in the stated domain."},"testCode":"for n in range(9): assert pair_count(n)==comb(n,2)\nfor bad in (-1,2.5,True):\n    try: pair_count(bad)\n    except ValueError: pass\n    else: raise AssertionError('invalid n accepted')\nprint('PASS: pair-count growth')"},
   "projectConnection": {
     "project": "Study-progress peer-review planner",
     "milestone": "Explain the candidate-pair formula in the planner's capacity notes and reject counts above a measured limit before generating teams.",

@@ -1,0 +1,1313 @@
+{
+  "schemaVersion": 1,
+  "groups": [
+    {
+      "level": "foundations",
+      "title": "Foundations",
+      "lessons": [
+        {
+          "id": "environment-execution-project-setup",
+          "title": "Environment, interpreter, scripts, and project setup"
+        },
+        {
+          "id": "identify-python-runtime-and-version",
+          "title": "Know which Python implementation and version runs your code"
+        },
+        {
+          "id": "browser-python-versus-installed-python",
+          "title": "Know when Python runs in your browser or on your computer"
+        },
+        {
+          "id": "first-program-comments-names-and-operators",
+          "title": "Your first Python program: comments, names, and operators"
+        },
+        {
+          "id": "statements-expressions-and-keywords",
+          "title": "Read Python syntax: expressions, statements, and keywords"
+        },
+        {
+          "id": "variables-assignment-and-identity",
+          "title": "Variables: names, values, assignment, and identity"
+        },
+        {
+          "id": "names-bindings-identity-and-equality",
+          "title": "Names, bindings, identity, and equality"
+        },
+        {
+          "id": "input-output-conversion-and-fstrings",
+          "title": "Input and output: talk to the user clearly"
+        },
+        {
+          "id": "data-types-and-type-conversion",
+          "title": "Data types: choose the right kind of value"
+        },
+        {
+          "id": "text-bytes-complex-and-missing-values",
+          "title": "Text, bytes, complex numbers, and missing values"
+        },
+        {
+          "id": "operators-expressions-and-precedence",
+          "title": "Operators and expressions: make Python calculate and decide"
+        },
+        {
+          "id": "division-remainder-powers-and-rounding",
+          "title": "Division, remainders, powers, and rounding rules"
+        },
+        {
+          "id": "floating-point-decimal-and-numerical-reasoning",
+          "title": "Floating point, Decimal, and numerical reasoning"
+        },
+        {
+          "id": "chained-comparisons-and-boolean-values",
+          "title": "Comparison chains and Boolean expressions"
+        },
+        {
+          "id": "truthiness-short-circuiting-and-safe-conditions",
+          "title": "Truthiness, short-circuiting, and safe conditions"
+        },
+        {
+          "id": "conditional-statements-and-decision-tables",
+          "title": "Conditional statements: let a program make a choice"
+        },
+        {
+          "id": "structural-pattern-matching-and-guards",
+          "title": "Structural pattern matching and guards"
+        },
+        {
+          "id": "loops-range-and-repetition",
+          "title": "Loops: repeat work without repeating code"
+        },
+        {
+          "id": "loop-exit-and-search-else",
+          "title": "Loop exits: break, continue, pass, and else"
+        },
+        {
+          "id": "strings-slicing-and-text-methods",
+          "title": "Strings: work with text safely and clearly"
+        },
+        {
+          "id": "unicode-string-boundaries-and-escapes",
+          "title": "Python text: Unicode, slices, escapes, and bytes"
+        },
+        {
+          "id": "lists-mutation-copying-and-nested-data",
+          "title": "Lists: keep ordered information and update it safely"
+        },
+        {
+          "id": "dictionaries-sets-and-tuples",
+          "title": "Dictionaries, sets, and tuples: model data by its purpose"
+        },
+        {
+          "id": "functions-results-and-documentation",
+          "title": "Functions: inputs, results, and a clear contract"
+        },
+        {
+          "id": "values-expressions-control-flow",
+          "title": "Values, names, expressions, and control flow"
+        },
+        {
+          "id": "repl-script-and-module-execution",
+          "title": "Choose the Python prompt, a script, or `python -m`"
+        },
+        {
+          "id": "cli-arguments-main-and-exit-code",
+          "title": "Read command-line arguments and return an honest exit code"
+        },
+        {
+          "id": "script-path-and-utf8-file-boundary",
+          "title": "Find project files from a script and choose a text encoding"
+        },
+        {
+          "id": "venv-interpreter-isolation-check",
+          "title": "Create a virtual environment and prove which Python is running"
+        },
+        {
+          "id": "check-package-environment-before-installing",
+          "title": "Check a package environment before installing anything"
+        },
+        {
+          "id": "syntax-style-and-behavior-checks",
+          "title": "Check Python syntax, style, and behavior as separate steps"
+        },
+        {
+          "id": "read-traceback-and-reproduce-bug",
+          "title": "Read a traceback, reproduce the bug, and check the fix"
+        },
+        {
+          "id": "git-workflow-for-python-projects",
+          "title": "Save and review a Python project with Git"
+        },
+        {
+          "id": "install-python-and-verify-selected-runtime",
+          "title": "Install Python, then verify the version you actually run"
+        }
+      ]
+    },
+    {
+      "level": "core",
+      "title": "Core programming",
+      "lessons": [
+        {
+          "id": "comprehensions-iterators-regex-and-structured-data",
+          "title": "Comprehensions, iterators, regex, and structured data"
+        },
+        {
+          "id": "comprehensions-iterators-regex-and-json",
+          "title": "Data transformations: comprehensions, iteration, patterns, and JSON"
+        },
+        {
+          "id": "comprehensions-generators-and-readable-nesting",
+          "title": "Comprehensions and generator expressions, step by step"
+        },
+        {
+          "id": "collections-text-and-copying",
+          "title": "Collections, text, and copying data safely"
+        },
+        {
+          "id": "list-methods-nested-copies-and-queues",
+          "title": "Lists in practice: methods, nested copies, stacks, and queues"
+        },
+        {
+          "id": "tuples-unpacking-and-named-records",
+          "title": "Tuples: fixed records, unpacking, and named fields"
+        },
+        {
+          "id": "set-algebra-frozenset-and-membership",
+          "title": "Sets and frozensets: unique membership and set algebra"
+        },
+        {
+          "id": "dictionary-views-defaults-merging-and-nesting",
+          "title": "Dictionaries in practice: keys, views, defaults, and nested records"
+        },
+        {
+          "id": "iteration-order-and-unequal-inputs",
+          "title": "Iteration order, zip safety, and uneven inputs"
+        },
+        {
+          "id": "sequence-ordering-reversal-and-strict-pairing",
+          "title": "Sequence tools: enumerate, strict zip, sorted, and reversed"
+        },
+        {
+          "id": "aliasing-shallow-copy-and-nested-mutation",
+          "title": "Aliasing, shallow copies, and nested mutation"
+        },
+        {
+          "id": "regex-patterns-and-safe-text-validation",
+          "title": "Regular expressions: patterns, validation, and safe text rules"
+        },
+        {
+          "id": "regex-search-match-fullmatch-and-replacement",
+          "title": "Regular expressions: search, match, fullmatch, and replace"
+        },
+        {
+          "id": "functions-scope-and-typed-interfaces",
+          "title": "Functions, scope, and typed interfaces"
+        },
+        {
+          "id": "functions-parameters-returns-and-scope",
+          "title": "Functions: give repeated work a clear name"
+        },
+        {
+          "id": "parameter-kinds-defaults-and-unpacking",
+          "title": "Function calls: positional-only, keyword-only, defaults, and unpacking"
+        },
+        {
+          "id": "scope-closures-and-late-binding",
+          "title": "Scope, closures, and the late-binding surprise"
+        },
+        {
+          "id": "name-resolution-shadowing-and-late-callbacks",
+          "title": "Scope and closures: where names come from and when callbacks read them"
+        },
+        {
+          "id": "recursive-base-cases-and-iterative-alternatives",
+          "title": "Recursion: base cases, call depth, and an iterative alternative"
+        },
+        {
+          "id": "generators-decorators-and-lazy-workflows",
+          "title": "Generators and decorators: delay work and wrap behaviour"
+        },
+        {
+          "id": "higher-order-functions-and-decorators",
+          "title": "Higher-order functions and decorators without hidden magic"
+        },
+        {
+          "id": "functions-as-values-map-filter-and-partial",
+          "title": "Functions as values: lambda, map, filter, and partial"
+        },
+        {
+          "id": "yield-from-and-one-pass-generator-pipelines",
+          "title": "Generators: yield, yield from, and one-pass data"
+        },
+        {
+          "id": "type-hints-dataclasses-and-protocols",
+          "title": "Type hints: communicate interfaces and catch mistakes earlier"
+        },
+        {
+          "id": "typeddict-protocol-generic-and-runtime-checks",
+          "title": "Type hints as contracts: TypedDict, Protocol, and runtime checks"
+        },
+        {
+          "id": "specialized-containers-and-priority-queues",
+          "title": "Specialized containers: Counter, defaultdict, deque, heapq, and array"
+        },
+        {
+          "id": "unpacking-enumerate-zip-and-starred-expressions",
+          "title": "Unpacking, enumerate, zip, and starred expressions"
+        },
+        {
+          "id": "sets-hashability-and-key-design",
+          "title": "Sets, hashability, and dictionary-key design"
+        },
+        {
+          "id": "function-defaults-args-kwargs-and-mutable-state",
+          "title": "Function defaults, *args, **kwargs, and mutable state"
+        },
+        {
+          "id": "pair-streams-with-strict-zip",
+          "title": "Pair two streams without silently losing a row"
+        }
+      ]
+    },
+    {
+      "level": "intermediate",
+      "title": "Intermediate engineering",
+      "lessons": [
+        {
+          "id": "imports-packages-and-program-entry-points",
+          "title": "Imports, packages, and program entry points"
+        },
+        {
+          "id": "tracebacks-debugging-and-minimal-reproductions",
+          "title": "Tracebacks, debugging, and minimal reproductions"
+        },
+        {
+          "id": "paths-encodings-and-atomic-file-writes",
+          "title": "Paths, encodings, and safer file writes"
+        },
+        {
+          "id": "csv-json-schema-and-data-normalization",
+          "title": "CSV, JSON, schema thinking, and data normalization"
+        },
+        {
+          "id": "json-validation-and-untrusted-data-boundaries",
+          "title": "JSON, validation, and untrusted-data boundaries"
+        },
+        {
+          "id": "csv-normalization-and-data-quality-checks",
+          "title": "CSV normalization and data-quality checks"
+        },
+        {
+          "id": "json-csv-parsing-and-schema-boundaries",
+          "title": "JSON and CSV: parse first, validate second"
+        },
+        {
+          "id": "iterators-itertools-and-one-pass-data",
+          "title": "Iterators, itertools, and one-pass data"
+        },
+        {
+          "id": "modules-packages-and-configuration",
+          "title": "Modules, packages, dependencies, and configuration"
+        },
+        {
+          "id": "modules-packages-and-imports",
+          "title": "Modules and packages: organize code without confusion"
+        },
+        {
+          "id": "imports-module-cache-and-side-effects",
+          "title": "Imports, the module cache, and avoiding startup surprises"
+        },
+        {
+          "id": "packages-relative-imports-and-public-apis",
+          "title": "Packages, relative imports, and clear public APIs"
+        },
+        {
+          "id": "import-cache-path-and-side-effect-lab",
+          "title": "Imports in action: search path, cache, and side effects"
+        },
+        {
+          "id": "package-boundaries-relative-imports-and-namespace-layout",
+          "title": "Packages: sibling imports, public APIs, and namespace layouts"
+        },
+        {
+          "id": "standard-library-report-metrics",
+          "title": "Build report metrics with math, statistics, random, and collections"
+        },
+        {
+          "id": "dates-and-deadlines-with-datetime",
+          "title": "Dates and deadlines with datetime"
+        },
+        {
+          "id": "portable-paths-environment-and-runtime",
+          "title": "Portable paths, process settings, and runtime checks"
+        },
+        {
+          "id": "command-line-argparse-and-config",
+          "title": "Command-line tools: accept clear, validated options"
+        },
+        {
+          "id": "layered-configuration-and-secret-boundaries",
+          "title": "Layered configuration: INI, environment, and command-line options"
+        },
+        {
+          "id": "errors-files-and-logging",
+          "title": "Errors, files, resources, and logging"
+        },
+        {
+          "id": "exceptions-and-defensive-file-handling",
+          "title": "Exceptions: handle expected failures without hiding mistakes"
+        },
+        {
+          "id": "exception-design-recovery-and-cleanup",
+          "title": "Exception design, recovery, and cleanup"
+        },
+        {
+          "id": "exception-boundaries-custom-errors-and-cleanup",
+          "title": "Exception boundaries, custom errors, and reliable cleanup"
+        },
+        {
+          "id": "syntax-errors-runtime-exceptions-and-tracebacks",
+          "title": "Syntax errors versus runtime exceptions"
+        },
+        {
+          "id": "exception-flow-else-finally-and-assertions",
+          "title": "Exception flow: except, else, finally, and assertions"
+        },
+        {
+          "id": "text-binary-files-and-encoding",
+          "title": "Text versus binary files: modes, encoding, and cleanup"
+        },
+        {
+          "id": "serialization-formats-and-trust-boundaries",
+          "title": "Choose JSON, CSV, or pickle by data shape and trust"
+        },
+        {
+          "id": "logging-debugging-and-tracebacks",
+          "title": "Logging and debugging: learn what a program is doing"
+        },
+        {
+          "id": "logging-context-levels-and-safe-diagnostics",
+          "title": "Logging with context, levels, and safe diagnostics"
+        },
+        {
+          "id": "structured-context-logging-without-secrets",
+          "title": "Useful logs: levels, handlers, context, and privacy"
+        },
+        {
+          "id": "debugging-breakpoint-pdb-and-minimal-repro",
+          "title": "Debug with a small reproduction, traceback, and breakpoint"
+        },
+        {
+          "id": "context-managers-serialization-and-files",
+          "title": "Files, context managers, and safe data serialization"
+        },
+        {
+          "id": "environments-standard-library-and-reproducible-runs",
+          "title": "Virtual environments, the standard library, and reproducible runs"
+        },
+        {
+          "id": "dates-times-timezones-and-scheduling",
+          "title": "Dates, times, time zones, and reliable scheduling"
+        },
+        {
+          "id": "json-schema-boundaries-and-error-messages",
+          "title": "Validate JSON shapes at the boundary"
+        }
+      ]
+    },
+    {
+      "level": "advanced",
+      "title": "Advanced Python",
+      "lessons": [
+        {
+          "id": "set-reconciliation-and-subset-proof",
+          "title": "Reconcile two inventories with set operations"
+        },
+        {
+          "id": "recursion-backtracking-and-dynamic-programming",
+          "title": "Recursion, backtracking, and dynamic programming"
+        },
+        {
+          "id": "custom-context-managers-and-resource-ownership",
+          "title": "Custom context managers and resource ownership"
+        },
+        {
+          "id": "contextlib-generator-context-managers",
+          "title": "Create a focused context manager with contextlib"
+        },
+        {
+          "id": "object-oriented-design-and-data-model",
+          "title": "Object-oriented design and the Python data model"
+        },
+        {
+          "id": "classes-objects-and-composition",
+          "title": "Classes and objects: model related state and behaviour"
+        },
+        {
+          "id": "composition-inheritance-and-method-resolution",
+          "title": "Composition, inheritance, and method resolution"
+        },
+        {
+          "id": "class-construction-and-bound-methods",
+          "title": "Create objects and understand bound methods"
+        },
+        {
+          "id": "class-instance-attributes-and-shadowing",
+          "title": "Class attributes, instance attributes, and shadowing"
+        },
+        {
+          "id": "python-data-model-properties-and-invariants",
+          "title": "The Python data model: properties, invariants, and special methods"
+        },
+        {
+          "id": "properties-name-mangling-and-introspection",
+          "title": "Properties, naming conventions, and inspecting object state"
+        },
+        {
+          "id": "cooperative-super-mixins-and-polymorphism",
+          "title": "Inheritance, mixins, polymorphism, and cooperative super"
+        },
+        {
+          "id": "value-object-repr-comparison-and-arithmetic",
+          "title": "Special methods for readable, comparable, addable values"
+        },
+        {
+          "id": "container-iteration-and-context-protocols",
+          "title": "Make an object work with len, indexing, for, and with"
+        },
+        {
+          "id": "dataclass-records-and-enum-boundaries",
+          "title": "Use dataclasses and enums without skipping validation"
+        },
+        {
+          "id": "abc-protocol-and-composition-contracts",
+          "title": "Choose an abstract base class, a protocol, or composition"
+        },
+        {
+          "id": "dataclasses-enums-abcs-and-protocol-design",
+          "title": "Dataclasses, enums, abstract base classes, and protocols"
+        },
+        {
+          "id": "execution-memory-and-performance",
+          "title": "Execution model, memory, and performance"
+        },
+        {
+          "id": "profiling-complexity-and-performance",
+          "title": "Performance: measure a bottleneck before optimizing"
+        },
+        {
+          "id": "asyncio-tasks-timeouts-and-cancellation",
+          "title": "Async Python: wait efficiently for I/O work"
+        },
+        {
+          "id": "async-queue-backpressure-and-clean-shutdown",
+          "title": "Bound an async work queue and finish jobs cleanly"
+        },
+        {
+          "id": "event-loop-task-trace-and-cancellation",
+          "title": "Trace an event loop task from start to cancellation"
+        },
+        {
+          "id": "concurrency-async-and-network-boundaries",
+          "title": "Concurrency, asyncio, and network boundaries"
+        },
+        {
+          "id": "thread-lock-order-and-safe-transfer",
+          "title": "Prevent thread races and lock-order deadlocks"
+        },
+        {
+          "id": "thread-queue-results-and-worker-failures",
+          "title": "Hand off thread work and collect failures safely"
+        },
+        {
+          "id": "cpu-io-bound-work-and-concurrency-choice",
+          "title": "CPU-bound, I/O-bound, and choosing Python concurrency"
+        },
+        {
+          "id": "process-payloads-and-pickle-boundaries",
+          "title": "Design data that can cross a process boundary"
+        },
+        {
+          "id": "process-pool-script-and-result-boundaries",
+          "title": "Run a process pool from a real script and collect results"
+        },
+        {
+          "id": "process-pipe-messages-and-ownership",
+          "title": "Send a result between processes without sharing a variable"
+        },
+        {
+          "id": "process-pool-failures-and-measurement",
+          "title": "Measure a process pool and keep worker failures visible"
+        },
+        {
+          "id": "taskgroup-failure-and-sibling-cleanup",
+          "title": "Know what happens to sibling async tasks when one fails"
+        },
+        {
+          "id": "sockets-protocols-timeouts-and-framing",
+          "title": "Sockets, protocols, timeouts, and message framing"
+        },
+        {
+          "id": "local-http-client-and-paged-responses",
+          "title": "Read a real HTTP response and collect every page safely"
+        },
+        {
+          "id": "http-retry-safety-and-rate-limits",
+          "title": "Retry an HTTP request only when its effect is safe"
+        },
+        {
+          "id": "retry-after-seconds-or-http-date",
+          "title": "Read a Retry-After wait as seconds or a date"
+        },
+        {
+          "id": "webhook-signature-dedupe-and-queue",
+          "title": "Accept a webhook only after checking its signature and delivery ID"
+        },
+        {
+          "id": "webhook-inbox-transaction-and-worker",
+          "title": "Record a delivery before a background worker processes it"
+        },
+        {
+          "id": "worker-retries-and-dead-letter-records",
+          "title": "Keep failed event jobs visible after bounded retries"
+        },
+        {
+          "id": "algorithms-data-structures-and-reasoning",
+          "title": "Algorithms, data structures, and problem reasoning"
+        },
+        {
+          "id": "graph-traversal-and-shortest-path-reasoning",
+          "title": "Graph traversal and shortest-path reasoning"
+        },
+        {
+          "id": "trees-tries-and-union-find",
+          "title": "Trees, tries, and union-find: choosing a structure for relationships"
+        },
+        {
+          "id": "recursion-memoization-and-dynamic-programming",
+          "title": "Recursion, memoization, and dynamic programming"
+        },
+        {
+          "id": "prove-first-seen-dedup-with-loop-invariant",
+          "title": "Reason through a loop invariant before trusting a data-cleaning loop"
+        },
+        {
+          "id": "derive-leftmost-search-boundary-with-invariant",
+          "title": "Derive a leftmost binary-search boundary"
+        },
+        {
+          "id": "induction-for-pair-count-growth",
+          "title": "Use induction to explain why pair counts grow"
+        },
+        {
+          "id": "topological-order-for-prerequisite-dag",
+          "title": "Order prerequisites and detect cycles"
+        },
+        {
+          "id": "linked-fifo-head-tail-invariants",
+          "title": "Keep head and tail correct in a linked FIFO queue"
+        },
+        {
+          "id": "big-o-empirical-measurement-and-tradeoffs",
+          "title": "Big-O, measurement, and time-space trade-offs"
+        },
+        {
+          "id": "count-possible-pairs-with-combinations",
+          "title": "Count possible review pairs before generating them"
+        },
+        {
+          "id": "amortized-list-growth-and-deque-choice",
+          "title": "Explain amortized list growth and choose a queue"
+        },
+        {
+          "id": "graphs-traversal-and-shortest-path-reasoning",
+          "title": "Graphs, traversal, and shortest-path reasoning"
+        },
+        {
+          "id": "sorting-heaps-and-priority-workflows",
+          "title": "Sorting, heaps, and priority workflows"
+        },
+        {
+          "id": "binary-search-bisect-and-sorted-data-contracts",
+          "title": "Binary search, bisect, and the sorted-data contract"
+        },
+        {
+          "id": "dictionaries-hash-tables-and-lookup-tradeoffs",
+          "title": "Dictionaries, hash tables, and lookup trade-offs"
+        },
+        {
+          "id": "union-find-connectivity-and-path-compression",
+          "title": "Track connected groups with union-find"
+        },
+        {
+          "id": "trie-prefix-lookup-and-word-boundaries",
+          "title": "Find word prefixes with a trie"
+        },
+        {
+          "id": "inorder-traversal-and-bst-invariant",
+          "title": "Read a binary search tree in sorted order"
+        },
+        {
+          "id": "dijkstra-nonnegative-weighted-paths",
+          "title": "Find a cheapest route when edge costs cannot be negative"
+        },
+        {
+          "id": "bellman-ford-negative-edges",
+          "title": "Find cheapest routes when costs may be negative"
+        },
+        {
+          "id": "hash-equality-collision-and-stable-keys",
+          "title": "Understand hash collisions and stable dictionary keys"
+        },
+        {
+          "id": "priority-queue-reschedule-and-cancel",
+          "title": "Reschedule and cancel work in a priority queue"
+        },
+        {
+          "id": "stable-sorting-and-top-k-choice",
+          "title": "Sort records stably or select only the first few"
+        },
+        {
+          "id": "singly-linked-list-head-operations",
+          "title": "Build a linked list and choose it only when it fits"
+        },
+        {
+          "id": "discrete-math-probability-and-algorithm-reasoning",
+          "title": "Discrete math, probability, and algorithm reasoning"
+        },
+        {
+          "id": "modular-arithmetic-for-cyclic-indexing",
+          "title": "Use modulo to wrap a position around a cycle"
+        },
+        {
+          "id": "probability-from-counted-sample-space",
+          "title": "Calculate a sampling probability from counted outcomes"
+        },
+        {
+          "id": "relations-versus-total-function-mappings",
+          "title": "Tell a many-to-many relation from a one-value function"
+        },
+        {
+          "id": "quantifiers-and-empty-input-validation",
+          "title": "Use all and any without accepting an empty batch by accident"
+        },
+        {
+          "id": "boolean-rules-and-de-morgan",
+          "title": "Translate a product rule with Boolean logic"
+        },
+        {
+          "id": "equivalence-classes-and-partitions",
+          "title": "Group values by an equivalence rule"
+        },
+        {
+          "id": "deque-heap-and-operation-driven-choices",
+          "title": "Choose a deque or heap from the operation you need"
+        },
+        {
+          "id": "threads-processes-and-coordination",
+          "title": "Threads, processes, and coordinated work"
+        },
+        {
+          "id": "algorithmic-thinking-and-data-structure-choices",
+          "title": "Algorithmic thinking and data-structure choices"
+        },
+        {
+          "id": "generics-protocols-and-runtime-validation-boundaries",
+          "title": "Generics, protocols, and runtime validation boundaries"
+        },
+        {
+          "id": "task-groups-exception-groups-and-structured-concurrency",
+          "title": "Task groups, exception groups, and structured concurrency"
+        },
+        {
+          "id": "context-manager-lifetime-and-resource-ownership",
+          "title": "Context managers, lifetime, and resource ownership"
+        },
+        {
+          "id": "async-iterators-timeouts-and-cancellation-cleanup",
+          "title": "Async iterators, timeouts, and cancellation cleanup"
+        },
+        {
+          "id": "async-streams-and-resource-lifetime",
+          "title": "Async streams and resource lifetime"
+        }
+      ]
+    },
+    {
+      "level": "production",
+      "title": "Production Python",
+      "lessons": [
+        {
+          "id": "code-quality-formatting-linting-and-reviewable-change",
+          "title": "Code quality: formatting, linting, and reviewable change"
+        },
+        {
+          "id": "packaging-pyproject-and-dependencies",
+          "title": "Packaging: make a Python project reproducible"
+        },
+        {
+          "id": "inspect-project-metadata-offline",
+          "title": "Inspect pyproject.toml before building a package"
+        },
+        {
+          "id": "requirements-constraints-and-safe-upgrades",
+          "title": "Requirements, constraints, locks, and safe upgrades"
+        },
+        {
+          "id": "wheels-sdists-and-release-boundaries",
+          "title": "Wheels, source distributions, and release boundaries"
+        },
+        {
+          "id": "secure-configuration-secrets-and-subprocesses",
+          "title": "Secure configuration: keep secrets and commands under control"
+        },
+        {
+          "id": "generate-and-handle-demo-tokens",
+          "title": "Generate a demo token without exposing it"
+        },
+        {
+          "id": "confine-user-file-paths",
+          "title": "Keep a requested file inside an allowed folder"
+        },
+        {
+          "id": "validate-json-without-untrusted-pickle",
+          "title": "Validate JSON data without loading untrusted pickle"
+        },
+        {
+          "id": "http-api-retries-timeouts-and-pagination",
+          "title": "HTTP APIs: reliable requests, retries, and pagination"
+        },
+        {
+          "id": "databases-apis-and-service-design",
+          "title": "Databases, APIs, and service design"
+        },
+        {
+          "id": "sqlite-parameters-and-transactions",
+          "title": "Databases from Python: parameters and transactions"
+        },
+        {
+          "id": "database-transaction-boundaries-and-query-safety",
+          "title": "Database transactions, connection boundaries, and query safety"
+        },
+        {
+          "id": "database-migrations-query-shape-and-n-plus-one",
+          "title": "Database migrations, query shape, and the N+1 trap"
+        },
+        {
+          "id": "sql-values-and-identifier-allowlists",
+          "title": "Keep SQL values separate and allow-list dynamic column names"
+        },
+        {
+          "id": "sqlite-two-write-rollback-boundary",
+          "title": "Keep two related database writes together"
+        },
+        {
+          "id": "sqlite-postgresql-portability-boundary",
+          "title": "Know what carries from SQLite to PostgreSQL"
+        },
+        {
+          "id": "test-a-real-sqlite-boundary",
+          "title": "Test a real SQLite boundary after a mocked unit test"
+        },
+        {
+          "id": "test-sqlite-transaction-boundary",
+          "title": "Test a database transaction as one whole operation"
+        },
+        {
+          "id": "sqlite-query-plan-and-index-evidence",
+          "title": "Check a database index with a real query plan"
+        },
+        {
+          "id": "sqlite-foreign-key-enforcement-boundary",
+          "title": "Keep related rows valid with SQLite foreign keys"
+        },
+        {
+          "id": "sqlite-savepoints-and-outer-commit",
+          "title": "Undo one part of a SQLite transaction with a savepoint"
+        },
+        {
+          "id": "sqlite-idempotent-completion-and-key-conflict",
+          "title": "Record an API completion once across retries"
+        },
+        {
+          "id": "conditional-update-etag-and-lost-update",
+          "title": "Prevent stale API edits from overwriting newer work"
+        },
+        {
+          "id": "sqlite-schema-version-and-safe-upgrade",
+          "title": "Version a SQLite schema and test its upgrade"
+        },
+        {
+          "id": "query-count-and-batched-progress-reads",
+          "title": "Measure query count and batch related reads"
+        },
+        {
+          "id": "measure-n-plus-one-with-sql-tracing",
+          "title": "Measure an N+1 query pattern before changing it"
+        },
+        {
+          "id": "sqlite-schema-version-migration",
+          "title": "Upgrade a SQLite schema without losing existing rows"
+        },
+        {
+          "id": "rows-to-domain-objects-and-orm-boundaries",
+          "title": "Turn database rows into Python records without hiding SQL"
+        },
+        {
+          "id": "sqlite-failed-migration-rollback",
+          "title": "Prove a failed schema upgrade leaves the old database usable"
+        },
+        {
+          "id": "api-contracts-validation-statuses-and-idempotency",
+          "title": "API contracts, validation, status semantics, and idempotency"
+        },
+        {
+          "id": "authentication-authorization-and-session-boundaries",
+          "title": "Authentication, authorization, and session boundaries"
+        },
+        {
+          "id": "idempotency-key-reuse-conflict",
+          "title": "Reject an idempotency key reused for a different request"
+        },
+        {
+          "id": "api-input-and-object-authorization-order",
+          "title": "Validate an API request and check the exact record it may change"
+        },
+        {
+          "id": "stable-cursor-pages-for-progress-api",
+          "title": "Return ordered API pages with a bounded next cursor"
+        },
+        {
+          "id": "api-response-version-compatibility",
+          "title": "Add a new API response without breaking an older client"
+        },
+        {
+          "id": "http-problem-details-safe-errors",
+          "title": "Give API clients useful errors without leaking internals"
+        },
+        {
+          "id": "fixed-window-rate-limit-and-retry-after",
+          "title": "Limit API requests and tell a client when to retry"
+        },
+        {
+          "id": "request-lifecycle-middleware-and-background-work",
+          "title": "Request lifecycle, middleware, and background-work boundaries"
+        },
+        {
+          "id": "queues-workers-and-backpressure",
+          "title": "Queues, worker jobs, and backpressure"
+        },
+        {
+          "id": "wsgi-request-route-and-response-boundary",
+          "title": "Trace a Python web request from route to response"
+        },
+        {
+          "id": "wsgi-middleware-response-wrapper",
+          "title": "Wrap a web handler with one reusable middleware rule"
+        },
+        {
+          "id": "html-template-text-escaping-boundary",
+          "title": "Show learner text in HTML without turning it into markup"
+        },
+        {
+          "id": "accepted-background-job-status-boundary",
+          "title": "Accept background work without pretending it is finished"
+        },
+        {
+          "id": "middleware-order-and-error-boundary",
+          "title": "Put web middleware in the right order and handle errors honestly"
+        },
+        {
+          "id": "queued-job-worker-state-transition",
+          "title": "Run one queued job and record success or failure"
+        },
+        {
+          "id": "sqlite-atomic-job-claim",
+          "title": "Claim a queued SQLite job before another worker can take it"
+        },
+        {
+          "id": "flask-route-and-test-client-contract",
+          "title": "Build and test one Flask route without starting a server"
+        },
+        {
+          "id": "flask-template-autoescaping-contract",
+          "title": "Render learner text safely in a Flask HTML template"
+        },
+        {
+          "id": "flask-app-factory-test-isolation",
+          "title": "Create separate Flask app instances for separate tests"
+        },
+        {
+          "id": "flask-request-db-lifetime",
+          "title": "Open a database connection for a Flask request and close it afterward"
+        },
+        {
+          "id": "flask-dev-server-production-boundary",
+          "title": "Know where Flask's development server stops and deployment begins"
+        },
+        {
+          "id": "web-routing-request-validation-and-handler-boundaries",
+          "title": "Web routing, request validation, and handler boundaries"
+        },
+        {
+          "id": "service-boundaries-idempotency-and-resilience",
+          "title": "Service design: boundaries, idempotency, and resilience"
+        },
+        {
+          "id": "circuit-breaker-state-transitions",
+          "title": "Stop repeated failing calls with a circuit breaker"
+        },
+        {
+          "id": "bounded-stale-fallback-and-degraded-response",
+          "title": "Keep a core feature working during an optional outage"
+        },
+        {
+          "id": "bulkhead-capacity-isolation-model",
+          "title": "Reserve capacity for essential work with a bulkhead"
+        },
+        {
+          "id": "testing-quality-and-secure-engineering",
+          "title": "Testing, code quality, and secure engineering"
+        },
+        {
+          "id": "testing-pytest-and-test-doubles",
+          "title": "Testing: prove behaviour before changing code"
+        },
+        {
+          "id": "test-design-boundaries-doubles-and-properties",
+          "title": "Test design: boundaries, doubles, and properties"
+        },
+        {
+          "id": "property-based-thinking-invariants-and-test-data",
+          "title": "Property-based thinking, invariants, and test data"
+        },
+        {
+          "id": "fixtures-test-doubles-and-interaction-boundaries",
+          "title": "Fixtures, test doubles, and interaction boundaries"
+        },
+        {
+          "id": "patch-the-name-your-code-uses",
+          "title": "Patch the name your Python code actually uses"
+        },
+        {
+          "id": "run-boundary-tests-with-unittest",
+          "title": "Run normal and error-boundary tests with unittest"
+        },
+        {
+          "id": "temporary-directory-test-isolation",
+          "title": "Test file output without touching real user files"
+        },
+        {
+          "id": "inject-clock-for-deterministic-tests",
+          "title": "Make time-based behavior testable with an injected clock"
+        },
+        {
+          "id": "test-writer-failure-boundary",
+          "title": "Test a failed save without hiding the failure"
+        },
+        {
+          "id": "test-retry-with-injected-sleeper",
+          "title": "Test bounded retries without waiting"
+        },
+        {
+          "id": "test-input-contract-and-regression",
+          "title": "Turn an input contract into a regression test"
+        },
+        {
+          "id": "check-invariant-over-generated-inputs",
+          "title": "Check a rule across many generated inputs"
+        },
+        {
+          "id": "pass-subprocess-arguments-as-data",
+          "title": "Pass subprocess arguments as data, not shell commands"
+        },
+        {
+          "id": "compare-local-package-artifact-hash",
+          "title": "Check a local package artifact against a recorded hash"
+        },
+        {
+          "id": "retention-minimization-and-safe-event-records",
+          "title": "Minimize event data and apply a retention rule"
+        },
+        {
+          "id": "delivery-operations-and-team-workflows",
+          "title": "Delivery, operations, and team workflows"
+        },
+        {
+          "id": "delivery-containers-ci-and-observability",
+          "title": "Delivery and operations: run software reliably after coding"
+        },
+        {
+          "id": "cloud-serverless-configuration-and-deployment-boundaries",
+          "title": "Cloud, serverless, configuration, and deployment boundaries"
+        },
+        {
+          "id": "reliability-objectives-incidents-and-dependency-lifecycle",
+          "title": "Reliability objectives, incident learning, and dependency lifecycle"
+        },
+        {
+          "id": "safe-job-logging-and-incident-triage",
+          "title": "Log a background job without exposing learner data"
+        },
+        {
+          "id": "processes-signals-and-graceful-shutdown",
+          "title": "Processes, signals, and graceful shutdown"
+        },
+        {
+          "id": "domain-boundaries-dependency-inversion-and-testable-services",
+          "title": "Domain boundaries, dependency inversion, and testable services"
+        },
+        {
+          "id": "versioning-deprecation-and-safe-migrations",
+          "title": "Versioning, deprecation, and safe migrations"
+        },
+        {
+          "id": "dependency-provenance-lockfiles-and-safe-upgrades",
+          "title": "Dependency provenance, lockfiles, and safe upgrades"
+        },
+        {
+          "id": "inventory-installed-distributions-offline",
+          "title": "Inventory installed Python distributions offline"
+        },
+        {
+          "id": "hold-dependency-release-on-missing-review-evidence",
+          "title": "Hold a dependency release when review evidence is missing"
+        },
+        {
+          "id": "compare-tested-resolved-set-with-environment",
+          "title": "Compare a tested dependency set with the current environment"
+        },
+        {
+          "id": "read-sbom-dependency-relationships-honestly",
+          "title": "Read an SBOM dependency map without hiding unknowns"
+        },
+        {
+          "id": "web-api-contracts-validation-and-errors",
+          "title": "Web API contracts, validation, and safe errors"
+        },
+        {
+          "id": "sqlite-atomic-progress-updates",
+          "title": "Make a progress update atomic with SQLite"
+        },
+        {
+          "id": "job-lease-expiry-and-stale-worker",
+          "title": "Recover an expired job without trusting an old worker"
+        }
+      ]
+    },
+    {
+      "level": "expert",
+      "title": "Expert and internals",
+      "lessons": [
+        {
+          "id": "python-portability-and-implementation-boundaries",
+          "title": "Python portability and implementation boundaries"
+        },
+        {
+          "id": "descriptors-and-class-creation-hooks",
+          "title": "Descriptors and class creation hooks"
+        },
+        {
+          "id": "class-decorators-init-subclass-and-metaclass-boundaries",
+          "title": "Choose a class decorator, subclass hook, or metaclass"
+        },
+        {
+          "id": "data-versus-nondata-descriptor-lookup",
+          "title": "Why some descriptors override instance values and others do not"
+        },
+        {
+          "id": "metaclass-new-and-class-creation-order",
+          "title": "See when a metaclass builds a class"
+        },
+        {
+          "id": "memory-bytecode-and-gil",
+          "title": "Python internals: references, bytecode, and the GIL"
+        },
+        {
+          "id": "reachability-cycles-and-weak-ownership",
+          "title": "Names, cycles, collection, and weak ownership"
+        },
+        {
+          "id": "object-lifetime-garbage-collection-and-weak-references",
+          "title": "Object lifetime, garbage collection, and weak references"
+        },
+        {
+          "id": "copy-depth-identity-and-interning-caveats",
+          "title": "Choose binding, shallow copy, or deep copy deliberately"
+        },
+        {
+          "id": "tracemalloc-snapshots-and-memory-ownership",
+          "title": "Measure Python allocations before blaming a memory leak"
+        },
+        {
+          "id": "profiling-memory-and-evidence-based-optimization",
+          "title": "Profiling memory and optimizing from evidence"
+        },
+        {
+          "id": "source-compile-bytecode-and-pyc-cache",
+          "title": "From source to code objects and .pyc cache files"
+        },
+        {
+          "id": "frames-call-stack-and-namespaces",
+          "title": "Read the call stack without confusing local and global names"
+        },
+        {
+          "id": "ast-bytecode-and-implementation-boundaries",
+          "title": "ASTs, bytecode, and implementation boundaries"
+        },
+        {
+          "id": "complexity-timeit-cprofile-workflow",
+          "title": "Connect complexity, a fair benchmark, and a profiler"
+        },
+        {
+          "id": "gil-builds-and-portable-thread-safety",
+          "title": "Understand the GIL without assuming threads are safe"
+        },
+        {
+          "id": "model-integration-evaluation-and-monitoring-boundaries",
+          "title": "Model integration, evaluation, and monitoring boundaries"
+        },
+        {
+          "id": "scientific-data-and-high-performance-workflows",
+          "title": "Scientific, data, and high-performance Python workflows"
+        },
+        {
+          "id": "tabular-joins-missing-data-and-data-quality",
+          "title": "Tabular joins, missing data, and data-quality checks"
+        },
+        {
+          "id": "numpy-vectorization-and-reproducibility",
+          "title": "NumPy thinking: arrays, vectorization, and reproducible results"
+        },
+        {
+          "id": "numpy-arrays-views-dtypes-and-reproducibility",
+          "title": "NumPy arrays: views, dtypes, and reproducible experiments"
+        },
+        {
+          "id": "reproducible-experiments-and-honest-data-visualization",
+          "title": "Reproducible experiments and honest data visualization"
+        },
+        {
+          "id": "tabular-data-quality-and-joins",
+          "title": "Tabular data: clean, join, group, and validate"
+        },
+        {
+          "id": "grouped-analysis-timeseries-and-measurement-caveats",
+          "title": "Grouped analysis, time series, and measurement caveats"
+        },
+        {
+          "id": "interpreter-extensions-and-embedding",
+          "title": "Interpreter internals, extensions, and embedding"
+        },
+        {
+          "id": "extensions-embedding-and-portability-decisions",
+          "title": "Extensions, embedding, and portability decisions"
+        },
+        {
+          "id": "security-supply-chain-and-reliability",
+          "title": "Security, supply chain, privacy, and reliability"
+        },
+        {
+          "id": "threat-modeling-trust-boundaries-and-secure-defaults",
+          "title": "Threat modeling, trust boundaries, and secure defaults"
+        },
+        {
+          "id": "extension-modules-embedding-and-portability",
+          "title": "Extension modules, embedding, and portable Python design"
+        }
+      ]
+    },
+    {
+      "level": "real-world",
+      "title": "Real-world projects",
+      "lessons": [
+        {
+          "id": "project-one-study-summary-cli",
+          "title": "Project 1: build a small study-summary command"
+        },
+        {
+          "id": "collaboration-code-review-and-change-management",
+          "title": "Collaboration, code review, and safe change management"
+        },
+        {
+          "id": "batch-data-pipelines-validation-and-recovery",
+          "title": "Batch data pipelines: validation, recovery, and trustworthy reports"
+        },
+        {
+          "id": "project-two-validated-study-csv",
+          "title": "Project 2: import validated study sessions from CSV"
+        },
+        {
+          "id": "qa-automation-test-reports-and-flaky-tests",
+          "title": "QA automation, useful test reports, and flaky-test control"
+        },
+        {
+          "id": "project-three-local-api-client-boundary",
+          "title": "Project 3: design an API client with a local stand-in"
+        },
+        {
+          "id": "contract-testing-and-compatible-change-design",
+          "title": "Contract testing and compatible change design"
+        },
+        {
+          "id": "accessible-private-and-user-safe-application-design",
+          "title": "Accessible, private, and user-safe application design"
+        },
+        {
+          "id": "accessible-error-contracts-and-recovery",
+          "title": "Give learners clear, accessible recovery messages"
+        },
+        {
+          "id": "automation-scheduling-and-idempotent-jobs",
+          "title": "Automation, scheduling, and idempotent jobs"
+        },
+        {
+          "id": "specializations-and-progressive-projects",
+          "title": "Python specializations and progressive real-world projects"
+        },
+        {
+          "id": "project-four-tested-progress-service",
+          "title": "Project 4: give progress a tested service contract"
+        },
+        {
+          "id": "project-five-study-progress-capstone",
+          "title": "Project 5: assemble and release the study-progress capstone"
+        },
+        {
+          "id": "gui-and-event-driven-apps",
+          "title": "Desktop GUI and event-driven Python"
+        },
+        {
+          "id": "embedded-events-sensors-and-resource-limits",
+          "title": "Embedded Python: sensor events and resource limits"
+        },
+        {
+          "id": "project-architecture-requirements-and-change-review",
+          "title": "Project architecture, requirements, and change review"
+        },
+        {
+          "id": "reading-codebases-and-planning-safe-changes",
+          "title": "Reading codebases and planning safe changes"
+        },
+        {
+          "id": "capstone-release-and-operational-readiness",
+          "title": "Capstone: turn a Python tool into a reliable release"
+        },
+        {
+          "id": "capstone-release-evidence-and-handover",
+          "title": "Prove a capstone is ready to hand over"
+        }
+      ]
+    },
+    {
+      "level": "certification",
+      "title": "Certification preparation",
+      "lessons": [
+        {
+          "id": "exam-reasoning-and-objective-map",
+          "title": "Certification reasoning, code tracing, and objective map"
+        }
+      ]
+    }
+  ]
+}

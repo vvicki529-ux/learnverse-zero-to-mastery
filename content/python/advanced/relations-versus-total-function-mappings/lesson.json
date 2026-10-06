@@ -64,45 +64,7 @@
       "avoid": "Name the domain and codomain and use consistent tuple positions."
     }
   ],
-  "lab": {
-    "title": "Validate one current lesson per active learner",
-    "safety": "Uses only fictional in-memory strings. The static site guides practice but does not yet execute Python in-browser.",
-    "starterCode": "def current_map(domain, pairs):\n    # Reject unknown learners, conflicting lessons, and missing learners.\n    pass\n\n# Test valid, conflict, missing and unknown cases.\n",
-    "guidedSteps": [
-      "Create an empty result dict.",
-      "Reject a pair whose learner is not in domain.",
-      "Reject a different lesson for a learner already present.",
-      "After all pairs, compare result keys with the full domain.",
-      "Test a valid map and each of the three invalid cases."
-    ],
-    "checks": [
-      "Valid mapping contains one value for every domain member.",
-      "Conflicting value is rejected, not silently overwritten.",
-      "Missing domain member is rejected.",
-      "Unknown learner is rejected."
-    ],
-    "hints": [
-      "Use `if learner not in domain`.",
-      "Check `learner in result and result[learner] != lesson` before assignment.",
-      "Use `set(result) != set(domain)` after the loop."
-    ],
-    "solution": "def current_map(domain, pairs):\n    result = {}\n    for learner, lesson in pairs:\n        if learner not in domain:\n            raise ValueError('unknown learner')\n        if learner in result and result[learner] != lesson:\n            raise ValueError('conflict')\n        result[learner] = lesson\n    if set(result) != set(domain):\n        raise ValueError('missing learner')\n    return result\n\nassert current_map({'Ada', 'Bo'}, [('Ada', 'Loops'), ('Bo', 'Files')]) == {\n    'Ada': 'Loops', 'Bo': 'Files'}\nfor bad in ([('Ada', 'Loops'), ('Ada', 'Files'), ('Bo', 'Files')],\n            [('Ada', 'Loops')],\n            [('Ada', 'Loops'), ('Bo', 'Files'), ('Cy', 'Input')]):\n    try:\n        current_map({'Ada', 'Bo'}, bad)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('invalid mapping accepted')\nprint('mapping contract checked')\n",
-    "solutionExplanation": "The function enforces at-most-one output through the conflict check and exactly-one-for-every-domain-member through the final coverage check. Completions that allow several lessons should not use this structure.",
-    "challenges": [
-      "Predict whether two identical Ada/Loops pairs pass.",
-      "Find the bug: assign to the dict before checking a conflict.",
-      "Experiment: represent completed lessons with a set of pairs instead of this dict."
-    ],
-    "simulation": {
-      "prompt": "Ada completed Input and Loops. Is a dict mapping Ada to one lesson a lossless representation of both completions?",
-      "choices": [
-        "No; a set of pairs or grouped collection is needed",
-        "Yes; dict keys can repeat"
-      ],
-      "correctIndex": 0,
-      "explanation": "A dictionary has one value per key, so a later assignment replaces the earlier one."
-    }
-  },
+  "lab": {"title":"Validate one current lesson per active learner","safety":"Only fictional in-memory strings are used. Run the exercise in the site's bundled Python worker.","starterCode":"def current_map(domain, pairs):\n    # Reject unknown learners, conflicting lessons, and missing learners.\n    pass\n\n# Test valid, conflict, missing and unknown cases.\n","guidedSteps":["Create an empty result dict.","Reject a pair whose learner is not in domain.","Reject a different lesson for a learner already present.","After all pairs, compare result keys with the full domain.","Test a valid map and each of the three invalid cases."],"checks":["Valid mapping contains one value for every domain member.","Conflicting value is rejected, not silently overwritten.","Missing domain member is rejected.","Unknown learner is rejected."],"hints":["Use `if learner not in domain`.","Check `learner in result and result[learner] != lesson` before assignment.","Use `set(result) != set(domain)` after the loop."],"solution":"def current_map(domain, pairs):\n    result = {}\n    for learner, lesson in pairs:\n        if learner not in domain:\n            raise ValueError('unknown learner')\n        if learner in result and result[learner] != lesson:\n            raise ValueError('conflict')\n        result[learner] = lesson\n    if set(result) != set(domain):\n        raise ValueError('missing learner')\n    return result\n\nassert current_map({'Ada', 'Bo'}, [('Ada', 'Loops'), ('Bo', 'Files')]) == {\n    'Ada': 'Loops', 'Bo': 'Files'}\nfor bad in ([('Ada', 'Loops'), ('Ada', 'Files'), ('Bo', 'Files')],\n            [('Ada', 'Loops')],\n            [('Ada', 'Loops'), ('Bo', 'Files'), ('Cy', 'Input')]):\n    try:\n        current_map({'Ada', 'Bo'}, bad)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('invalid mapping accepted')\nprint('mapping contract checked')\n","solutionExplanation":"The function enforces at-most-one output through the conflict check and exactly-one-for-every-domain-member through the final coverage check. Completions that allow several lessons should not use this structure.","challenges":["Predict whether two identical Ada/Loops pairs pass.","Find the bug: assign to the dict before checking a conflict.","Experiment: represent completed lessons with a set of pairs instead of this dict."],"simulation":{"prompt":"Ada completed Input and Loops. Is a dict mapping Ada to one lesson a lossless representation of both completions?","choices":["No; a set of pairs or grouped collection is needed","Yes; dict keys can repeat"],"correctIndex":0,"explanation":"A dictionary has one value per key, so a later assignment replaces the earlier one."},"testCode":"assert current_map({'Ada','Bo'},[('Ada','Loops'),('Bo','Files')])=={'Ada':'Loops','Bo':'Files'}\nfor bad in ([('Ada','Loops')],[('Ada','Loops'),('Ada','Files'),('Bo','Files')],[('Ada','Loops'),('Bo','Files'),('Cy','Input')]):\n    try: current_map({'Ada','Bo'},bad)\n    except ValueError: pass\n    else: raise AssertionError('invalid mapping accepted')\nprint('PASS: total mapping')"},
   "projectConnection": {
     "project": "Study-progress data model",
     "milestone": "Store completed learner/lesson pairs without loss, and separately validate the one-current-lesson mapping for active learners.",

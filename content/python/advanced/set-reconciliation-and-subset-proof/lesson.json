@@ -65,45 +65,7 @@
       "avoid": "Validate duplicates on the original sequence when duplicates are an error."
     }
   ],
-  "lab": {
-    "title": "Build a deterministic inventory-difference report",
-    "safety": "Uses small in-memory examples only. The static site guides this exercise but does not yet execute Python in the browser.",
-    "starterCode": "def reconcile(expected_ids, submitted_ids):\n    # Reject repeated submitted IDs.\n    # Return sorted missing and unexpected ID lists.\n    pass\n\n# Try an exact match, one missing ID, and one unexpected ID.\n",
-    "guidedSteps": [
-      "Check submitted_ids for duplicates before making a set.",
-      "Create expected and submitted sets.",
-      "Compute missing as expected minus submitted.",
-      "Compute unexpected in the opposite direction.",
-      "Sort both lists so the same inputs produce the same display."
-    ],
-    "checks": [
-      "Returns empty lists for an exact match.",
-      "Reports missing and unexpected in the correct directions.",
-      "Rejects a duplicate submitted ID before discarding it.",
-      "Produces sorted results."
-    ],
-    "hints": [
-      "Compare len(submitted_ids) with len(set(submitted_ids)) first.",
-      "Use expected - submitted for missing.",
-      "Use sorted(...) on both differences."
-    ],
-    "solution": "def reconcile(expected_ids, submitted_ids):\n    if len(submitted_ids) != len(set(submitted_ids)):\n        raise ValueError('duplicate submitted ID')\n    expected = set(expected_ids)\n    submitted = set(submitted_ids)\n    return sorted(expected - submitted), sorted(submitted - expected)\n\nassert reconcile(['intro', 'loops'], ['loops', 'intro']) == ([], [])\nassert reconcile(['intro', 'loops'], ['intro', 'files']) == (['loops'], ['files'])\ntry:\n    reconcile(['intro'], ['intro', 'intro'])\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('duplicate accepted')\nprint('inventory checks passed')\n",
-    "solutionExplanation": "The duplicate check runs while the original submitted sequence is still available. The two directional differences then create stable missing/unexpected reports. In production, add explicit element-type and normalization rules at the input boundary.",
-    "challenges": [
-      "Predict why two inventories can have the same size but still differ.",
-      "Find the bug: label submitted - expected as missing.",
-      "Experiment: add one expected ID to submitted while keeping an extra ID."
-    ],
-    "simulation": {
-      "prompt": "Expected is {A, B}; submitted is {A, C}. Which expression finds the missing ID?",
-      "choices": [
-        "expected - submitted",
-        "submitted - expected"
-      ],
-      "correctIndex": 0,
-      "explanation": "Expected minus submitted leaves B, the required ID that did not arrive."
-    }
-  },
+  "lab": {"title":"Build a deterministic inventory-difference report","safety":"Only small in-memory examples are used. Run the exercise in the site's bundled Python worker.","starterCode":"def reconcile(expected_ids, submitted_ids):\n    # Reject repeated submitted IDs.\n    # Return sorted missing and unexpected ID lists.\n    pass\n\n# Try an exact match, one missing ID, and one unexpected ID.\n","guidedSteps":["Check submitted_ids for duplicates before making a set.","Create expected and submitted sets.","Compute missing as expected minus submitted.","Compute unexpected in the opposite direction.","Sort both lists so the same inputs produce the same display."],"checks":["Returns empty lists for an exact match.","Reports missing and unexpected in the correct directions.","Rejects a duplicate submitted ID before discarding it.","Produces sorted results."],"hints":["Compare len(submitted_ids) with len(set(submitted_ids)) first.","Use expected - submitted for missing.","Use sorted(...) on both differences."],"solution":"def reconcile(expected_ids, submitted_ids):\n    if len(submitted_ids) != len(set(submitted_ids)):\n        raise ValueError('duplicate submitted ID')\n    expected = set(expected_ids)\n    submitted = set(submitted_ids)\n    return sorted(expected - submitted), sorted(submitted - expected)\n\nassert reconcile(['intro', 'loops'], ['loops', 'intro']) == ([], [])\nassert reconcile(['intro', 'loops'], ['intro', 'files']) == (['loops'], ['files'])\ntry:\n    reconcile(['intro'], ['intro', 'intro'])\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('duplicate accepted')\nprint('inventory checks passed')\n","solutionExplanation":"The duplicate check runs while the original submitted sequence is still available. The two directional differences then create stable missing/unexpected reports. In production, add explicit element-type and normalization rules at the input boundary.","challenges":["Predict why two inventories can have the same size but still differ.","Find the bug: label submitted - expected as missing.","Experiment: add one expected ID to submitted while keeping an extra ID."],"simulation":{"prompt":"Expected is {A, B}; submitted is {A, C}. Which expression finds the missing ID?","choices":["expected - submitted","submitted - expected"],"correctIndex":0,"explanation":"Expected minus submitted leaves B, the required ID that did not arrive."},"testCode":"assert reconcile(['intro','loops'],['loops','intro'])==([],[])\nassert reconcile(['intro','loops'],['intro','files'])==(['loops'],['files'])\ntry: reconcile(['intro'],['intro','intro'])\nexcept ValueError: pass\nelse: raise AssertionError('duplicate accepted')\nprint('PASS: set reconciliation')"},
   "projectConnection": {
     "project": "Study-progress import reconciliation",
     "milestone": "Display stable missing/unexpected lesson IDs and reject duplicate submission rows before comparison.",

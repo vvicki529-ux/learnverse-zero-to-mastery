@@ -34,7 +34,8 @@
     "hints": ["return 'study: ' + super().render()", "return super().render() + ' [checked]'", "[cls.__name__ for cls in StudyReport.__mro__]"],
     "solution": "class Report:\n    def render(self):\n        return 'progress'\n\nclass PrefixMixin:\n    def render(self):\n        return 'study: ' + super().render()\n\nclass AuditMixin:\n    def render(self):\n        return super().render() + ' [checked]'\n\nclass StudyReport(PrefixMixin, AuditMixin, Report):\n    pass\n\nreport = StudyReport()\nprint([cls.__name__ for cls in StudyReport.__mro__])\nprint(report.render())\nprint(isinstance(report, Report))\n",
     "solutionExplanation": "Each override hands work to the next class in the MRO, so both mixins contribute exactly once to the final report.",
-    "challenges": ["Predict the output after swapping mixin order.", "Find the lost behavior if PrefixMixin calls Report.render(self) directly.", "Experiment: replace one formatting mixin with an injected formatter object and compare the design complexity."]
+    "challenges": ["Predict the output after swapping mixin order.", "Find the lost behavior if PrefixMixin calls Report.render(self) directly.", "Experiment: replace one formatting mixin with an injected formatter object and compare the design complexity."],
+    "testCode": "assert StudyReport().render()=='study: progress [checked]'\nassert StudyReport.__mro__[:3]==(StudyReport,PrefixMixin,AuditMixin)\nassert isinstance(StudyReport(),Report)\nprint('PASS: cooperative MRO')"
   },
   "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Choose a clear report extension strategy and document why a mixin or a composed collaborator fits.", "definitionOfDone": "Tests prove the intended render contract, exact contribution order, and one reasonable alternative design using composition."},
   "assessment": [

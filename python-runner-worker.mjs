@@ -15,7 +15,7 @@ self.onmessage = async ({data}) => {
   const code = String(data.code || '').slice(0, 100000);
   const stdin = String(data.stdin || '').slice(0, 10000);
   // JSON encoding creates Python string literals without interpolating learner code into syntax.
-  const wrapper = `import contextlib, io, json, sys, traceback\n` +
+  const wrapper = `import ast, contextlib, inspect, io, json, sys, traceback\n` +
     `source = ${JSON.stringify(code)}\n` +
     `input_text = ${JSON.stringify(stdin)}\n` +
     `output = io.StringIO()\nerrors = io.StringIO()\n` +
@@ -24,7 +24,10 @@ self.onmessage = async ({data}) => {
     `try:\n` +
     `    with contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):\n` +
     `        try:\n` +
-    `            exec(compile(source, '<lesson>', 'exec'), {'__name__': '__main__'})\n` +
+    `            compiled = compile(source, '<lesson>', 'exec', flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)\n` +
+    `            result = eval(compiled, {'__name__': '__main__'})\n` +
+    `            if inspect.isawaitable(result):\n` +
+    `                await result\n` +
     `        except BaseException:\n` +
     `            traceback.print_exc()\n` +
     `            exit_code = 1\n` +

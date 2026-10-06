@@ -34,7 +34,8 @@
     "hints": ["self.completed = []", "mina.label = 'mentor'", "'label' in vars(mina)"],
     "solution": "class Learner:\n    label = 'member'\n\n    def __init__(self, name):\n        self.name = name\n        self.completed = []\n\nmina = Learner('Mina')\nleo = Learner('Leo')\nmina.label = 'mentor'\nmina.completed.append('loops')\nprint(mina.label, leo.label)\nprint(mina.completed, leo.completed)\nprint('label' in vars(mina), 'label' in vars(leo))\n",
     "solutionExplanation": "Mina shadows only her label, while both progress lists are independent instance state.",
-    "challenges": ["Predict labels after setting Learner.label = 'student' at the end.", "Find the bug if completed = [] moves to the class body.", "Experiment: delete mina.label and read her label again."]
+    "challenges": ["Predict labels after setting Learner.label = 'student' at the end.", "Find the bug if completed = [] moves to the class body.", "Experiment: delete mina.label and read her label again."],
+    "testCode": "a,b=Learner('Mina'),Learner('Leo')\na.label='mentor'; a.completed.append('loops')\nassert (a.label,b.label)==('mentor','member')\nassert a.completed==['loops'] and b.completed==[]\nassert 'label' in vars(a) and 'label' not in vars(b)\nprint('PASS: attribute shadowing')"
   },
   "projectConnection": {"project": "Cross-track study-progress dashboard", "milestone": "Use a shared display default without sharing each learner's progress list.", "definitionOfDone": "Tests demonstrate two independent lists, a single-instance label override, and no accidental cross-learner change."},
   "assessment": [

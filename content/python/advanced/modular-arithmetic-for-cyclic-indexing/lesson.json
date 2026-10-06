@@ -63,45 +63,7 @@
       "avoid": "Choose a stop condition or bounded index for non-cyclic workflows."
     }
   ],
-  "lab": {
-    "title": "Rotate a fictional review queue",
-    "safety": "Uses only in-memory topic names. The static site guides the lab but does not yet run Python in-browser.",
-    "starterCode": "def move(items, current, step):\n    # Reject an empty list, then return the wrapped index.\n    pass\n\n# Test forward, backward, large-step and empty cases.\n",
-    "guidedSteps": [
-      "Reject an empty items list with ValueError.",
-      "Let n be len(items).",
-      "Return `(current + step) % n`.",
-      "Assert that moving forward from the last of four topics returns 0.",
-      "Assert that moving back from 0 returns 3 and moving forward six returns 2."
-    ],
-    "checks": [
-      "Empty list is rejected before modulo.",
-      "Forward and backward wrap are correct.",
-      "Large steps wrap correctly.",
-      "The learner can explain why a positive modulus yields valid list indices."
-    ],
-    "hints": [
-      "Use `if not items: raise ValueError(...)`.",
-      "Use `len(items)` as the positive modulus.",
-      "`-1 % 4` is 3 in Python."
-    ],
-    "solution": "def move(items, current, step):\n    if not items:\n        raise ValueError('need at least one item')\n    return (current + step) % len(items)\n\nitems = ['a', 'b', 'c', 'd']\nassert move(items, 3, 1) == 0\nassert move(items, 0, -1) == 3\nassert move(items, 0, 6) == 2\ntry:\n    move([], 0, 1)\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('empty cycle accepted')\nprint('cyclic indices checked')\n",
-    "solutionExplanation": "With n>0, `% n` keeps the result within the valid index range. The explicit empty check prevents a zero-divisor error and the tests cover both directions.",
-    "challenges": [
-      "Predict move(items, 2, -6).",
-      "Find the bug: use `% (len(items)-1)` for a four-item list.",
-      "Experiment with a one-item cycle and explain why its only index is always 0."
-    ],
-    "simulation": {
-      "prompt": "What is `-1 % 4` in Python?",
-      "choices": [
-        "3",
-        "-1"
-      ],
-      "correctIndex": 0,
-      "explanation": "For positive 4, the remainder is in 0..3 and -1 == (-1)*4 + 3."
-    }
-  },
+  "lab": {"title":"Rotate a fictional review queue","safety":"Only in-memory topic names are used. Run the exercise in the site's bundled Python worker.","starterCode":"def move(items, current, step):\n    # Reject an empty list, then return the wrapped index.\n    pass\n\n# Test forward, backward, large-step and empty cases.\n","guidedSteps":["Reject an empty items list with ValueError.","Let n be len(items).","Return `(current + step) % n`.","Assert that moving forward from the last of four topics returns 0.","Assert that moving back from 0 returns 3 and moving forward six returns 2."],"checks":["Empty list is rejected before modulo.","Forward and backward wrap are correct.","Large steps wrap correctly.","The learner can explain why a positive modulus yields valid list indices."],"hints":["Use `if not items: raise ValueError(...)`.","Use `len(items)` as the positive modulus.","`-1 % 4` is 3 in Python."],"solution":"def move(items, current, step):\n    if not items:\n        raise ValueError('need at least one item')\n    return (current + step) % len(items)\n\nitems = ['a', 'b', 'c', 'd']\nassert move(items, 3, 1) == 0\nassert move(items, 0, -1) == 3\nassert move(items, 0, 6) == 2\ntry:\n    move([], 0, 1)\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('empty cycle accepted')\nprint('cyclic indices checked')\n","solutionExplanation":"With n>0, `% n` keeps the result within the valid index range. The explicit empty check prevents a zero-divisor error and the tests cover both directions.","challenges":["Predict move(items, 2, -6).","Find the bug: use `% (len(items)-1)` for a four-item list.","Experiment with a one-item cycle and explain why its only index is always 0."],"simulation":{"prompt":"What is `-1 % 4` in Python?","choices":["3","-1"],"correctIndex":0,"explanation":"For positive 4, the remainder is in 0..3 and -1 == (-1)*4 + 3."},"testCode":"items=['a','b','c','d']\nassert move(items,3,1)==0 and move(items,0,-1)==3 and move(items,0,6)==2\ntry: move([],0,1)\nexcept ValueError: pass\nelse: raise AssertionError('empty cycle accepted')\nprint('PASS: cyclic indexing')"},
   "projectConnection": {
     "project": "Offline study-topic scheduler",
     "milestone": "Rotate the review queue forward and backward while rejecting an empty curriculum.",

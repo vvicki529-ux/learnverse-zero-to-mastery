@@ -65,45 +65,7 @@
       "avoid": "Use Python's documented modulo behavior and test negative inputs when portability matters."
     }
   ],
-  "lab": {
-    "title": "Partition task IDs into review lanes",
-    "safety": "Uses a short local list of integer IDs only. The static site guides practice but does not yet execute Python in the browser.",
-    "starterCode": "def review_lanes(task_ids, lane_count):\n    # Validate lane_count and each ID.\n    # Group IDs by ID % lane_count.\n    pass\n\n# Check IDs 0..5 with three lanes and -1 with three lanes.\n",
-    "guidedSteps": [
-      "Reject lane_count unless it is an exact positive integer.",
-      "Create an empty dictionary of groups.",
-      "For each exact integer ID, calculate ID % lane_count and append it to that lane.",
-      "Check that the flattened groups contain each input ID once.",
-      "Explain why equal lane keys are a transitive relation."
-    ],
-    "checks": [
-      "Three lanes group 0 with 3, 1 with 4, and 2 with 5.",
-      "A negative ID is assigned according to Python's positive-divisor modulo rule.",
-      "Invalid lane counts and Boolean IDs are rejected.",
-      "Every input is assigned to exactly one list."
-    ],
-    "hints": [
-      "Use type(lane_count) is int and lane_count > 0.",
-      "Use groups.setdefault(task_id % lane_count, []).append(task_id).",
-      "For positive divisor 3, Python computes -1 % 3 as 2."
-    ],
-    "solution": "def review_lanes(task_ids, lane_count):\n    if type(lane_count) is not int or lane_count <= 0:\n        raise ValueError('positive integer lane count required')\n    groups = {}\n    for task_id in task_ids:\n        if type(task_id) is not int:\n            raise ValueError('integer task ID required')\n        groups.setdefault(task_id % lane_count, []).append(task_id)\n    return groups\n\nassert review_lanes(list(range(6)), 3) == {0: [0, 3], 1: [1, 4], 2: [2, 5]}\nassert review_lanes([-1], 3) == {2: [-1]}\nfor bad in (0, -2, True):\n    try:\n        review_lanes([1], bad)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('invalid lane count accepted')\nprint('lane partition checked')\n",
-    "solutionExplanation": "A valid ID has exactly one remainder for a positive lane count, so the key rule puts each supplied ID into one group. The tests cover a full six-item sample, a negative ID, and invalid lane counts; the reflexive/symmetric/transitive reasoning comes from equality of remainder keys.",
-    "challenges": [
-      "Predict which group receives -1 when lane_count is 3.",
-      "Find the bug: append the same ID to two lanes after calculating its key.",
-      "Experiment with lane_count 4 and check every ID appears exactly once."
-    ],
-    "simulation": {
-      "prompt": "Which property fails if A matches B and B matches C, but A does not match C?",
-      "choices": [
-        "Transitivity",
-        "Symmetry"
-      ],
-      "correctIndex": 0,
-      "explanation": "Transitivity requires the A-to-C match whenever the two earlier matches hold."
-    }
-  },
+  "lab": {"title":"Partition task IDs into review lanes","safety":"Only a short in-memory list of integer IDs is used. Run the exercise in the site's bundled Python worker.","starterCode":"def review_lanes(task_ids, lane_count):\n    # Validate lane_count and each ID.\n    # Group IDs by ID % lane_count.\n    pass\n\n# Check IDs 0..5 with three lanes and -1 with three lanes.\n","guidedSteps":["Reject lane_count unless it is an exact positive integer.","Create an empty dictionary of groups.","For each exact integer ID, calculate ID % lane_count and append it to that lane.","Check that the flattened groups contain each input ID once.","Explain why equal lane keys are a transitive relation."],"checks":["Three lanes group 0 with 3, 1 with 4, and 2 with 5.","A negative ID is assigned according to Python's positive-divisor modulo rule.","Invalid lane counts and Boolean IDs are rejected.","Every input is assigned to exactly one list."],"hints":["Use type(lane_count) is int and lane_count > 0.","Use groups.setdefault(task_id % lane_count, []).append(task_id).","For positive divisor 3, Python computes -1 % 3 as 2."],"solution":"def review_lanes(task_ids, lane_count):\n    if type(lane_count) is not int or lane_count <= 0:\n        raise ValueError('positive integer lane count required')\n    groups = {}\n    for task_id in task_ids:\n        if type(task_id) is not int:\n            raise ValueError('integer task ID required')\n        groups.setdefault(task_id % lane_count, []).append(task_id)\n    return groups\n\nassert review_lanes(list(range(6)), 3) == {0: [0, 3], 1: [1, 4], 2: [2, 5]}\nassert review_lanes([-1], 3) == {2: [-1]}\nfor bad in (0, -2, True):\n    try:\n        review_lanes([1], bad)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('invalid lane count accepted')\nprint('lane partition checked')\n","solutionExplanation":"A valid ID has exactly one remainder for a positive lane count, so the key rule puts each supplied ID into one group. The tests cover a full six-item sample, a negative ID, and invalid lane counts; the reflexive/symmetric/transitive reasoning comes from equality of remainder keys.","challenges":["Predict which group receives -1 when lane_count is 3.","Find the bug: append the same ID to two lanes after calculating its key.","Experiment with lane_count 4 and check every ID appears exactly once."],"simulation":{"prompt":"Which property fails if A matches B and B matches C, but A does not match C?","choices":["Transitivity","Symmetry"],"correctIndex":0,"explanation":"Transitivity requires the A-to-C match whenever the two earlier matches hold."},"testCode":"assert review_lanes(list(range(6)),3)=={0:[0,3],1:[1,4],2:[2,5]}\nassert review_lanes([-1],3)=={2:[-1]}\nfor bad in (0,-2,True):\n    try: review_lanes([1],bad)\n    except ValueError: pass\n    else: raise AssertionError('invalid lane count accepted')\nprint('PASS: modulo partitions')"},
   "projectConnection": {
     "project": "Study-progress review scheduler",
     "milestone": "Partition a small batch of task IDs into deterministic review lanes and document the same-lane rule.",

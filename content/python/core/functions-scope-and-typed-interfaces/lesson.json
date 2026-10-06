@@ -76,31 +76,7 @@
       "avoid": "Use a named def for nontrivial logic and reserve lambdas for small local callbacks where they improve clarity."
     }
   ],
-  "lab": {
-    "title": "Write a testable spending-limit function",
-    "safety": "This exercise uses fictional amounts. Do not include personal banking data.",
-    "starterCode": "def remaining_budget(limit: float, spent: float, *, include_pending: bool = False) -> float:\n    # TODO: reject negative inputs\n    # TODO: optionally include a fictional pending charge\n    # TODO: return the remaining amount\n    pass\n",
-    "guidedSteps": [
-      "Reject a negative limit or spent amount with ValueError.",
-      "Use a keyword-only include_pending flag and a named pending amount of 5.0 for this exercise.",
-      "Calculate the effective spent amount without printing inside the function.",
-      "Return limit minus effective spent.",
-      "Test a normal case, the exact-limit case, an over-limit case, and a negative-input case."
-    ],
-    "checks": [
-      "Function returns a float-like numeric result rather than printing it.",
-      "include_pending is keyword-only.",
-      "Negative values raise ValueError with a useful message.",
-      "The calculation has named intermediate values rather than duplicated expressions."
-    ],
-    "hints": [
-      "A keyword-only separator is written as *, before the keyword-only parameter.",
-      "A guard clause can combine checks: if limit < 0 or spent < 0: ...",
-      "effective_spent can be spent + pending_charge if include_pending else spent."
-    ],
-    "solution": "def remaining_budget(limit: float, spent: float, *, include_pending: bool = False) -> float:\n    if limit < 0 or spent < 0:\n        raise ValueError('limit and spent must be non-negative')\n\n    pending_charge = 5.0 if include_pending else 0.0\n    effective_spent = spent + pending_charge\n    return limit - effective_spent\n",
-    "solutionExplanation": "The guard clause rejects impossible inputs before calculation. The keyword-only flag makes the optional rule explicit at a call site, and returning a value rather than printing keeps the function reusable and easy to test."
-  },
+  "lab": {"title":"Write a testable spending-limit function","safety":"This exercise uses fictional amounts. Do not include personal banking data.","starterCode":"def remaining_budget(limit: float, spent: float, *, include_pending: bool = False) -> float:\n    # TODO: reject negative inputs\n    # TODO: optionally include a fictional pending charge\n    # TODO: return the remaining amount\n    pass\n","guidedSteps":["Reject a negative limit or spent amount with ValueError.","Use a keyword-only include_pending flag and a named pending amount of 5.0 for this exercise.","Calculate the effective spent amount without printing inside the function.","Return limit minus effective spent.","Test a normal case, the exact-limit case, an over-limit case, and a negative-input case."],"checks":["Function returns a float-like numeric result rather than printing it.","include_pending is keyword-only.","Negative values raise ValueError with a useful message.","The calculation has named intermediate values rather than duplicated expressions."],"hints":["A keyword-only separator is written as *, before the keyword-only parameter.","A guard clause can combine checks: if limit < 0 or spent < 0: ...","effective_spent can be spent + pending_charge if include_pending else spent."],"solution":"def remaining_budget(limit: float, spent: float, *, include_pending: bool = False) -> float:\n    if limit < 0 or spent < 0:\n        raise ValueError('limit and spent must be non-negative')\n\n    pending_charge = 5.0 if include_pending else 0.0\n    effective_spent = spent + pending_charge\n    return limit - effective_spent\n","solutionExplanation":"The guard clause rejects impossible inputs before calculation. The keyword-only flag makes the optional rule explicit at a call site, and returning a value rather than printing keeps the function reusable and easy to test.","testCode":"assert remaining_budget(20, 7) == 13\nassert remaining_budget(20, 7, include_pending=True) == 8\ntry:\n    remaining_budget(-1, 0)\nexcept ValueError:\n    print('PASS: budget calculation and invalid input')\nelse:\n    raise AssertionError('negative limit must fail')"},
   "projectConnection": {
     "project": "CLI habit tracker",
     "milestone": "Extract streak-calculation and validation rules into separate functions with explicit inputs and return values. Add tests for empty history, a completed streak, and invalid dates.",

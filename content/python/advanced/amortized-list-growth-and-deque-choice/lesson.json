@@ -64,45 +64,7 @@
       "avoid": "Reason from the operation model, then benchmark representative workloads separately."
     }
   ],
-  "lab": {
-    "title": "Convert a FIFO task list to a deque",
-    "safety": "Works on a tiny local in-memory task list. The static site guides practice but does not yet execute Python in the browser.",
-    "starterCode": "from collections import deque\n\ndef process_in_order(tasks):\n    # Copy tasks to a deque; consume from the left.\n    # Return the processed tasks in arrival order.\n    pass\n\n# Test empty, one-task and three-task inputs.\n",
-    "guidedSteps": [
-      "Make a deque from tasks so the input is not mutated.",
-      "Create a result list.",
-      "While pending is nonempty, popleft and append the task to result.",
-      "Test empty, one and several tasks in arrival order.",
-      "Explain why this workload favors deque over repeated list.pop(0)."
-    ],
-    "checks": [
-      "Returns [] for empty input.",
-      "Preserves FIFO order for several tasks.",
-      "Does not mutate the caller's input list.",
-      "Uses popleft for repeated left-end removal."
-    ],
-    "hints": [
-      "pending = deque(tasks)",
-      "while pending: result.append(pending.popleft())",
-      "A list is still appropriate for the output accumulated at its right end."
-    ],
-    "solution": "from collections import deque\n\ndef process_in_order(tasks):\n    pending = deque(tasks)\n    result = []\n    while pending:\n        result.append(pending.popleft())\n    return result\n\noriginal = ['one', 'two', 'three']\nassert process_in_order([]) == []\nassert process_in_order(['one']) == ['one']\nassert process_in_order(original) == ['one', 'two', 'three']\nassert original == ['one', 'two', 'three']\nprint('FIFO cases checked')\n",
-    "solutionExplanation": "The deque handles repeated left-end removal; the result list handles right-end append. Copying the input to a deque preserves the caller's list. This small lab proves order and non-mutation, not a speedup; profile representative large workloads if performance is a requirement.",
-    "challenges": [
-      "Predict what changes if popleft is replaced by pop on the deque.",
-      "Find the bug: repeatedly call tasks.pop(0) and claim the caller's list remains unchanged.",
-      "Experiment with ten tasks and compare output order, then separately design a representative benchmark."
-    ],
-    "simulation": {
-      "prompt": "What does amortized O(1) append mean?",
-      "choices": [
-        "A long sequence has constant average cost per append under the growth model, though some appends resize",
-        "Every individual append is guaranteed to take exactly the same time"
-      ],
-      "correctIndex": 0,
-      "explanation": "Occasional expensive resizes are spread across many cheaper appends."
-    }
-  },
+  "lab": {"title":"Convert a FIFO task list to a deque","safety":"This works on a tiny in-memory task list. Run it in the site's bundled Python worker; it does not use your computer's files.","starterCode":"from collections import deque\n\ndef process_in_order(tasks):\n    # Copy tasks to a deque; consume from the left.\n    # Return the processed tasks in arrival order.\n    pass\n\n# Test empty, one-task and three-task inputs.\n","guidedSteps":["Make a deque from tasks so the input is not mutated.","Create a result list.","While pending is nonempty, popleft and append the task to result.","Test empty, one and several tasks in arrival order.","Explain why this workload favors deque over repeated list.pop(0)."],"checks":["Returns [] for empty input.","Preserves FIFO order for several tasks.","Does not mutate the caller's input list.","Uses popleft for repeated left-end removal."],"hints":["pending = deque(tasks)","while pending: result.append(pending.popleft())","A list is still appropriate for the output accumulated at its right end."],"solution":"from collections import deque\n\ndef process_in_order(tasks):\n    pending = deque(tasks)\n    result = []\n    while pending:\n        result.append(pending.popleft())\n    return result\n\noriginal = ['one', 'two', 'three']\nassert process_in_order([]) == []\nassert process_in_order(['one']) == ['one']\nassert process_in_order(original) == ['one', 'two', 'three']\nassert original == ['one', 'two', 'three']\nprint('FIFO cases checked')\n","solutionExplanation":"The deque handles repeated left-end removal; the result list handles right-end append. Copying the input to a deque preserves the caller's list. This small lab proves order and non-mutation, not a speedup; profile representative large workloads if performance is a requirement.","challenges":["Predict what changes if popleft is replaced by pop on the deque.","Find the bug: repeatedly call tasks.pop(0) and claim the caller's list remains unchanged.","Experiment with ten tasks and compare output order, then separately design a representative benchmark."],"simulation":{"prompt":"What does amortized O(1) append mean?","choices":["A long sequence has constant average cost per append under the growth model, though some appends resize","Every individual append is guaranteed to take exactly the same time"],"correctIndex":0,"explanation":"Occasional expensive resizes are spread across many cheaper appends."},"testCode":"original=['one','two','three']\nassert process_in_order([])==[]\nassert process_in_order(original)==original\nassert original==['one','two','three']\nprint('PASS: FIFO deque choice')"},
   "projectConnection": {
     "project": "Study-progress event processor",
     "milestone": "Replace repeated front-of-list removals with a deque and document the workload and cost trade-off.",

@@ -65,45 +65,7 @@
       "avoid": "Use padding only when the domain explicitly allows missing records."
     }
   ],
-  "lab": {
-    "title": "Reject an unmatched score",
-    "safety": "Uses only small fictional in-memory data. No files or network. The current static site guides the lab but does not yet execute Python in-browser.",
-    "starterCode": "def paired_rows(names, scores):\n    # Return a complete list of pairs, or let ValueError show a mismatch.\n    pass\n\n# Test equal inputs and both directions of mismatch.\n",
-    "guidedSteps": [
-      "Return list(zip(names, scores, strict=True)).",
-      "Test two names and two scores.",
-      "Test one extra name and catch ValueError.",
-      "Test one extra score and catch ValueError.",
-      "Explain why the call to list is inside the test's try block."
-    ],
-    "checks": [
-      "Matching inputs produce all pairs.",
-      "Both mismatch directions raise ValueError.",
-      "No partial paired result is returned after failure.",
-      "The learner knows strict is available from Python 3.10."
-    ],
-    "hints": [
-      "`list(zip(names, scores, strict=True))` forces consumption.",
-      "Wrap each invalid call in try/except ValueError.",
-      "If no exception appears, raise AssertionError in the test."
-    ],
-    "solution": "def paired_rows(names, scores):\n    return list(zip(names, scores, strict=True))\n\nassert paired_rows(['Ada', 'Bo'], [80, 90]) == [('Ada', 80), ('Bo', 90)]\nfor names, scores in ((['Ada', 'Bo'], [80]), (['Ada'], [80, 90])):\n    try:\n        paired_rows(names, scores)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('mismatch was accepted')\nprint('strict pairing checked')\n",
-    "solutionExplanation": "The function materializes a complete small result only if the streams align. Both mismatch directions are explicitly tested.",
-    "challenges": [
-      "Predict the result for two empty lists.",
-      "Find the bug: return zip(...) without consuming it before saving records.",
-      "Experiment: replace strict zip with ordinary zip and see which assertions stop protecting you."
-    ],
-    "simulation": {
-      "prompt": "When does zip(..., strict=True) report unequal input lengths?",
-      "choices": [
-        "When the zip iterator is consumed",
-        "As soon as zip(...) is called"
-      ],
-      "correctIndex": 0,
-      "explanation": "zip is lazy, so the mismatch is discovered during iteration."
-    }
-  },
+  "lab": {"title":"Reject an unmatched score","safety":"Uses only small fictional in-memory data. No files or network. The in-site Run Python button executes this lab in a fresh browser worker; this particular exercise uses neither local computer files nor external services.","starterCode":"def paired_rows(names, scores):\n    # Return a complete list of pairs, or let ValueError show a mismatch.\n    pass\n\n# Test equal inputs and both directions of mismatch.\n","guidedSteps":["Return list(zip(names, scores, strict=True)).","Test two names and two scores.","Test one extra name and catch ValueError.","Test one extra score and catch ValueError.","Explain why the call to list is inside the test's try block."],"checks":["Matching inputs produce all pairs.","Both mismatch directions raise ValueError.","No partial paired result is returned after failure.","The learner knows strict is available from Python 3.10."],"hints":["`list(zip(names, scores, strict=True))` forces consumption.","Wrap each invalid call in try/except ValueError.","If no exception appears, raise AssertionError in the test."],"solution":"def paired_rows(names, scores):\n    return list(zip(names, scores, strict=True))\n\nassert paired_rows(['Ada', 'Bo'], [80, 90]) == [('Ada', 80), ('Bo', 90)]\nfor names, scores in ((['Ada', 'Bo'], [80]), (['Ada'], [80, 90])):\n    try:\n        paired_rows(names, scores)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('mismatch was accepted')\nprint('strict pairing checked')\n","solutionExplanation":"The function materializes a complete small result only if the streams align. Both mismatch directions are explicitly tested.","challenges":["Predict the result for two empty lists.","Find the bug: return zip(...) without consuming it before saving records.","Experiment: replace strict zip with ordinary zip and see which assertions stop protecting you."],"simulation":{"prompt":"When does zip(..., strict=True) report unequal input lengths?","choices":["When the zip iterator is consumed","As soon as zip(...) is called"],"correctIndex":0,"explanation":"zip is lazy, so the mismatch is discovered during iteration."},"testCode":"assert paired_rows(['Ada', 'Bo'], [80, 90]) == [('Ada', 80), ('Bo', 90)]\nfor names, scores in ((['Ada', 'Bo'], [80]), (['Ada'], [80, 90])):\n    try:\n        paired_rows(names, scores)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('unequal inputs accepted')\nprint('PASS: strict pairing both mismatch directions')"},
   "projectConnection": {
     "project": "Study-progress importer",
     "milestone": "Pair learner IDs and scores with strict zip before committing an imported batch.",

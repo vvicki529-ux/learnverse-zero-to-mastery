@@ -64,43 +64,7 @@
       "avoid": "Enforce sensitive policy at the appropriate trusted boundary."
     }
   ],
-  "lab": {
-    "title": "Check every case of a release rule",
-    "safety": "Uses only local Boolean values and does not handle accounts, secrets or real permissions. The static site guides this exercise but does not yet run Python in the browser.",
-    "starterCode": "from itertools import product\n\ndef can_release(reviewed, approved):\n    # Return True only if both requirements hold.\n    pass\n\ndef must_hold(reviewed, approved):\n    # Write the equivalent negative rule using not/or.\n    pass\n\n# Check all four Boolean input pairs.\n",
-    "guidedSteps": [
-      "Write can_release as reviewed and approved.",
-      "Write must_hold as (not reviewed) or (not approved).",
-      "Generate all four pairs with itertools.product.",
-      "Assert must_hold is not can_release for each pair and inspect the mixed rows."
-    ],
-    "checks": [
-      "Both True allows release and does not hold it.",
-      "Either missing requirement holds the release.",
-      "The two functions are opposites for every Boolean pair."
-    ],
-    "hints": [
-      "The release rule needs both conditions.",
-      "Negating an AND changes it to an OR of negated parts.",
-      "product((False, True), repeat=2) generates all four cases."
-    ],
-    "solution": "from itertools import product\n\ndef can_release(reviewed, approved):\n    return reviewed and approved\n\ndef must_hold(reviewed, approved):\n    return (not reviewed) or (not approved)\n\nfor reviewed, approved in product((False, True), repeat=2):\n    assert must_hold(reviewed, approved) == (not can_release(reviewed, approved))\nassert can_release(True, True) is True\nassert must_hold(True, False) is True\nprint('four release cases checked')\n",
-    "solutionExplanation": "The positive rule needs both requirements. The negative rule needs at least one missing requirement. Checking the entire two-variable truth table catches the common error of using and between the negated parts.",
-    "challenges": [
-      "Predict the result for reviewed=True and approved=False before running.",
-      "Find the bug: must_hold returns not reviewed and not approved.",
-      "Experiment with a third Boolean requirement and count the truth-table rows."
-    ],
-    "simulation": {
-      "prompt": "Which rule means a release must be held if either review OR approval is missing?",
-      "choices": [
-        "(not reviewed) or (not approved)",
-        "(not reviewed) and (not approved)"
-      ],
-      "correctIndex": 0,
-      "explanation": "Either missing requirement is enough to hold the release."
-    }
-  },
+  "lab": {"title":"Check every case of a release rule","safety":"Only local Boolean values are used; no accounts, secrets or real permissions are involved. Run this self-contained exercise in the site's bundled Python worker.","starterCode":"from itertools import product\n\ndef can_release(reviewed, approved):\n    # Return True only if both requirements hold.\n    pass\n\ndef must_hold(reviewed, approved):\n    # Write the equivalent negative rule using not/or.\n    pass\n\n# Check all four Boolean input pairs.\n","guidedSteps":["Write can_release as reviewed and approved.","Write must_hold as (not reviewed) or (not approved).","Generate all four pairs with itertools.product.","Assert must_hold is not can_release for each pair and inspect the mixed rows."],"checks":["Both True allows release and does not hold it.","Either missing requirement holds the release.","The two functions are opposites for every Boolean pair."],"hints":["The release rule needs both conditions.","Negating an AND changes it to an OR of negated parts.","product((False, True), repeat=2) generates all four cases."],"solution":"from itertools import product\n\ndef can_release(reviewed, approved):\n    return reviewed and approved\n\ndef must_hold(reviewed, approved):\n    return (not reviewed) or (not approved)\n\nfor reviewed, approved in product((False, True), repeat=2):\n    assert must_hold(reviewed, approved) == (not can_release(reviewed, approved))\nassert can_release(True, True) is True\nassert must_hold(True, False) is True\nprint('four release cases checked')\n","solutionExplanation":"The positive rule needs both requirements. The negative rule needs at least one missing requirement. Checking the entire two-variable truth table catches the common error of using and between the negated parts.","challenges":["Predict the result for reviewed=True and approved=False before running.","Find the bug: must_hold returns not reviewed and not approved.","Experiment with a third Boolean requirement and count the truth-table rows."],"simulation":{"prompt":"Which rule means a release must be held if either review OR approval is missing?","choices":["(not reviewed) or (not approved)","(not reviewed) and (not approved)"],"correctIndex":0,"explanation":"Either missing requirement is enough to hold the release."},"testCode":"for reviewed,approved in product((False,True),repeat=2):\n    assert must_hold(reviewed,approved)==(not can_release(reviewed,approved))\nassert can_release(True,True) is True\nprint('PASS: De Morgan truth table')"},
   "projectConnection": {
     "project": "Study-progress release checklist",
     "milestone": "Express a two-condition release gate in positive and negative forms and attach a four-row truth-table test.",

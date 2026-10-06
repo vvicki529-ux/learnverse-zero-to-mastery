@@ -28,4 +28,8 @@ assert.match(failure.stderr, /ValueError: expected failure/);
 const isolated = await run('print("fresh scope")');
 assert.equal(isolated.exitCode, 0);
 assert.equal(isolated.stdout, 'fresh scope\n');
-console.log('Self-hosted Python runner: output, input, errors, and repeat runs passed.');
+
+const asynchronous = await run('import asyncio\nasync def answer():\n    await asyncio.sleep(0)\n    return 42\nprint(await answer())');
+assert.equal(asynchronous.exitCode, 0);
+assert.equal(asynchronous.stdout, '42\n');
+console.log('Self-hosted Python runner: output, input, errors, repeat runs, and top-level await passed.');

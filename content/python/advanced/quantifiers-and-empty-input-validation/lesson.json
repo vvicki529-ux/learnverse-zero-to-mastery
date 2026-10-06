@@ -65,45 +65,7 @@
       "avoid": "Use an explicit bounded peek or materialize only when size is safe."
     }
   ],
-  "lab": {
-    "title": "Validate a nonempty score batch",
-    "safety": "Uses fictional in-memory scores only. The static site guides the lab but does not yet execute Python in-browser.",
-    "starterCode": "def valid_batch(scores):\n    # Require at least one score; all scores must be exact ints in 0..100.\n    pass\n\n# Test [], [0, 100], [True], and [101].\n",
-    "guidedSteps": [
-      "Check the nonempty condition before the all expression.",
-      "Require type(score) is int inside the generator.",
-      "Check 0 <= score <= 100.",
-      "Test both valid endpoints and three invalid cases.",
-      "Explain why all([]) alone would be wrong for this feature."
-    ],
-    "checks": [
-      "Empty batch is False.",
-      "0 and 100 are accepted.",
-      "True and 101 are rejected.",
-      "No external data or files are used."
-    ],
-    "hints": [
-      "`bool(scores) and all(...)` expresses two separate rules.",
-      "Use `type(score) is int`.",
-      "`all` can stop at the first failure."
-    ],
-    "solution": "def valid_batch(scores):\n    return bool(scores) and all(\n        type(score) is int and 0 <= score <= 100\n        for score in scores\n    )\n\nassert not valid_batch([])\nassert valid_batch([0, 100])\nassert not valid_batch([True])\nassert not valid_batch([101])\nprint('batch logic checked')\n",
-    "solutionExplanation": "The function first enforces nonempty input and then checks every score. The tests specifically protect the empty-iterable and Boolean-as-integer traps.",
-    "challenges": [
-      "Predict valid_batch([0]).",
-      "Find the bug: remove bool(scores) from the return expression.",
-      "Experiment: pass a generator instead of a list and explain why bool(generator) is not an emptiness test."
-    ],
-    "simulation": {
-      "prompt": "What does all([]) return?",
-      "choices": [
-        "True",
-        "False"
-      ],
-      "correctIndex": 0,
-      "explanation": "There is no element that fails the predicate; a nonempty product rule must be added separately."
-    }
-  },
+  "lab": {"title":"Validate a nonempty score batch","safety":"Only fictional in-memory scores are used. Run the exercise in the site's bundled Python worker.","starterCode":"def valid_batch(scores):\n    # Require at least one score; all scores must be exact ints in 0..100.\n    pass\n\n# Test [], [0, 100], [True], and [101].\n","guidedSteps":["Check the nonempty condition before the all expression.","Require type(score) is int inside the generator.","Check 0 <= score <= 100.","Test both valid endpoints and three invalid cases.","Explain why all([]) alone would be wrong for this feature."],"checks":["Empty batch is False.","0 and 100 are accepted.","True and 101 are rejected.","No external data or files are used."],"hints":["`bool(scores) and all(...)` expresses two separate rules.","Use `type(score) is int`.","`all` can stop at the first failure."],"solution":"def valid_batch(scores):\n    return bool(scores) and all(\n        type(score) is int and 0 <= score <= 100\n        for score in scores\n    )\n\nassert not valid_batch([])\nassert valid_batch([0, 100])\nassert not valid_batch([True])\nassert not valid_batch([101])\nprint('batch logic checked')\n","solutionExplanation":"The function first enforces nonempty input and then checks every score. The tests specifically protect the empty-iterable and Boolean-as-integer traps.","challenges":["Predict valid_batch([0]).","Find the bug: remove bool(scores) from the return expression.","Experiment: pass a generator instead of a list and explain why bool(generator) is not an emptiness test."],"simulation":{"prompt":"What does all([]) return?","choices":["True","False"],"correctIndex":0,"explanation":"There is no element that fails the predicate; a nonempty product rule must be added separately."},"testCode":"assert valid_batch([0,100])\nfor bad in ([],[True],[101],[-1]): assert not valid_batch(bad)\nprint('PASS: nonempty universal condition')"},
   "projectConnection": {
     "project": "Study-progress importer",
     "milestone": "Reject empty score batches and enforce exact integer/range rules before writing progress.",

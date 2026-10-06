@@ -75,31 +75,7 @@
       "avoid": "Read the final exception first, then trace backwards to the earliest relevant frame in your project."
     }
   ],
-  "lab": {
-    "title": "Make a portable project-status script",
-    "safety": "This lab reads local paths only. Do not place real credentials or sensitive data in the project.",
-    "starterCode": "from pathlib import Path\nimport sys\n\n# TODO: locate the project root from this file\n# TODO: create the path data/orders.csv\n# TODO: print the Python major/minor version and the path\n",
-    "guidedSteps": [
-      "Create a Path from __file__, resolve it, and select the project root.",
-      "Build the input path using / 'data' / 'orders.csv'.",
-      "Print sys.version_info.major and sys.version_info.minor in one readable message.",
-      "Print the input path and run the script from two different current directories.",
-      "Add a --dry-run argument when invoking the script and print sys.argv[1:]."
-    ],
-    "checks": [
-      "Uses pathlib.Path instead of a hand-built absolute path.",
-      "Prints an interpreter-version message.",
-      "Builds a data/orders.csv path from a project root.",
-      "Does not include a credential, token, or personal absolute path."
-    ],
-    "hints": [
-      "__file__ is the current script file path when a script is run from a file.",
-      "Path(__file__).resolve().parents[1] is useful when the script is inside a src folder.",
-      "sys.argv[0] is the script name; user-provided arguments begin at index 1."
-    ],
-    "solution": "from pathlib import Path\nimport sys\n\nproject_root = Path(__file__).resolve().parents[1]\ninput_file = project_root / 'data' / 'orders.csv'\n\nprint(f'Python version: {sys.version_info.major}.{sys.version_info.minor}')\nprint(f'Input file: {input_file}')\nprint(f'Arguments: {sys.argv[1:]}')\n",
-    "solutionExplanation": "The script builds its data path from its own location instead of a personal machine path. It prints only safe diagnostics—the interpreter version, calculated path, and supplied arguments—so setup differences can be investigated without exposing configuration."
-  },
+  "lab": {"title":"Plan a portable project path from a script location","safety":"This browser lab uses fictional paths and version numbers. It does not read your computer's files or arguments. Follow the lesson's local procedure to inspect a real script.","starterCode":"from pathlib import Path\n\ndef project_report(script_file, version, args):\n    # Treat script_file as a file under project/src/.\n    # Return data_path, version text, and a copy of args.\n    pass\n","guidedSteps":["Convert script_file to Path and resolve it.","Go up from project/src/tool.py to the project root.","Join data/orders.csv with pathlib's / operator.","Format the provided major/minor version and copy the arguments.","Run Tests for two different project roots."],"checks":["The data path is anchored to the script's project, not the current working directory.","The version comes from the provided tuple rather than a hard-coded number.","Argument data is copied, so the caller's list is not changed."],"hints":["Path(script_file).resolve().parents[1] is the project root in this exercise.","Use root / 'data' / 'orders.csv'.","Return {'version': f'{version[0]}.{version[1]}', ...}."],"solution":"from pathlib import Path\n\ndef project_report(script_file, version, args):\n    root = Path(script_file).resolve().parents[1]\n    return {\n        'data_path': root / 'data' / 'orders.csv',\n        'version': f'{version[0]}.{version[1]}',\n        'args': list(args),\n    }\n","solutionExplanation":"Passing a fictional script location makes the path logic executable inside the browser. In a real saved script the source would usually be __file__; the actual interpreter version and sys.argv are read at run time.","testCode":"from pathlib import Path\nfor root in (Path('/course-one'), Path('/course-two')):\n    r = project_report(root / 'src' / 'tool.py', (3, 14), ['--dry-run'])\n    assert r['data_path'] == root / 'data' / 'orders.csv'\n    assert r['version'] == '3.14' and r['args'] == ['--dry-run']\nprint('PASS: two project locations')\nargs = ['--dry-run']\nr = project_report('/course/src/tool.py', (3, 12), args)\nr['args'].append('--extra')\nassert args == ['--dry-run'] and r['version'] == '3.12'\nprint('PASS: version and input independence')","challenges":["Explain why a relative Path('data/orders.csv') depends on the working directory.","Find the bug in using parents[0] as the project root when tool.py is in src/.","Run a real saved script locally and compare __file__ with the fictional path input."],"simulation":{"prompt":"What anchors the data path in this exercise?","choices":["The saved script's project location","Whatever directory the terminal currently uses"],"correctIndex":0,"explanation":"The path is derived from the script location, not the process working directory."}},
   "projectConnection": {
     "project": "CLI habit tracker",
     "milestone": "Create the project layout, virtual environment notes, .gitignore, a src entry script, and a command that prints a safe status message.",

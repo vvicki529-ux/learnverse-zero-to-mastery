@@ -65,45 +65,7 @@
       "avoid": "Keep counting and likelihood as separate questions."
     }
   ],
-  "lab": {
-    "title": "Budget a fictional peer-review pairing",
-    "safety": "Counts and generates only tiny fictional inputs. The static site guides the lab but does not yet execute Python in-browser.",
-    "starterCode": "from math import comb\nfrom itertools import combinations\n\ndef allowed_pairs(names, limit):\n    # Reject if the number of unordered pairs exceeds limit.\n    # Otherwise return the small list of pairs.\n    pass\n\n# Test 3 names with limit 3 and 5 names with limit 3.\n",
-    "guidedSteps": [
-      "Compute comb(len(names), 2) before generating pairs.",
-      "Raise ValueError if the count is over limit.",
-      "Otherwise return list(combinations(names, 2)).",
-      "Test three names with a limit of three.",
-      "Test five names with the same limit and confirm rejection."
-    ],
-    "checks": [
-      "Count is computed before pair materialization.",
-      "Three names produce three unordered pairs.",
-      "Five names are rejected at a limit of three.",
-      "No large pair list is created in the test."
-    ],
-    "hints": [
-      "`comb(len(names), 2)` gives the planned count.",
-      "`if count > limit: raise ValueError(...)`.",
-      "`combinations(names, 2)` yields each unordered pair once."
-    ],
-    "solution": "from math import comb\nfrom itertools import combinations\n\ndef allowed_pairs(names, limit):\n    count = comb(len(names), 2)\n    if count > limit:\n        raise ValueError('too many review pairs')\n    return list(combinations(names, 2))\n\nassert allowed_pairs(['Ada', 'Bo', 'Cy'], 3) == [\n    ('Ada', 'Bo'), ('Ada', 'Cy'), ('Bo', 'Cy')]\ntry:\n    allowed_pairs(['a', 'b', 'c', 'd', 'e'], 3)\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('large request accepted')\nprint('pair budget checked')\n",
-    "solutionExplanation": "The count gate runs before constructing the list, so this small exercise rejects an oversized request at the boundary. A production limit should be chosen from measured resource and product requirements.",
-    "challenges": [
-      "Predict comb(1, 2).",
-      "Find the bug: build all pairs first and only then compare the length with limit.",
-      "Experiment: compare comb(5, 2) and perm(5, 2), explaining the role of order."
-    ],
-    "simulation": {
-      "prompt": "If A-B and B-A are the same peer-review team, which count applies?",
-      "choices": [
-        "math.comb(n, 2)",
-        "math.perm(n, 2)"
-      ],
-      "correctIndex": 0,
-      "explanation": "Combinations do not distinguish order."
-    }
-  },
+  "lab": {"title":"Budget a fictional peer-review pairing","safety":"Only tiny fictional inputs are counted. Run the exercise in the site's bundled Python worker.","starterCode":"from math import comb\nfrom itertools import combinations\n\ndef allowed_pairs(names, limit):\n    # Reject if the number of unordered pairs exceeds limit.\n    # Otherwise return the small list of pairs.\n    pass\n\n# Test 3 names with limit 3 and 5 names with limit 3.\n","guidedSteps":["Compute comb(len(names), 2) before generating pairs.","Raise ValueError if the count is over limit.","Otherwise return list(combinations(names, 2)).","Test three names with a limit of three.","Test five names with the same limit and confirm rejection."],"checks":["Count is computed before pair materialization.","Three names produce three unordered pairs.","Five names are rejected at a limit of three.","No large pair list is created in the test."],"hints":["`comb(len(names), 2)` gives the planned count.","`if count > limit: raise ValueError(...)`.","`combinations(names, 2)` yields each unordered pair once."],"solution":"from math import comb\nfrom itertools import combinations\n\ndef allowed_pairs(names, limit):\n    count = comb(len(names), 2)\n    if count > limit:\n        raise ValueError('too many review pairs')\n    return list(combinations(names, 2))\n\nassert allowed_pairs(['Ada', 'Bo', 'Cy'], 3) == [\n    ('Ada', 'Bo'), ('Ada', 'Cy'), ('Bo', 'Cy')]\ntry:\n    allowed_pairs(['a', 'b', 'c', 'd', 'e'], 3)\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('large request accepted')\nprint('pair budget checked')\n","solutionExplanation":"The count gate runs before constructing the list, so this small exercise rejects an oversized request at the boundary. A production limit should be chosen from measured resource and product requirements.","challenges":["Predict comb(1, 2).","Find the bug: build all pairs first and only then compare the length with limit.","Experiment: compare comb(5, 2) and perm(5, 2), explaining the role of order."],"simulation":{"prompt":"If A-B and B-A are the same peer-review team, which count applies?","choices":["math.comb(n, 2)","math.perm(n, 2)"],"correctIndex":0,"explanation":"Combinations do not distinguish order."},"testCode":"assert allowed_pairs(['Ada','Bo','Cy'],3)==[('Ada','Bo'),('Ada','Cy'),('Bo','Cy')]\nassert allowed_pairs([],0)==[]\ntry: allowed_pairs(['a','b','c','d','e'],3)\nexcept ValueError: pass\nelse: raise AssertionError('pair budget ignored')\nprint('PASS: pair budget')"},
   "projectConnection": {
     "project": "Study-progress peer-review planner",
     "milestone": "Show the number of possible teams and reject pair-generation requests above a documented limit before materializing them.",
