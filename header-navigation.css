@@ -11,5 +11,7 @@ aside .course-outline{margin-top:0;padding-top:0;border-top:0}
 @media(max-width:720px){.site-header{min-height:64px}.site-nav a{font-size:.82rem;padding:.42rem .55rem}.layout{min-height:calc(100vh - 64px)}}
 .python-stdin{display:block;width:100%;max-width:38rem;margin:.75rem 0;resize:vertical;font-family:ui-monospace,Consolas,monospace;font-size:.85rem}
 .course-outline-group .outline-count{font-size:.75rem;font-weight:700;opacity:.8;margin-left:auto}
+.course-outline-group summary .outline-count{flex:0 0 auto;padding:.1rem .45rem;border-radius:999px;background:rgba(255,255,255,.13);color:#d9eaff;font-variant-numeric:tabular-nums;line-height:1.5;transform:none}
+.course-outline-group[open] summary .outline-count{transform:none}
 aside .outline-lesson[aria-current="page"]{background:#244a78;color:#fff;font-weight:750;border-left:3px solid #69c8ff;padding-left:calc(1rem - 3px)}
 aside .outline-lesson[aria-current="page"] b{color:#b4e6ff}

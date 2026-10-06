@@ -19,5 +19,8 @@ setImmediate(() => {
   assert.match(holder.innerHTML, /aria-current="page"/);
   assert.match(holder.innerHTML, /Foundations/);
   assert.match(holder.innerHTML, /Expert and internals/);
+  const styles = fs.readFileSync(path.join(root, 'header-navigation.css'), 'utf8');
+  assert.match(styles, /\.course-outline-group\[open\] summary \.outline-count\s*\{transform:none\}/);
+  assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /header-navigation\.css\?v=outline-count-fix01/);
   console.log(`Python sidebar renders ${expected} ordered lesson links and marks the current lesson.`);
 });
