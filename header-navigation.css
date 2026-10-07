@@ -5,6 +5,11 @@
 .site-nav a:hover,.site-nav a:focus-visible{background:var(--sky);color:var(--blue);outline:2px solid transparent}
 .site-nav .cert{margin:0;border:1px solid var(--line);color:var(--ink)!important}
 .site-header #theme{flex:none}
+/* The header stays light by default, so dark-mode text needs its own dark surface. */
+body.dark .site-header{background:#111f34;border-bottom-color:#344159;color:#e8f0ff}
+body.dark .site-nav a:hover,body.dark .site-nav a:focus-visible{background:#24446e;color:#fff}
+body.dark .site-header #theme{background:#1e304b;color:#e8f0ff;border:1px solid #607796}
+body.dark .crumb a{color:#9dc9ff}
 .layout{min-height:calc(100vh - 72px)}
 aside .course-outline{margin-top:0;padding-top:0;border-top:0}
 @media(max-width:980px){.site-header{justify-content:space-between}.site-nav{flex-basis:100%;order:3;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:.2rem}.site-nav a{flex:none}.site-header #theme{margin-left:auto}aside{position:static;max-height:none}}

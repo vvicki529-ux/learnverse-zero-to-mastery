@@ -47,6 +47,7 @@ setImmediate(() => {
   assert.match(holder.innerHTML, /Expert and internals/);
   const styles = fs.readFileSync(path.join(root, 'header-navigation.css'), 'utf8');
   assert.match(styles, /\.course-outline-group\[open\] summary \.outline-count\s*\{transform:none\}/);
-  assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /header-navigation\.css\?v=outline-count-fix01/);
+  assert.match(styles, /body\.dark \.site-header\{background:#111f34/);
+  assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /header-navigation\.css\?v=dark-header01/);
   console.log(`Python sidebar renders ${expected} ordered lesson links and marks the current lesson.`);
 });
